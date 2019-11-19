@@ -279,8 +279,8 @@ class App extends React.Component {
     const lastDayOfMonthStart = firstDayOfMonth.endOf('month').date();
     const lastDayOfMonthEnd = firstDayOfMonth.endOf('month').date();
     this.setState({ query, lastDayOfMonthStart, lastDayOfMonthEnd });
-    const params = query;
-    const { data } = await axios.get('/api/v1/ranks/cached', { params });
+    const params = { sy, sm, sd, ey, em, ed };
+    const { data } = await axios.get(`/api/v1/ranks/${t}/cached`, { params });
     const { error, message, ranks } = data;
     if (error) {
       console.error(message)
@@ -290,8 +290,8 @@ class App extends React.Component {
   }
   getRanks = async () => {
     const { t, sy, sm, sd, ey, em, ed } = this.state.query;
-    const params = { t, sy, sm, sd, ey, em, ed };
-    const response = await axios.get('/api/v1/ranks', { params });
+    const params = { sy, sm, sd, ey, em, ed };
+    const response = await axios.get(`/api/v1/ranks/${t}`, { params });
     const { data } = response;
     const { error, message, ranks } = data;
     if (error) {
@@ -301,9 +301,8 @@ class App extends React.Component {
     }
   }
   getYoutubeCached = async rank => {
-    const { number, title, artist } = rank;
-    const params = { number, title, artist };
-    const { data } = await axios.get('/api/v1/youtube/cached', { params });
+    const { number } = rank;
+    const { data } = await axios.get(`/api/v1/youtube/${number}/cached`);
     const { error, message, youtube } = data;
     if (error) {
       console.error(message)
@@ -326,19 +325,18 @@ class App extends React.Component {
   }
   setYoutube = async (rank, youtube) => {
     const { number, title, artist } = rank;
-    const data = { number, title, artist, youtube };
-    await axios.post('/api/v1/youtube', data);
+    const data = { youtube };
+    await axios.post(`/api/v1/youtube/${number}`, data);
   }
   getAudio = async rank => {
     const { youtube } = rank;
     const { videoId } = youtube;
-    const data = { videoId };
-    await axios.post('/api/v1/audio', data);
+    await axios.post(`/api/v1/audio/${videoId}`);
 
     const audio = `/audio/${videoId}`;
     rank.audio = audio;
 
-    const { ranks } = this.state;
+    ({ ranks } = this.state);
     this.setState({ ranks });
   }
 }

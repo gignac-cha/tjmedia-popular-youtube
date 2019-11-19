@@ -57,13 +57,12 @@ def get_ranks(strType, SYY, SMM, SDD, EYY, EMM, EDD):
         })
   return ranks
 
-@server.route("/api/v1/ranks", methods=[ "GET" ])
-def _api_get_ranks():
+@server.route("/api/v1/ranks/<type_>", methods=[ "GET" ])
+def _api_get_ranks(type_):
   args = flask.request.args
-  if any(key not in args.keys() for key in ("t", "sy", "sm", "sd", "ey", "em", "ed")):
-    return flask.jsonify(error=True, message="Invalid parameters: 't', 'sy', 'sm', 'sd', 'ey', 'em', 'ed'")
+  if any(key not in args.keys() for key in ("sy", "sm", "sd", "ey", "em", "ed")):
+    return flask.jsonify(error=True, message="Invalid parameters: 'sy', 'sm', 'sd', 'ey', 'em', 'ed'")
 
-  type_ = args["t"]
   start_year = args["sy"]
   start_month = args["sm"]
   start_day = args["sd"]
@@ -78,13 +77,12 @@ def _api_get_ranks():
   cache["ranks"][key] = ranks
   return flask.jsonify(error=False, ranks=ranks)
 
-@server.route("/api/v1/ranks/cached", methods=[ "GET" ])
-def _api_get_ranks_cached():
+@server.route("/api/v1/ranks/<type_>/cached", methods=[ "GET" ])
+def _api_get_ranks_cached(type_):
   args = flask.request.args
-  if any(key not in args.keys() for key in ("t", "sy", "sm", "sd", "ey", "em", "ed")):
-    return flask.jsonify(error=True, message="Invalid parameters: 't', 'sy', 'sm', 'sd', 'ey', 'em', 'ed'")
+  if any(key not in args.keys() for key in ("sy", "sm", "sd", "ey", "em", "ed")):
+    return flask.jsonify(error=True, message="Invalid parameters: 'sy', 'sm', 'sd', 'ey', 'em', 'ed'")
 
-  type_ = args["t"]
   start_year = args["sy"]
   start_month = args["sm"]
   start_day = args["sd"]
@@ -99,43 +97,35 @@ def _api_get_ranks_cached():
     cache["ranks"][key] = get_ranks(type_, start_year, start_month, start_day, end_year, end_month, end_day)
   return flask.jsonify(error=False, ranks=cache["ranks"][key])
 
-@server.route("/api/v1/youtube/cached", methods=[ "GET" ])
-def _api_get_youtube_cached():
-  args = flask.request.args
-  if any(key not in args.keys() for key in ("number", "title", "artist")):
-    return flask.jsonify(error=True, message="Invalid parameters: 'number', 'title', 'artist'")
-
-  number = args["number"]
-  title = args["title"]
-  artist = args["artist"]
-
-  key = number
-  if key not in cache["youtube"].keys():
+@server.route("/api/v1/youtube/<number>/cached", methods=[ "GET" ])
+def _api_get_youtube_cached(number):
+  if number not in cache["youtube"].keys():
     return flask.jsonify(error=True, message="")
-  return flask.jsonify(error=False, youtube=cache["youtube"][key])
+  return flask.jsonify(error=False, youtube=cache["youtube"][number])
 
-@server.route("/api/v1/youtube", methods=[ "POST" ])
-def _api_post_youtube():
+@server.route("/api/v1/youtube/<number>", methods=[ "POST" ])
+def _api_post_youtube(number):
   data = flask.request.json
-  if any(key not in data.keys() for key in ("number", "title", "artist", "youtube")):
-    return flask.jsonify(error=True, message="Invalid parameters: 'number', 'title', 'artist', 'youtube'")
+  if "youtube" not in data.keys():
+    return flask.jsonify(error=True, message="Invalid parameters: 'youtube'")
 
-  number = data["number"]
-  title = data["title"]
-  artist = data["artist"]
   youtube = data["youtube"]
 
-  key = number
-  cache["youtube"][key] = youtube
+  cache["youtube"][number] = youtube
   return flask.jsonify(error=False)
 
-@server.route("/api/v1/audio", methods=[ "POST" ])
-def _api_post_audio():
-  data = flask.request.json
-  if "videoId" not in data.keys():
-    return flask.jsonify(error=True, message="Invalid parameters: 'videoId'")
+@server.route("/api/v1/audio/<videoId>", methods=[ "GET" ])
+def _get_audio(videoId):
+  if videoId not in cache["audio"].keys():
+    return flask.jsonify(error=True, message="")
 
-  videoId = data["videoId"]
+  if not os.path.exists(f'web/static/{videoId}.mp3'):
+    return flask.jsonify(error=True, message="")
+
+  return flask.jsonify(error=False)
+
+@server.route("/api/v1/audio/<videoId>", methods=[ "POST" ])
+def _api_post_audio(videoId):
   if videoId not in cache["audio"].keys():
     urls = [ f'https://www.youtube.com/watch?v={videoId}' ]
     result = youtube_dl.YoutubeDL({
