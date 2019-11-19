@@ -89,6 +89,7 @@ class App extends React.Component {
                   <th scope="col">Number</th>
                   <th scope="col">Title</th>
                   <th scope="col">Artist</th>
+                  <th scope="col">Youtube</th>
                 </tr>
               </thead>
               <tbody>{this.state.ranks.map(this.renderRanks)}</tbody>
@@ -99,6 +100,54 @@ class App extends React.Component {
     );
   }
 
+  renderBefore = rank => {
+    const { youtube } = rank;
+    const { before } = youtube;
+    if (before) {
+      const ellipsisStyle = { display: 'inline-block', width: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
+      return (
+        <div className="text-left">
+          <button className="btn btn-link p-0" onClick={e => this.onClickBeforeAfter(rank, before)}>
+            <FontAwesomeIcon icon={fas.faAngleDoubleLeft} size={'2x'} />
+            <div className="text-left" style={ellipsisStyle}> {allHtmlEntities.decode(before.title)}</div>
+          </button>
+        </div>
+      );
+    }
+  }
+  renderAfter = rank => {
+    const { youtube } = rank;
+    const { after } = youtube;
+    if (after) {
+      const ellipsisStyle = { display: 'inline-block', width: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
+      return (
+        <div className="text-right">
+          <button className="btn btn-link p-0" onClick={e => this.onClickBeforeAfter(rank, after)}>
+            <div className="text-right" style={ellipsisStyle}>{allHtmlEntities.decode(after.title)} </div>
+            <FontAwesomeIcon icon={fas.faAngleDoubleRight} size={'2x'} />
+          </button>
+        </div>
+      );
+    }
+  }
+  renderYoutube = rank => {
+    const { youtube } = rank;
+    if (youtube && youtube.videoId) {
+      return (
+        <div>
+          <iframe src={`https://www.youtube.com/embed/${youtube.videoId}`} title={youtube.title} width={640} height={360} frameBorder={0} allowFullScreen={true}></iframe>
+          {this.renderBefore(rank)}
+          {this.renderAfter(rank)}
+        </div>
+      );
+    }
+    return (
+      <summary onClick={e => this.onClickYoutube(rank)}
+        onMouseEnter={e => this.onMouseEnterYoutube(rank)} onMouseLeave={e => this.onMouseLeaveYoutube(rank)}>
+        <FontAwesomeIcon icon={fab.faYoutube} color={rank.youtubeMouseOver ? 'red' : ''} />
+      </summary>
+    );
+  }
   renderRanks = (rank, i) => {
     const ellipsisStyle = { width: 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
     return (
@@ -111,6 +160,7 @@ class App extends React.Component {
           </div>
         </td>
         <td>{rank.artist}</td>
+        <td className={classnames({ 'p-0': rank.youtube && rank.youtube.videoId })}>{this.renderYoutube(rank)}</td>
       </tr>
     );
   }
@@ -139,6 +189,56 @@ class App extends React.Component {
   }
   onClickApply = async e => {
     this.getRanks();
+  }
+  onMouseEnterYoutube = rank => {
+    rank.youtubeMouseOver = true;
+
+    const { ranks } = this.state;
+    this.setState({ ranks });
+  }
+  onMouseLeaveYoutube = rank => {
+    rank.youtubeMouseOver = false;
+
+    const { ranks } = this.state;
+    this.setState({ ranks });
+  }
+  onClickYoutube = async rank => {
+    const youtube = await this.getYoutubeCached(rank);
+    rank.youtube = youtube;
+
+    const list = await this.getYoutube(rank);
+    youtube.list = list;
+
+    if (youtube.videoId) {
+      const index = _.findIndex(list, item => item.videoId === youtube.videoId);
+      youtube.title = list[index].title;
+      youtube.before = index > 0 ? list[index - 1] : null;
+      youtube.after = index < list.length - 1 ? list[index + 1] : null;
+    } else {
+      const { videoId, title } = _.first(list);
+      youtube.videoId = videoId;
+      youtube.title = title;
+      youtube.before = null;
+      youtube.after = list[1];
+    }
+    this.setYoutube(rank, youtube);
+
+    const { ranks } = this.state;
+    this.setState({ ranks });
+  }
+  onClickBeforeAfter = (rank, selected) => {
+    const { youtube } = rank;
+    const { list } = youtube;
+    const index = _.findIndex(list, item => item.videoId === selected.videoId);
+    const { videoId, title } = list[index];
+    youtube.videoId = videoId;
+    youtube.title = title;
+    youtube.before = index > 0 ? list[index - 1] : null;
+    youtube.after = index < list.length - 1 ? list[index + 1] : null;
+    this.setYoutube(rank, youtube);
+
+    const { ranks } = this.state;
+    this.setState({ ranks });
   }
 
   getApiKey = async () => {
@@ -180,6 +280,35 @@ class App extends React.Component {
     } else {
       this.setState({ ranks });
     }
+  }
+  getYoutubeCached = async rank => {
+    const { number, title, artist } = rank;
+    const params = { number, title, artist };
+    const { data } = await axios.get('/api/v1/youtube/cached', { params });
+    const { error, message, youtube } = data;
+    if (error) {
+      console.error(message)
+      return {};
+    } else {
+      return youtube;
+    }
+  }
+  getYoutube = async rank => {
+    const { title, artist } = rank;
+    const q = _.join([ title, artist ], ' - ');
+    const part = 'id,snippet';
+    const maxResults = 10;
+    const key = this.state.apiKey;
+    const params = { q, part, maxResults, key };
+    const { data } = await axios.get('https://www.googleapis.com/youtube/v3/search', { params });
+    const { items } = data;
+    const list = _.map(items, item => ({ videoId: item.id.videoId, title: item.snippet.title }));
+    return list;
+  }
+  setYoutube = async (rank, youtube) => {
+    const { number, title, artist } = rank;
+    const data = { number, title, artist, youtube };
+    await axios.post('/api/v1/youtube', data);
   }
 }
 

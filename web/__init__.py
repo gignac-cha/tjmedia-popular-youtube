@@ -20,6 +20,7 @@ def index():
 
 cache = {
   "ranks": {},
+  "youtube": {},
 }
 
 def get_ranks(strType, SYY, SMM, SDD, EYY, EMM, EDD):
@@ -94,6 +95,37 @@ def _api_get_ranks_cached():
   if key not in cache["ranks"].keys() or len(cache["ranks"][key]) <= 0:
     cache["ranks"][key] = get_ranks(type_, start_year, start_month, start_day, end_year, end_month, end_day)
   return flask.jsonify(error=False, ranks=cache["ranks"][key])
+
+@server.route("/api/v1/youtube/cached", methods=[ "GET" ])
+def _api_get_youtube_cached():
+  args = flask.request.args
+  if any(key not in args.keys() for key in ("number", "title", "artist")):
+    return flask.jsonify(error=True, message="Invalid parameters: 'number', 'title', 'artist'")
+
+  number = args["number"]
+  title = args["title"]
+  artist = args["artist"]
+
+  key = number
+  if key not in cache["youtube"].keys():
+    return flask.jsonify(error=True, message="")
+  return flask.jsonify(error=False, youtube=cache["youtube"][key])
+
+@server.route("/api/v1/youtube", methods=[ "POST" ])
+def _api_post_youtube():
+  data = flask.request.json
+  if any(key not in data.keys() for key in ("number", "title", "artist", "youtube")):
+    return flask.jsonify(error=True, message="Invalid parameters: 'number', 'title', 'artist', 'youtube'")
+
+  number = data["number"]
+  title = data["title"]
+  artist = data["artist"]
+  youtube = data["youtube"]
+
+  key = number
+  cache["youtube"][key] = youtube
+  return flask.jsonify(error=False)
+
 @server.route("/api/v1/api-key")
 def _api_get_api_key():
   apiKey = os.getenv("API_KEY")
