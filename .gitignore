@@ -506,3 +506,4 @@ DerivedData/
 
 
 web/static
+!ui/public
