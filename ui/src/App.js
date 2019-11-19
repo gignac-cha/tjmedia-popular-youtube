@@ -85,12 +85,12 @@ class App extends React.Component {
             <table className="table table-sm table-hover table-striped">
               <thead>
                 <tr>
-                  <th scope="col">Rank</th>
-                  <th scope="col">Number</th>
-                  <th scope="col">Title</th>
-                  <th scope="col">Artist</th>
-                  <th scope="col">Youtube</th>
-                  <th scope="col">Audio</th>
+                  <th scope="col" className="pt-0 pb-0">Rank</th>
+                  <th scope="col" className="pt-0 pb-0">Number</th>
+                  <th scope="col" className="pt-0 pb-0">Title</th>
+                  <th scope="col" className="pt-0 pb-0">Artist</th>
+                  <th scope="col" className="pt-0 pb-0">Youtube</th>
+                  <th scope="col" className="pt-0 pb-0">Audio</th>
                 </tr>
               </thead>
               <tbody>{this.state.ranks.map(this.renderRanks)}</tbody>
@@ -153,12 +153,14 @@ class App extends React.Component {
     const { audio, youtube } = rank;
     if (audio) {
       return (
-        <audio src={audio} loop controls>
+        <audio src={audio} loop={true} controls={true}>
           Your browser does not support the <code>audio</code> element.
         </audio>
       );
+    } else if (rank.audioRequesting) {
+      return <div><FontAwesomeIcon icon={fas.faSyncAlt} color={'orange'} spin={true} size={'4x'} /></div>;
     } else if (youtube && youtube.videoId) {
-      return <summary onClick={e => this.onClickAudio(rank)}><FontAwesomeIcon icon={fas.faMusic} color={'blue'} /></summary>;
+      return <summary onClick={e => this.onClickAudio(rank)}><FontAwesomeIcon icon={fas.faMusic} color={'blue'} size={'4x'} /></summary>;
     } else {
       return <div><FontAwesomeIcon icon={fas.faMusic} color={'gray'} /></div>;
     }
@@ -167,16 +169,16 @@ class App extends React.Component {
     const ellipsisStyle = { width: 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
     return (
       <tr key={i}>
-        <th scope="row">{rank.rank}</th>
-        <td>{rank.number}</td>
-        <td>
+        <th scope="row" className="pt-0 pb-0">{rank.rank}</th>
+        <td className="pt-0 pb-0">{rank.number}</td>
+        <td className="pt-0 pb-0">
           <div style={ellipsisStyle}>
             {rank.title}
           </div>
         </td>
-        <td>{rank.artist}</td>
-        <td className={classnames({ 'p-0': rank.youtube && rank.youtube.videoId })}>{this.renderYoutube(rank)}</td>
-        <td className={classnames({ 'p-0': rank.audio })}>{this.renderAudio(rank)}</td>
+        <td className="pt-0 pb-0">{rank.artist}</td>
+        <td className={classnames('pt-0', 'pb-0', { 'p-0': rank.youtube && rank.youtube.videoId })}>{this.renderYoutube(rank)}</td>
+        <td className={classnames('pt-0', 'pb-0', { 'p-0': rank.audio })}>{this.renderAudio(rank)}</td>
       </tr>
     );
   }
@@ -279,8 +281,8 @@ class App extends React.Component {
     const lastDayOfMonthStart = firstDayOfMonth.endOf('month').date();
     const lastDayOfMonthEnd = firstDayOfMonth.endOf('month').date();
     this.setState({ query, lastDayOfMonthStart, lastDayOfMonthEnd });
-    const params = query;
-    const { data } = await axios.get('/api/v1/ranks/cached', { params });
+    const params = { sy, sm, sd, ey, em, ed };
+    const { data } = await axios.get(`/api/v1/ranks/${t}/cached`, { params });
     const { error, message, ranks } = data;
     if (error) {
       console.error(message)
@@ -290,8 +292,8 @@ class App extends React.Component {
   }
   getRanks = async () => {
     const { t, sy, sm, sd, ey, em, ed } = this.state.query;
-    const params = { t, sy, sm, sd, ey, em, ed };
-    const response = await axios.get('/api/v1/ranks', { params });
+    const params = { sy, sm, sd, ey, em, ed };
+    const response = await axios.get(`/api/v1/ranks/${t}`, { params });
     const { data } = response;
     const { error, message, ranks } = data;
     if (error) {
@@ -301,9 +303,8 @@ class App extends React.Component {
     }
   }
   getYoutubeCached = async rank => {
-    const { number, title, artist } = rank;
-    const params = { number, title, artist };
-    const { data } = await axios.get('/api/v1/youtube/cached', { params });
+    const { number } = rank;
+    const { data } = await axios.get(`/api/v1/youtube/${number}/cached`);
     const { error, message, youtube } = data;
     if (error) {
       console.error(message)
@@ -326,19 +327,22 @@ class App extends React.Component {
   }
   setYoutube = async (rank, youtube) => {
     const { number, title, artist } = rank;
-    const data = { number, title, artist, youtube };
-    await axios.post('/api/v1/youtube', data);
+    const data = { youtube };
+    await axios.post(`/api/v1/youtube/${number}`, data);
   }
   getAudio = async rank => {
+    rank.audioRequesting = true;
+    let { ranks } = this.state;
+    this.setState({ ranks });
+
     const { youtube } = rank;
     const { videoId } = youtube;
-    const data = { videoId };
-    await axios.post('/api/v1/audio', data);
+    await axios.post(`/api/v1/audio/${videoId}`);
 
     const audio = `/audio/${videoId}`;
     rank.audio = audio;
-
-    const { ranks } = this.state;
+    rank.audioRequesting = false;
+    ({ ranks } = this.state);
     this.setState({ ranks });
   }
 }
