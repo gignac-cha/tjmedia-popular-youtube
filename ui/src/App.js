@@ -153,12 +153,14 @@ class App extends React.Component {
     const { audio, youtube } = rank;
     if (audio) {
       return (
-        <audio src={audio} loop controls>
+        <audio src={audio} loop={true} controls={true}>
           Your browser does not support the <code>audio</code> element.
         </audio>
       );
+    } else if (rank.audioRequesting) {
+      return <div><FontAwesomeIcon icon={fas.faSyncAlt} color={'orange'} spin={true} size={'4x'} /></div>;
     } else if (youtube && youtube.videoId) {
-      return <summary onClick={e => this.onClickAudio(rank)}><FontAwesomeIcon icon={fas.faMusic} color={'blue'} /></summary>;
+      return <summary onClick={e => this.onClickAudio(rank)}><FontAwesomeIcon icon={fas.faMusic} color={'blue'} size={'4x'} /></summary>;
     } else {
       return <div><FontAwesomeIcon icon={fas.faMusic} color={'gray'} /></div>;
     }
@@ -329,13 +331,17 @@ class App extends React.Component {
     await axios.post(`/api/v1/youtube/${number}`, data);
   }
   getAudio = async rank => {
+    rank.audioRequesting = true;
+    let { ranks } = this.state;
+    this.setState({ ranks });
+
     const { youtube } = rank;
     const { videoId } = youtube;
     await axios.post(`/api/v1/audio/${videoId}`);
 
     const audio = `/audio/${videoId}`;
     rank.audio = audio;
-
+    rank.audioRequesting = false;
     ({ ranks } = this.state);
     this.setState({ ranks });
   }
