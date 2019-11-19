@@ -85,12 +85,12 @@ class App extends React.Component {
             <table className="table table-sm table-hover table-striped">
               <thead>
                 <tr>
-                  <th scope="col">Rank</th>
-                  <th scope="col">Number</th>
-                  <th scope="col">Title</th>
-                  <th scope="col">Artist</th>
-                  <th scope="col">Youtube</th>
-                  <th scope="col">Audio</th>
+                  <th scope="col" className="pt-0 pb-0">Rank</th>
+                  <th scope="col" className="pt-0 pb-0">Number</th>
+                  <th scope="col" className="pt-0 pb-0">Title</th>
+                  <th scope="col" className="pt-0 pb-0">Artist</th>
+                  <th scope="col" className="pt-0 pb-0">Youtube</th>
+                  <th scope="col" className="pt-0 pb-0">Audio</th>
                 </tr>
               </thead>
               <tbody>{this.state.ranks.map(this.renderRanks)}</tbody>
@@ -167,16 +167,16 @@ class App extends React.Component {
     const ellipsisStyle = { width: 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
     return (
       <tr key={i}>
-        <th scope="row">{rank.rank}</th>
-        <td>{rank.number}</td>
-        <td>
+        <th scope="row" className="pt-0 pb-0">{rank.rank}</th>
+        <td className="pt-0 pb-0">{rank.number}</td>
+        <td className="pt-0 pb-0">
           <div style={ellipsisStyle}>
             {rank.title}
           </div>
         </td>
-        <td>{rank.artist}</td>
-        <td className={classnames({ 'p-0': rank.youtube && rank.youtube.videoId })}>{this.renderYoutube(rank)}</td>
-        <td className={classnames({ 'p-0': rank.audio })}>{this.renderAudio(rank)}</td>
+        <td className="pt-0 pb-0">{rank.artist}</td>
+        <td className={classnames('pt-0', 'pb-0', { 'p-0': rank.youtube && rank.youtube.videoId })}>{this.renderYoutube(rank)}</td>
+        <td className={classnames('pt-0', 'pb-0', { 'p-0': rank.audio })}>{this.renderAudio(rank)}</td>
       </tr>
     );
   }
