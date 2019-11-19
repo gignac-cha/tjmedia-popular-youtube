@@ -12,6 +12,8 @@ import lxml.etree
 
 import pytz
 
+import youtube_dl
+
 server = flask.Flask(__name__, static_url_path='')
 
 @server.route('/')
@@ -21,6 +23,7 @@ def index():
 cache = {
   "ranks": {},
   "youtube": {},
+  "audio": {},
 }
 
 def get_ranks(strType, SYY, SMM, SDD, EYY, EMM, EDD):
@@ -125,6 +128,38 @@ def _api_post_youtube():
   key = number
   cache["youtube"][key] = youtube
   return flask.jsonify(error=False)
+
+@server.route("/api/v1/audio", methods=[ "POST" ])
+def _api_post_audio():
+  data = flask.request.json
+  if "videoId" not in data.keys():
+    return flask.jsonify(error=True, message="Invalid parameters: 'videoId'")
+
+  videoId = data["videoId"]
+  if videoId not in cache["audio"].keys():
+    urls = [ f'https://www.youtube.com/watch?v={videoId}' ]
+    result = youtube_dl.YoutubeDL({
+      "format": "bestaudio/best",
+      "postprocessors": [
+        {
+          "key": "FFmpegExtractAudio",
+          "preferredcodec": "mp3",
+          "preferredquality": "320",
+        },
+      ],
+      "outtmpl": "web/static/%(id)s.%(ext)s"
+    }).download(urls)
+    if result != 0:
+      return flask.jsonify(error=True, message="")
+    cache["audio"][videoId] = True
+  return flask.jsonify(error=False)
+
+@server.route("/audio/<videoId>", methods=[ "GET" ])
+def _api_get_audio(videoId):
+  if videoId not in cache["audio"].keys():
+    return flask.jsonify(error=True, message="")
+
+  return server.send_static_file(f'{videoId}.mp3')
 
 @server.route("/api/v1/api-key")
 def _api_get_api_key():

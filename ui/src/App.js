@@ -90,6 +90,7 @@ class App extends React.Component {
                   <th scope="col">Title</th>
                   <th scope="col">Artist</th>
                   <th scope="col">Youtube</th>
+                  <th scope="col">Audio</th>
                 </tr>
               </thead>
               <tbody>{this.state.ranks.map(this.renderRanks)}</tbody>
@@ -148,6 +149,20 @@ class App extends React.Component {
       </summary>
     );
   }
+  renderAudio = rank => {
+    const { audio, youtube } = rank;
+    if (audio) {
+      return (
+        <audio src={audio} loop controls>
+          Your browser does not support the <code>audio</code> element.
+        </audio>
+      );
+    } else if (youtube && youtube.videoId) {
+      return <summary onClick={e => this.onClickAudio(rank)}><FontAwesomeIcon icon={fas.faMusic} color={'blue'} /></summary>;
+    } else {
+      return <div><FontAwesomeIcon icon={fas.faMusic} color={'gray'} /></div>;
+    }
+  }
   renderRanks = (rank, i) => {
     const ellipsisStyle = { width: 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
     return (
@@ -161,6 +176,7 @@ class App extends React.Component {
         </td>
         <td>{rank.artist}</td>
         <td className={classnames({ 'p-0': rank.youtube && rank.youtube.videoId })}>{this.renderYoutube(rank)}</td>
+        <td className={classnames({ 'p-0': rank.audio })}>{this.renderAudio(rank)}</td>
       </tr>
     );
   }
@@ -240,6 +256,9 @@ class App extends React.Component {
     const { ranks } = this.state;
     this.setState({ ranks });
   }
+  onClickAudio = rank => {
+    this.getAudio(rank);
+  }
 
   getApiKey = async () => {
     const { data } = await axios.get('/api/v1/api-key');
@@ -309,6 +328,18 @@ class App extends React.Component {
     const { number, title, artist } = rank;
     const data = { number, title, artist, youtube };
     await axios.post('/api/v1/youtube', data);
+  }
+  getAudio = async rank => {
+    const { youtube } = rank;
+    const { videoId } = youtube;
+    const data = { videoId };
+    await axios.post('/api/v1/audio', data);
+
+    const audio = `/audio/${videoId}`;
+    rank.audio = audio;
+
+    const { ranks } = this.state;
+    this.setState({ ranks });
   }
 }
 
