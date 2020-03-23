@@ -4,7 +4,7 @@ import classnames from 'classnames';
 
 import { AllHtmlEntities } from 'html-entities';
 
-// import $ from 'jquery';
+import $ from 'jquery';
 import _ from 'lodash';
 import moment from 'moment';
 import axios from 'axios';
@@ -24,6 +24,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      screen: {},
       query: {},
       lastDayOfMonthStart: -1,
       lastDayOfMonthEnd: -1,
@@ -34,6 +35,8 @@ class App extends React.Component {
   componentDidMount() {
     this.getApiKey();
     this.getRanksCached();
+    this.onResize();
+    $(window).on('resize', this.onResize);
   }
   render() {
     return (
@@ -183,6 +186,12 @@ class App extends React.Component {
     );
   }
 
+  onResize = e => {
+    const width = $(window).width();
+    const height = $(window).height();
+    const screen = { width, height };
+    this.setState({ screen });
+  }
   onChangeQuery = e => {
     const { name, value } = e.currentTarget;
     const { query } = this.state;
