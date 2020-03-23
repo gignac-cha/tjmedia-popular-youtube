@@ -39,14 +39,14 @@ class App extends React.Component {
     return (
       <div className="container-fluid">
         <div className="row">
-          <div className="col col-3 p-0">
+          <div className="col col-2 p-0">
             <select className="form-control" name="t" value={this.state.query.t} onChange={this.onChangeQuery}>
               <option value={1}>한국</option>
               <option value={2}>외국</option>
               <option value={3}>일본</option>
             </select>
           </div>
-          <div className="col col-1 p-0">
+          <div className="col col-2 p-0">
             <input className="form-control" type="number"
               min={2017} max={2019} step={1} name="sy"
               ref={e => this.sy = e} onChange={this.onChangeQuery} />
@@ -61,7 +61,7 @@ class App extends React.Component {
               min={1} max={this.state.lastDayOfMonthStart} step={1} name="sd"
               ref={e => this.sd = e} onChange={this.onChangeQuery} />
           </div>
-          <div className="col col-1 p-0">
+          <div className="col col-2 p-0">
             <input className="form-control" type="number"
               min={2017} max={2019} step={1} name="ey"
               ref={e => this.ey = e} onChange={this.onChangeQuery} />
@@ -76,13 +76,13 @@ class App extends React.Component {
               min={1} max={this.state.lastDayOfMonthEnd} step={1} name="ed"
               ref={e => this.ed = e} onChange={this.onChangeQuery} />
           </div>
-          <div className="col col-3 p-0">
+          <div className="col col-2 p-0">
             <button className="btn btn-secondary form-control" onClick={this.onClickApply}>Apply</button>
           </div>
         </div>
         <div className="row">
           <div className="col col-12 p-0">
-            <table className="table table-sm table-hover table-striped">
+            <table className="table table-sm table-hover table-striped table-responsive-sm">
               <thead>
                 <tr>
                   <th scope="col" className="pt-0 pb-0">Rank</th>
