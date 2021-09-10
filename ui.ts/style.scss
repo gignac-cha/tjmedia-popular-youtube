@@ -1,0 +1,51 @@
+.query-group {
+  display: flex;
+  flex-wrap: wrap;
+
+  .query-1 {
+    flex-grow: 1;
+    padding: 2px;
+
+    #strType {
+      width: 100%;
+    }
+  }
+  .query-2 {
+    flex-grow: 2;
+    display: block;
+    padding: 2px;
+
+    .query-start-date {
+      display: flex;
+    }
+    .query-end-date {
+      display: flex;
+    }
+    .query-date-item {
+      flex-grow: 1;
+    }
+  }
+
+  .query-button {
+    padding: 12px;
+    width: 100%;
+  }
+}
+
+@media (min-width: 480px) {
+  #SYY, #EYY {
+    width: 50px;
+  }
+  #SMM, #SDD, #EMM, #EDD {
+    width: 40px;
+  }
+}
+
+@media (min-width: 0px) and (max-width: 480px) {
+  #SYY, #EYY {
+    width: 30px;
+  }
+  #SMM, #SDD, #EMM, #EDD {
+    width: 20px;
+  }
+}
