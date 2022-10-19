@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "vite build",
-    "publish:page": "vite build --outDir docs",
+    "publish:page": "vite build --base ./ --outDir docs",
     "start": "vite dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
