@@ -3,6 +3,11 @@ $fa-font-path: 'resources/webfonts';
 @import '@fortawesome/fontawesome-free/scss/solid.scss';
 @import '@fortawesome/fontawesome-free/scss/brands.scss';
 
+html, body {
+  margin: 0px;
+  padding: 0px;
+}
+
 #root {
   display: flex;
   flex-direction: column;
@@ -10,6 +15,10 @@ $fa-font-path: 'resources/webfonts';
   margin: auto;
   padding: 1rem;
   width: 800px;
+
+  @media screen and (max-width: 480px) {
+    width: initial;
+  }
 
   .controls {
     display: flex;
@@ -113,6 +122,14 @@ $fa-font-path: 'resources/webfonts';
     }
     &.expanded {
       max-height: 100rem;
+
+      .row-1 {
+        .title {
+          @media screen and (max-width: 480px) {
+            font-size: 1rem;
+          }
+        }
+      }
     }
 
     &:not(:last-child) {
@@ -151,6 +168,11 @@ $fa-font-path: 'resources/webfonts';
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        transition: .2s;
+
+        @media screen and (max-width: 480px) {
+          font-size: 1.5rem;
+        }
       }
     }
 
