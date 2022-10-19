@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "vite build",
+    "publish:page": "vite build --outDir docs",
     "start": "vite dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
