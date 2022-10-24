@@ -49,11 +49,13 @@ export const Item: FunctionComponent<ItemProperties> = ({ item }) => {
   };
   const changeIndex = useCallback(
     (newIndex: number) => {
-      setSelectedIndex(newIndex);
-      refs.video.current?.setAttribute('width', '50%');
-      setVideoLoading(true);
+      if (selectedIndex !== newIndex) {
+        setSelectedIndex(newIndex);
+        refs.video.current?.setAttribute('width', '50%');
+        setVideoLoading(true);
+      }
     },
-    [refs.video, setSelectedIndex, setVideoLoading],
+    [refs.video, selectedIndex, setSelectedIndex, setVideoLoading],
   );
   const onClicks = {
     item: async (event: MouseEvent<HTMLDivElement>) => {
@@ -110,7 +112,7 @@ export const Item: FunctionComponent<ItemProperties> = ({ item }) => {
         )}
       </div>
       <div className={classnames(['row-5', !isExpanded && 'hide'])}>
-        <button className="previous" onClick={onClicks.previous}>
+        <button className="previous" onClick={onClicks.previous} disabled={selectedIndex === 0}>
           <FontAwesomeIcon icon={faBackward} /> 이전
         </button>
         {items && items.length && (
@@ -118,7 +120,7 @@ export const Item: FunctionComponent<ItemProperties> = ({ item }) => {
             {selectedIndex + 1} / {items.length}
           </div>
         )}
-        <button className="next" onClick={onClicks.next}>
+        <button className="next" onClick={onClicks.next} disabled={items && selectedIndex === items.length - 1}>
           <FontAwesomeIcon icon={faForward} /> 다음
         </button>
       </div>
