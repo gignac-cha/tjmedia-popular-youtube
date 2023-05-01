@@ -16,16 +16,17 @@ export interface MusicItem {
 }
 
 export const getMusicList = async (query: Query): Promise<MusicItem[]> => {
-  const html: string = JSON.parse(await callLambdaFunction('tjmedia-popular', query));
+  const url = new URL('https://9wwj125oz1.execute-api.ap-northeast-2.amazonaws.com/');
+  for (const key in query) {
+    url.searchParams.set(key, `${query[key]}`);
+  }
+  const response: Response = await fetch(url);
+  const html: string = await response.text();
   const newDocument: Document = HTML.parse(html);
-  const trs: HTMLTableRowElement[] = Array.from(
-    newDocument.querySelectorAll<HTMLTableRowElement>('#BoardType1 tr'),
-  ).slice(1);
+  const trs: HTMLTableRowElement[] = Array.from(newDocument.querySelectorAll<HTMLTableRowElement>('#BoardType1 tr')).slice(1);
   return trs
     .map((tr: HTMLTableRowElement): MusicItem | undefined => {
-      const [indexElement, _, titleElement, artistElement]: HTMLTableCellElement[] = Array.from(
-        tr.querySelectorAll<HTMLTableCellElement>('td'),
-      );
+      const [indexElement, _, titleElement, artistElement]: HTMLTableCellElement[] = Array.from(tr.querySelectorAll<HTMLTableCellElement>('td'));
       if (!indexElement || !titleElement || !artistElement) {
         return;
       }
