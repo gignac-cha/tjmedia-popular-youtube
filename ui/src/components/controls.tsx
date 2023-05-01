@@ -62,7 +62,7 @@ export const Controls: FunctionComponent<ControlsProperties> = () => {
       // API error
     }
     setLoading(false);
-  }, []);
+  }, [end, setItems, setLoading, start, type]);
   const onClicks = {
     query: async (event: React.MouseEvent<HTMLButtonElement>) => {
       await query();
@@ -78,7 +78,7 @@ export const Controls: FunctionComponent<ControlsProperties> = () => {
   };
   useEffect(() => {
     query();
-  }, []);
+  }, [query]);
   const today = useMemo(() => dayjs(), []);
   return (
     <div className="controls">
