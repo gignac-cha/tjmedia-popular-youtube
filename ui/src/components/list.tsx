@@ -2,9 +2,9 @@ import { Dispatch, FunctionComponent, SetStateAction } from 'react';
 import { useMainContext } from '../contexts/main';
 
 import { MusicItem } from '../utilities/tjmedia';
-import { Item } from './item';
-import { Loading } from './loading';
-import { EmptyList } from './emptyList';
+import { Item } from './Item';
+import { Loading } from './Loading';
+import { EmptyList } from './EmptyList';
 
 export interface ListProperties {}
 export interface ListState {

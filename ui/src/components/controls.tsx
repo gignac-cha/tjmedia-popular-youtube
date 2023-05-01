@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ChangeEvent, Dispatch, FunctionComponent, SetStateAction, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -57,7 +58,9 @@ export const Controls: FunctionComponent<ControlsProperties> = () => {
     setLoading(true);
     try {
       setItems(await getMusicList({ strType: type, SYY, SMM, EYY, EMM }));
-    } catch (error) {}
+    } catch (error) {
+      // API error
+    }
     setLoading(false);
   }, []);
   const onClicks = {
