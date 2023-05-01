@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "vite build",
-    "publish:page": "vite build --base ./ --outDir ../docs",
+    "publish:page": "vite build --base ./ --outDir ../docs --emptyOutDir",
     "start": "vite",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,25 +20,25 @@
   },
   "homepage": "https://github.com/gignac-cha/tjmedia-popular-youtube#readme",
   "devDependencies": {
-    "@emotion/css": "^11.10.0",
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4",
-    "@fortawesome/fontawesome-free": "^6.2.0",
-    "@fortawesome/fontawesome-svg-core": "^6.2.0",
-    "@fortawesome/free-solid-svg-icons": "^6.2.0",
+    "@emotion/css": "^11.10.8",
+    "@emotion/react": "^11.10.8",
+    "@emotion/styled": "^11.10.8",
+    "@fortawesome/fontawesome-free": "^6.4.0",
+    "@fortawesome/fontawesome-svg-core": "^6.4.0",
+    "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@types/lodash": "^4.14.186",
-    "@types/react": "^18.0.21",
-    "@types/react-dom": "^18.0.6",
-    "@vitejs/plugin-react": "^2.1.0",
+    "@types/lodash": "^4.14.194",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.1",
+    "@vitejs/plugin-react": "^4.0.0",
     "classnames": "^2.3.2",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "sass": "^1.55.0",
-    "vite": "^3.1.8"
+    "sass": "^1.62.1",
+    "vite": "^4.3.3"
   },
   "dependencies": {
-    "dayjs": "^1.11.5",
+    "dayjs": "^1.11.7",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
