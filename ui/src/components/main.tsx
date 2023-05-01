@@ -33,7 +33,7 @@ export const Main: FunctionComponent<MainProperties> = () => {
   return (
     <MainContext.Provider value={initialValues}>
       <Controls />
-      {items.length > 0 ? <List /> : <EmptyList />}
+      <List />
     </MainContext.Provider>
   );
 };

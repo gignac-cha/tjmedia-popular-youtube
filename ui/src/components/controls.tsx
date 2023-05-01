@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, FunctionComponent, SetStateAction, useRef } from 'react';
+import { ChangeEvent, Dispatch, FunctionComponent, SetStateAction, useMemo, useRef } from 'react';
 
 import { faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -35,26 +35,42 @@ export const Controls: FunctionComponent<ControlsProperties> = () => {
         case '2':
         case '3':
           setType(refs.type.current.value);
+          localStorage.setItem('type', refs.type.current.value);
           return;
       }
     },
-    start: (event: ChangeEvent<HTMLInputElement>) => setStart(dayjs(refs.start.current?.value)),
-    end: (event: ChangeEvent<HTMLInputElement>) => setEnd(dayjs(refs.end.current?.value)),
+    start: (event: ChangeEvent<HTMLInputElement>) => {
+      setStart(dayjs(refs.start.current?.value));
+      localStorage.setItem('start', `${refs.start.current?.value}`);
+    },
+    end: (event: ChangeEvent<HTMLInputElement>) => {
+      setEnd(dayjs(refs.end.current?.value));
+      localStorage.setItem('end', `${refs.end.current?.value}`);
+    },
   };
   const onClicks = {
     query: async (event: React.MouseEvent<HTMLButtonElement>) => {
+      localStorage.setItem('type', type);
+      localStorage.setItem('start', start.format('YYYY-MM'));
+      localStorage.setItem('end', end.format('YYYY-MM'));
       const [SYY, SMM]: string[] = start.format('YYYY-MM').split('-');
       const [EYY, EMM]: string[] = end.format('YYYY-MM').split('-');
       setLoading(true);
-      setItems(await getMusicList({ strType: type, SYY, SMM, EYY, EMM }));
+      try {
+        setItems(await getMusicList({ strType: type, SYY, SMM, EYY, EMM }));
+      } catch (error) {}
       setLoading(false);
     },
     reset: (event: React.MouseEvent<HTMLButtonElement>) => {
       setType(defaultValues.type);
       setStart(defaultValues.start);
       setEnd(defaultValues.end);
+      localStorage.setItem('type', defaultValues.type);
+      localStorage.setItem('start', defaultValues.start.format('YYYY-MM'));
+      localStorage.setItem('end', defaultValues.end.format('YYYY-MM'));
     },
   };
+  const today = useMemo(() => dayjs(), []);
   return (
     <div className="controls">
       <div className="row">
@@ -63,8 +79,8 @@ export const Controls: FunctionComponent<ControlsProperties> = () => {
           <option value="2">POP</option>
           <option value="3">JPOP</option>
         </select>
-        <input id="start" ref={refs.start} type="month" value={start.format('YYYY-MM')} onChange={onChanges.start} />
-        <input id="end" ref={refs.end} type="month" value={end.format('YYYY-MM')} onChange={onChanges.end} />
+        <input id="start" ref={refs.start} type="month" value={start.format('YYYY-MM')} max={today.format('YYYY-MM')} onChange={onChanges.start} />
+        <input id="end" ref={refs.end} type="month" value={end.format('YYYY-MM')} max={today.format('YYYY-MM')} onChange={onChanges.end} />
       </div>
       <div className="row">
         <button id="query" onClick={_.throttle(onClicks.query, 1000)}>
