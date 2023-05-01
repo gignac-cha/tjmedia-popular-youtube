@@ -1,13 +1,4 @@
-import {
-  FunctionComponent,
-  MouseEvent,
-  SyntheticEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { FunctionComponent, MouseEvent, SyntheticEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { faBackward, faForward } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -62,7 +53,9 @@ export const Item: FunctionComponent<ItemProperties> = ({ item }) => {
       setExpanded(!isExpanded);
       if (!items) {
         setListLoading(true);
-        setItems(await getVideoList(item));
+        try {
+          setItems(await getVideoList(item));
+        } catch (error) {}
         setListLoading(false);
       }
     },
@@ -88,10 +81,7 @@ export const Item: FunctionComponent<ItemProperties> = ({ item }) => {
     }
   };
   return (
-    <div
-      className={classnames(['item', isLoading && 'item-loading', isExpanded && 'expanded'])}
-      onClick={onClicks.item}
-    >
+    <div className={classnames(['item', isLoading && 'item-loading', isExpanded && 'expanded'])} onClick={onClicks.item}>
       <div className="row-1">
         <div className="index">{index}</div>
         <div className="title">{title}</div>
