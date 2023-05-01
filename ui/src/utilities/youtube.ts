@@ -1,4 +1,4 @@
-import { callLambdaFunction, SearchParams } from './aws';
+import { SearchParams } from './aws';
 import { HTML } from './htmlParser';
 import { MusicItem } from './tjmedia';
 
@@ -60,9 +60,9 @@ export const getVideoList = async (item: MusicItem): Promise<VideoItem[]> => {
   const html: string = await response.text();
   const newDocument: Document = HTML.parse(html);
   const scripts: HTMLScriptElement[] = Array.from(newDocument.querySelectorAll<HTMLScriptElement>('script'));
-  const startKey: string = 'var ytInitialData = ';
-  const [script]: HTMLScriptElement[] = scripts.filter((script: HTMLScriptElement) => script.textContent!.startsWith(startKey));
-  const ytInitialData: YtInitialData = JSON.parse(script.textContent!.slice(startKey.length, -1));
+  const startKey = 'var ytInitialData = ';
+  const [script]: HTMLScriptElement[] = scripts.filter((script: HTMLScriptElement) => (script.textContent ?? '').startsWith(startKey));
+  const ytInitialData: YtInitialData = JSON.parse((script.textContent ?? '').slice(startKey.length, -1));
   const items: VideoItem[] = [];
   for (const c1 of ytInitialData.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents) {
     if (c1.itemSectionRenderer) {

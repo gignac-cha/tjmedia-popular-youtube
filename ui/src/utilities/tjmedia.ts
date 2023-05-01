@@ -1,4 +1,4 @@
-import { callLambdaFunction, SearchParams } from './aws';
+import { SearchParams } from './aws';
 import { HTML } from './htmlParser';
 
 export interface Query extends SearchParams {
@@ -26,13 +26,14 @@ export const getMusicList = async (query: Query): Promise<MusicItem[]> => {
   const trs: HTMLTableRowElement[] = Array.from(newDocument.querySelectorAll<HTMLTableRowElement>('#BoardType1 tr')).slice(1);
   return trs
     .map((tr: HTMLTableRowElement): MusicItem | undefined => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [indexElement, _, titleElement, artistElement]: HTMLTableCellElement[] = Array.from(tr.querySelectorAll<HTMLTableCellElement>('td'));
       if (!indexElement || !titleElement || !artistElement) {
         return;
       }
-      const index: number = parseInt(indexElement.textContent!);
-      const title: string = titleElement.textContent!;
-      const artist: string = artistElement.textContent!;
+      const index: number = parseInt(indexElement.textContent ?? '-1');
+      const title: string = titleElement.textContent ?? 'error';
+      const artist: string = artistElement.textContent ?? 'error';
       return { index, title, artist };
     })
     .filter<MusicItem>((musicItem?: MusicItem): musicItem is MusicItem => !!musicItem);

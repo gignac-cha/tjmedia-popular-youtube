@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FunctionComponent, MouseEvent, SyntheticEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { faBackward, faForward } from '@fortawesome/free-solid-svg-icons';
@@ -7,7 +8,7 @@ import classnames from 'classnames';
 import { useMainContext } from '../contexts/main';
 import { MusicItem } from '../utilities/tjmedia';
 import { getVideoList, VideoItem } from '../utilities/youtube';
-import { Loading } from './loading';
+import { Loading } from './Loading';
 
 export interface ItemProperties {
   item: MusicItem;
@@ -55,7 +56,9 @@ export const Item: FunctionComponent<ItemProperties> = ({ item }) => {
         setListLoading(true);
         try {
           setItems(await getVideoList(item));
-        } catch (error) {}
+        } catch (error) {
+          // API error
+        }
         setListLoading(false);
       }
     },

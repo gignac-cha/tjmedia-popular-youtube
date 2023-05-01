@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ChangeEvent, Dispatch, FunctionComponent, SetStateAction, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -57,9 +58,11 @@ export const Controls: FunctionComponent<ControlsProperties> = () => {
     setLoading(true);
     try {
       setItems(await getMusicList({ strType: type, SYY, SMM, EYY, EMM }));
-    } catch (error) {}
+    } catch (error) {
+      // API error
+    }
     setLoading(false);
-  }, []);
+  }, [end, setItems, setLoading, start, type]);
   const onClicks = {
     query: async (event: React.MouseEvent<HTMLButtonElement>) => {
       await query();
@@ -75,7 +78,7 @@ export const Controls: FunctionComponent<ControlsProperties> = () => {
   };
   useEffect(() => {
     query();
-  }, []);
+  }, [query]);
   const today = useMemo(() => dayjs(), []);
   return (
     <div className="controls">

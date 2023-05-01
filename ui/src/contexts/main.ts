@@ -2,17 +2,17 @@ import { createContext, useContext } from 'react';
 
 import dayjs, { Dayjs } from 'dayjs';
 
-import { ControlsProperties, ControlsState, Type } from '../components/controls';
-import { ListProperties, ListState } from '../components/list';
-import { MainProperties, MainState } from '../components/main';
+import { ControlsProperties, ControlsState, Type } from '../components/Controls';
+import { ListProperties, ListState } from '../components/List';
+import { MainProperties, MainState } from '../components/Main';
 
 export type MainContextProperties = MainProperties & ListProperties & ControlsProperties;
 export type MainContextStates = MainState & ListState & ControlsState;
 export type MainContextValues = MainContextProperties & MainContextStates;
 
-const doNothing = () => {};
-
-const today: Dayjs = dayjs();
+const doNothing = () => {
+  // DO NOTHING
+};
 
 export const defaultValues: MainContextValues = {
   type: '1',
