@@ -19,7 +19,8 @@ export const List: FunctionComponent<ListProperties> = () => {
   return (
     <div id="list">
       <Loading isLoading={isLoading} />
-      {items.length > 0 ? items.map((item: MusicItem, i: number) => <Item key={i} item={item} />) : <EmptyList />}
+      {items.length > 0 && items.map((item: MusicItem, i: number) => <Item key={i} item={item} />)}
+      {!isLoading && items.length === 0 && <EmptyList />}
     </div>
   );
 };

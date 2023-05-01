@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, FunctionComponent, SetStateAction, useMemo, useRef } from 'react';
+import { ChangeEvent, Dispatch, FunctionComponent, SetStateAction, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -48,18 +48,21 @@ export const Controls: FunctionComponent<ControlsProperties> = () => {
       localStorage.setItem('end', `${refs.end.current?.value}`);
     },
   };
+  const query = useCallback(async () => {
+    localStorage.setItem('type', type);
+    localStorage.setItem('start', start.format('YYYY-MM'));
+    localStorage.setItem('end', end.format('YYYY-MM'));
+    const [SYY, SMM]: string[] = start.format('YYYY-MM').split('-');
+    const [EYY, EMM]: string[] = end.format('YYYY-MM').split('-');
+    setLoading(true);
+    try {
+      setItems(await getMusicList({ strType: type, SYY, SMM, EYY, EMM }));
+    } catch (error) {}
+    setLoading(false);
+  }, []);
   const onClicks = {
     query: async (event: React.MouseEvent<HTMLButtonElement>) => {
-      localStorage.setItem('type', type);
-      localStorage.setItem('start', start.format('YYYY-MM'));
-      localStorage.setItem('end', end.format('YYYY-MM'));
-      const [SYY, SMM]: string[] = start.format('YYYY-MM').split('-');
-      const [EYY, EMM]: string[] = end.format('YYYY-MM').split('-');
-      setLoading(true);
-      try {
-        setItems(await getMusicList({ strType: type, SYY, SMM, EYY, EMM }));
-      } catch (error) {}
-      setLoading(false);
+      await query();
     },
     reset: (event: React.MouseEvent<HTMLButtonElement>) => {
       setType(defaultValues.type);
@@ -70,6 +73,9 @@ export const Controls: FunctionComponent<ControlsProperties> = () => {
       localStorage.setItem('end', defaultValues.end.format('YYYY-MM'));
     },
   };
+  useEffect(() => {
+    query();
+  }, []);
   const today = useMemo(() => dayjs(), []);
   return (
     <div className="controls">
