@@ -4,6 +4,7 @@ import { useMainContext } from '../contexts/main';
 import { MusicItem } from '../utilities/tjmedia';
 import { Item } from './item';
 import { Loading } from './loading';
+import { EmptyList } from './emptyList';
 
 export interface ListProperties {}
 export interface ListState {
@@ -18,9 +19,7 @@ export const List: FunctionComponent<ListProperties> = () => {
   return (
     <div id="list">
       <Loading isLoading={isLoading} />
-      {items.map((item: MusicItem, i: number) => (
-        <Item key={i} item={item} />
-      ))}
+      {items.length > 0 ? items.map((item: MusicItem, i: number) => <Item key={i} item={item} />) : <EmptyList />}
     </div>
   );
 };
