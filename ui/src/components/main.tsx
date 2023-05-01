@@ -4,8 +4,8 @@ import dayjs, { Dayjs } from 'dayjs';
 
 import { defaultValues, MainContext, MainContextValues } from '../contexts/main';
 import { MusicItem } from '../utilities/tjmedia';
-import { Controls, Type } from './controls';
-import { List } from './list';
+import { Controls, Type } from './Controls';
+import { List } from './List';
 
 export interface MainProperties {}
 export interface MainState {}
