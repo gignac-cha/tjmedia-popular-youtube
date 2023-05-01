@@ -5,10 +5,8 @@ export interface Query extends SearchParams {
   strType: string;
   SYY: string;
   SMM: string;
-  SDD: string;
   EYY: string;
   EMM: string;
-  EDD: string;
 }
 
 export interface MusicItem {
