@@ -1,0 +1,28 @@
+service: 'youtube-search'
+frameworkVersion: '3'
+useDotenv: true
+deprecationNotificationMode: warn:summary
+provider:
+  name: aws
+  stage: ${sls:stage}
+  region: ap-northeast-2
+  runtime: nodejs18.x
+  runtimeManagement: auto
+  memorySize: 128
+  timeout: 10
+  architecture: arm64
+  iam:
+    role: arn:aws:iam::170930780491:role/serverless-framework
+  httpApi:
+    payload: "2.0"
+    disableDefaultEndpoint: false
+    cors:
+      allowedOrigins:
+        - https://gignac-cha.github.io
+functions:
+  youtube-search:
+    handler: index.handler
+    events:
+      - httpApi:
+          method: GET
+          path: /

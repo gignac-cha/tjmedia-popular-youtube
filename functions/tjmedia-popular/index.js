@@ -1,16 +1,1 @@
-const { URL } = require('url');
-const axios = require('axios');
-
-exports.handler = async (e) => {
-  const url = new URL('http://www.tjmedia.co.kr/tjsong/song_monthPopular.asp');
-  Object.entries(e.searchParams).map(([k, v]) => url.searchParams.set(k, v));
-  // url.searchParams.set('strType', e.strType);
-  // url.searchParams.set('SYY', e.SYY);
-  // url.searchParams.set('SMM', e.SMM);
-  // url.searchParams.set('SDD', e.SDD);
-  // url.searchParams.set('EYY', e.EYY);
-  // url.searchParams.set('EMM', e.EMM);
-  // url.searchParams.set('EDD', e.EDD);
-  const { data } = await axios.get(url.toString());
-  return data;
-};
+"use strict";var n=Object.defineProperty;var c=Object.getOwnPropertyDescriptor;var i=Object.getOwnPropertyNames;var m=Object.prototype.hasOwnProperty;var p=(s,e)=>{for(var t in e)n(s,t,{get:e[t],enumerable:!0})},h=(s,e,t,a)=>{if(e&&typeof e=="object"||typeof e=="function")for(let r of i(e))!m.call(s,r)&&r!==t&&n(s,r,{get:()=>e[r],enumerable:!(a=c(e,r))||a.enumerable});return s};var P=s=>h(n({},"__esModule",{value:!0}),s);var l={};p(l,{handler:()=>o});module.exports=P(l);var o=async s=>{let e=new URL("http://www.tjmedia.co.kr/tjsong/song_monthPopular.asp"),{searchParams:t={}}=s;for(let r in t)e.searchParams.set(r,t[r]);return(await fetch(e)).text()};require.main===module&&(async()=>console.log(await o({searchParams:{strType:"1",SYY:"2023",SMM:"04",EYY:"2023",EMM:"05"}})))();0&&(module.exports={handler});
