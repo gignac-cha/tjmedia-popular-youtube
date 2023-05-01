@@ -1,0 +1,15 @@
+{
+  "name": "tjmedia-popular",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "node build.mjs",
+    "deploy": "serverless deploy --stage",
+    "deploy:development": "npm run deploy development",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

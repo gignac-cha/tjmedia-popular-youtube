@@ -43,10 +43,10 @@ export const Controls: FunctionComponent<ControlsProperties> = () => {
   };
   const onClicks = {
     query: async (event: React.MouseEvent<HTMLButtonElement>) => {
-      const [SYY, SMM, SDD]: string[] = start.format('YYYY-MM-DD').split('-');
-      const [EYY, EMM, EDD]: string[] = end.format('YYYY-MM-DD').split('-');
+      const [SYY, SMM]: string[] = start.format('YYYY-MM').split('-');
+      const [EYY, EMM]: string[] = end.format('YYYY-MM').split('-');
       setLoading(true);
-      setItems(await getMusicList({ strType: type, SYY, SMM, SDD, EYY, EMM, EDD }));
+      setItems(await getMusicList({ strType: type, SYY, SMM, EYY, EMM }));
       setLoading(false);
     },
     reset: (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -63,8 +63,8 @@ export const Controls: FunctionComponent<ControlsProperties> = () => {
           <option value="2">POP</option>
           <option value="3">JPOP</option>
         </select>
-        <input id="start" ref={refs.start} type="date" value={start.format('YYYY-MM-DD')} onChange={onChanges.start} />
-        <input id="end" ref={refs.end} type="date" value={end.format('YYYY-MM-DD')} onChange={onChanges.end} />
+        <input id="start" ref={refs.start} type="month" value={start.format('YYYY-MM')} onChange={onChanges.start} />
+        <input id="end" ref={refs.end} type="month" value={end.format('YYYY-MM')} onChange={onChanges.end} />
       </div>
       <div className="row">
         <button id="query" onClick={_.throttle(onClicks.query, 1000)}>

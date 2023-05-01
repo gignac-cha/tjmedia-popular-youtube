@@ -15,7 +15,7 @@ const doNothing = () => {};
 export const defaultValues: MainContextValues = {
   type: '1',
   setType: doNothing,
-  start: dayjs().date(1),
+  start: dayjs().subtract(1, 'month'),
   setStart: doNothing,
   end: dayjs(),
   setEnd: doNothing,
