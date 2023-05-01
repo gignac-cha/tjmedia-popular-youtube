@@ -21,13 +21,18 @@ export const getMusicList = async (query: Query): Promise<MusicItem[]> => {
   const trs: HTMLTableRowElement[] = Array.from(
     newDocument.querySelectorAll<HTMLTableRowElement>('#BoardType1 tr'),
   ).slice(1);
-  return trs.map((tr: HTMLTableRowElement): MusicItem => {
-    const [indexElement, _, titleElement, artistElement]: HTMLTableCellElement[] = Array.from(
-      tr.querySelectorAll<HTMLTableCellElement>('td'),
-    );
-    const index: number = parseInt(indexElement.textContent!);
-    const title: string = titleElement.textContent!;
-    const artist: string = artistElement.textContent!;
-    return { index, title, artist };
-  });
+  return trs
+    .map((tr: HTMLTableRowElement): MusicItem | undefined => {
+      const [indexElement, _, titleElement, artistElement]: HTMLTableCellElement[] = Array.from(
+        tr.querySelectorAll<HTMLTableCellElement>('td'),
+      );
+      if (!indexElement || !titleElement || !artistElement) {
+        return;
+      }
+      const index: number = parseInt(indexElement.textContent!);
+      const title: string = titleElement.textContent!;
+      const artist: string = artistElement.textContent!;
+      return { index, title, artist };
+    })
+    .filter<MusicItem>((musicItem?: MusicItem): musicItem is MusicItem => !!musicItem);
 };

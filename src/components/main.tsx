@@ -6,6 +6,7 @@ import { defaultValues, MainContext, MainContextValues } from '../contexts/main'
 import { MusicItem } from '../utilities/tjmedia';
 import { Controls, Type } from './controls';
 import { List } from './list';
+import { EmptyList } from './emptyList';
 
 export interface MainProperties {}
 export interface MainState {}
@@ -32,7 +33,7 @@ export const Main: FunctionComponent<MainProperties> = () => {
   return (
     <MainContext.Provider value={initialValues}>
       <Controls />
-      <List />
+      {items.length > 0 ? <List /> : <EmptyList />}
     </MainContext.Provider>
   );
 };
