@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -81,7 +85,7 @@ importers:
         version: 18.2.1
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.0.0(vite@4.3.3)
+        version: 4.0.0(vite@4.3.9)
       classnames:
         specifier: ^2.3.2
         version: 2.3.2
@@ -95,8 +99,8 @@ importers:
         specifier: ^1.62.1
         version: 1.62.1
       vite:
-        specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)(sass@1.62.1)
+        specifier: ^4.3.9
+        version: 4.3.9(@types/node@18.16.3)(sass@1.62.1)
 
 packages:
 
@@ -1121,7 +1125,7 @@ packages:
       eslint-visitor-keys: 3.4.0
     dev: true
 
-  /@vitejs/plugin-react@4.0.0(vite@4.3.3):
+  /@vitejs/plugin-react@4.0.0(vite@4.3.9):
     resolution: {integrity: sha512-HX0XzMjL3hhOYm+0s95pb0Z7F8O81G7joUHgfDd/9J/ZZf5k4xX6QAMFkKsHFxaHlf6X7GD7+XuaZ66ULiJuhQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -1131,7 +1135,7 @@ packages:
       '@babel/plugin-transform-react-jsx-self': 7.21.0(@babel/core@7.21.5)
       '@babel/plugin-transform-react-jsx-source': 7.19.6(@babel/core@7.21.5)
       react-refresh: 0.14.0
-      vite: 4.3.3(@types/node@18.16.3)(sass@1.62.1)
+      vite: 4.3.9(@types/node@18.16.3)(sass@1.62.1)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -4630,8 +4634,8 @@ packages:
       builtins: 1.0.3
     dev: false
 
-  /vite@4.3.3(@types/node@18.16.3)(sass@1.62.1):
-    resolution: {integrity: sha512-MwFlLBO4udZXd+VBcezo3u8mC77YQk+ik+fbc0GZWGgzfbPP+8Kf0fldhARqvSYmtIWoAJ5BXPClUbMTlqFxrA==}
+  /vite@4.3.9(@types/node@18.16.3)(sass@1.62.1):
+    resolution: {integrity: sha512-qsTNZjO9NoJNW7KnOrgYwczm0WctJ8m/yqYAMAK9Lxt4SoySUfS5S8ia9K7JHpa3KEeMfyF8LoJ3c5NeBJy6pg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
