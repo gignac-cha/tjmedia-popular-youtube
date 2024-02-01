@@ -4,11 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from 'react';
-import { defaultValues, useMainContext } from '../../contexts/MainContext';
+import { defaultValue, useQueryContext } from '../../contexts/QueryContext';
 import { getMusicList } from '../../utilities/tjmedia';
+
 export const Controls = () => {
   const { type, setType, start, setStart, end, setEnd, setLoading, setItems } =
-    useMainContext();
+    useQueryContext();
+
   const refs = {
     type: useRef<HTMLSelectElement>(null),
     start: useRef<HTMLInputElement>(null),
@@ -16,6 +18,7 @@ export const Controls = () => {
     query: useRef<HTMLButtonElement>(null),
     reset: useRef<HTMLButtonElement>(null),
   };
+
   const onChanges = {
     type: (event: ChangeEvent<HTMLSelectElement>) => {
       switch (refs.type.current?.value) {
@@ -36,6 +39,7 @@ export const Controls = () => {
       localStorage.setItem('end', `${refs.end.current?.value}`);
     },
   };
+
   const query = useCallback(async () => {
     localStorage.setItem('type', type);
     localStorage.setItem('start', start.format('YYYY-MM'));
@@ -50,23 +54,27 @@ export const Controls = () => {
     }
     setLoading(false);
   }, [end, setItems, setLoading, start, type]);
+
   const onClicks = {
     query: async (event: React.MouseEvent<HTMLButtonElement>) => {
       await query();
     },
     reset: (event: React.MouseEvent<HTMLButtonElement>) => {
-      setType(defaultValues.type);
-      setStart(defaultValues.start);
-      setEnd(defaultValues.end);
-      localStorage.setItem('type', defaultValues.type);
-      localStorage.setItem('start', defaultValues.start.format('YYYY-MM'));
-      localStorage.setItem('end', defaultValues.end.format('YYYY-MM'));
+      setType(defaultValue.type);
+      setStart(defaultValue.start);
+      setEnd(defaultValue.end);
+      localStorage.setItem('type', defaultValue.type);
+      localStorage.setItem('start', defaultValue.start.format('YYYY-MM'));
+      localStorage.setItem('end', defaultValue.end.format('YYYY-MM'));
     },
   };
+
   useEffect(() => {
     query();
   }, [query]);
+
   const today = useMemo(() => dayjs(), []);
+
   return (
     <section className="controls">
       <section className="row">

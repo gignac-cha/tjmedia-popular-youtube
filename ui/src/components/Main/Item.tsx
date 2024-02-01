@@ -11,23 +11,25 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useMainContext } from '../../contexts/MainContext';
+import { useQueryContext } from '../../contexts/QueryContext';
 import { getVideoList } from '../../utilities/youtube';
 import { Loading } from '../Loading/Loading';
 
 export const Item = ({ item }: { item: MusicItem }) => {
   const { index, title, artist } = item;
-  const { isLoading } = useMainContext();
+  const { isLoading } = useQueryContext();
   const [isListLoading, setListLoading] = useState<boolean>(false);
   const [isExpanded, setExpanded] = useState<boolean>(false);
   const [items, setItems] = useState<VideoItem[]>();
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isVideoLoading, setVideoLoading] = useState<boolean>(false);
+
   useEffect(() => {
     setExpanded(false);
     setItems(undefined);
     setSelectedIndex(0);
   }, [item]);
+
   const video = useMemo(() => {
     if (items && items.length > 0) {
       const { videoId, title, width, height } = items[selectedIndex];
@@ -36,10 +38,12 @@ export const Item = ({ item }: { item: MusicItem }) => {
     }
     return {};
   }, [items, selectedIndex]);
+
   const refs = {
     row4: useRef<HTMLElement>(null),
     video: useRef<HTMLIFrameElement>(null),
   };
+
   const changeIndex = useCallback(
     (newIndex: number) => {
       if (selectedIndex !== newIndex) {
@@ -50,6 +54,7 @@ export const Item = ({ item }: { item: MusicItem }) => {
     },
     [refs.video, selectedIndex, setSelectedIndex, setVideoLoading]
   );
+
   const onClicks = {
     item: async (event: MouseEvent<HTMLButtonElement>) => {
       setExpanded(!isExpanded);
@@ -74,6 +79,7 @@ export const Item = ({ item }: { item: MusicItem }) => {
       }
     },
   };
+
   const onLoad = (event: SyntheticEvent<HTMLIFrameElement>) => {
     setVideoLoading(false);
     if (refs.row4.current && refs.video.current && items) {
@@ -84,6 +90,7 @@ export const Item = ({ item }: { item: MusicItem }) => {
       refs.video.current.setAttribute('height', `${clientHeight}`);
     }
   };
+
   return (
     <li
       className={classnames([

@@ -1,4 +1,4 @@
-import { MainContextProvider } from '../contexts/MainContext';
+import { QueryContextProvider } from '../contexts/QueryContext';
 import { List } from './Main/List';
 import { Main } from './Main/Main';
 import { Controls } from './Navigation/Controls';
@@ -6,7 +6,7 @@ import { Navigation } from './Navigation/Navigation';
 
 export const Root = () => {
   return (
-    <MainContextProvider>
+    <QueryContextProvider>
       <header></header>
       <Navigation>
         <Controls />
@@ -15,6 +15,6 @@ export const Root = () => {
         <List />
       </Main>
       <footer></footer>
-    </MainContextProvider>
+    </QueryContextProvider>
   );
 };
