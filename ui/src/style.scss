@@ -3,7 +3,8 @@ $fa-font-path: 'resources/webfonts';
 @import '@fortawesome/fontawesome-free/scss/solid.scss';
 @import '@fortawesome/fontawesome-free/scss/brands.scss';
 
-html, body {
+html,
+body {
   margin: 0px;
   padding: 0px;
 }
@@ -38,13 +39,17 @@ html, body {
   padding: 1rem;
   border: none;
   outline: 1px solid gray;
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   font-size: 1rem;
   font-weight: bold;
-  transition: .2s;
+  transition: 0.2s;
 }
 
-#type, #start, #end, #query, #reset {
+#type,
+#start,
+#end,
+#query,
+#reset {
   @include control();
 
   flex-grow: 1;
@@ -54,7 +59,9 @@ html, body {
   }
 }
 
-#type, #start, #end {
+#type,
+#start,
+#end {
   &:hover {
     background-color: #eee;
   }
@@ -78,11 +85,13 @@ html, body {
   }
 }
 
-#query, #reset {
+#query,
+#reset {
   @include button();
 }
 
-.previous, .next {
+.previous,
+.next {
   @include control();
   @include button();
 }
@@ -90,11 +99,11 @@ html, body {
 #list {
   display: flex;
   flex-direction: column;
-  padding: .5rem;
+  padding: 0.5rem;
   outline: 1px solid black;
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   opacity: 1;
-  transition: .2s;
+  transition: 0.2s;
 
   &:empty {
     outline: none;
@@ -108,13 +117,23 @@ html, body {
     padding: 1rem;
   }
 
+  .empty-button {
+    background: none;
+    border: none;
+    outline: none;
+
+    &:hover {
+      color: white;
+    }
+  }
+
   .item {
     position: relative;
     display: flex;
     flex-direction: column;
-    padding: .5rem;
+    padding: 0.5rem;
     max-height: 4rem;
-    transition: .2s;
+    transition: 0.2s;
     z-index: 1;
 
     &.item-loading {
@@ -143,7 +162,8 @@ html, body {
       color: white;
       z-index: 2;
 
-      .previous, .next {
+      .previous,
+      .next {
         @include control();
         @include button();
         border-radius: initial;
@@ -164,11 +184,12 @@ html, body {
         font-weight: bold;
       }
       .title {
+        margin: 0;
         font-size: 2rem;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        transition: .2s;
+        transition: 0.2s;
 
         @media screen and (max-width: 480px) {
           font-size: 1.5rem;
@@ -206,7 +227,7 @@ html, body {
         filter: blur(0rem);
         border: none;
         outline: 1px solid white;
-        transition: .2s;
+        transition: 0.2s;
 
         &.hide {
           display: none;

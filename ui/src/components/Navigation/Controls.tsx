@@ -1,34 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  ChangeEvent,
-  Dispatch,
-  FunctionComponent,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
-
 import { faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import _ from 'lodash';
-
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from 'react';
 import { defaultValues, useMainContext } from '../../contexts/MainContext';
 import { getMusicList } from '../../utilities/tjmedia';
-
-export interface ControlsProperties {}
-export interface ControlsState {
-  type: Type;
-  setType: Dispatch<SetStateAction<Type>>;
-  start: Dayjs;
-  setStart: Dispatch<SetStateAction<Dayjs>>;
-  end: Dayjs;
-  setEnd: Dispatch<SetStateAction<Dayjs>>;
-}
-
-export const Controls: FunctionComponent<ControlsProperties> = () => {
+export const Controls = () => {
   const { type, setType, start, setStart, end, setEnd, setLoading, setItems } =
     useMainContext();
   const refs = {
@@ -90,8 +68,8 @@ export const Controls: FunctionComponent<ControlsProperties> = () => {
   }, [query]);
   const today = useMemo(() => dayjs(), []);
   return (
-    <div className="controls">
-      <div className="row">
+    <section className="controls">
+      <section className="row">
         <select
           id="type"
           ref={refs.type}
@@ -118,15 +96,15 @@ export const Controls: FunctionComponent<ControlsProperties> = () => {
           max={today.format('YYYY-MM')}
           onChange={onChanges.end}
         />
-      </div>
-      <div className="row">
+      </section>
+      <section className="row">
         <button id="query" onClick={_.throttle(onClicks.query, 1000)}>
           <FontAwesomeIcon icon={faMagnifyingGlass} /> 조회
         </button>
         <button id="reset" onClick={onClicks.reset}>
           <FontAwesomeIcon icon={faTrash} /> 초기화
         </button>
-      </div>
-    </div>
+      </section>
+    </section>
   );
 };

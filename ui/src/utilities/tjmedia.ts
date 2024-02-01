@@ -30,9 +30,9 @@ export const getMusicList = async (
   ).slice(1);
   return trs
     .map((tr: HTMLTableRowElement): MusicItem | undefined => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [
         indexElement,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _,
         titleElement,
         artistElement,
