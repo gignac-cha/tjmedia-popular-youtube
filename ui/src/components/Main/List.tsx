@@ -1,7 +1,5 @@
 import { Dispatch, FunctionComponent, SetStateAction } from 'react';
 import { useMainContext } from '../../contexts/MainContext';
-
-import { MusicItem } from '../../utilities/tjmedia';
 import { Loading } from '../Loading/Loading';
 import { EmptyList } from './EmptyList';
 import { Item } from './Item';

@@ -1,14 +1,11 @@
-import { FunctionComponent, useState } from 'react';
-
 import dayjs, { Dayjs } from 'dayjs';
-
+import { FunctionComponent, useState } from 'react';
 import {
-  defaultValues,
   MainContext,
   MainContextValues,
+  defaultValues,
 } from '../../contexts/MainContext';
-import { MusicItem } from '../../utilities/tjmedia';
-import { Controls, Type } from '../Navigation/Controls';
+import { Controls } from '../Navigation/Controls';
 import { List } from './List';
 
 export interface MainProperties {}

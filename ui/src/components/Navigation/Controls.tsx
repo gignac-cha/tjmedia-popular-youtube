@@ -18,7 +18,6 @@ import _ from 'lodash';
 import { defaultValues, useMainContext } from '../../contexts/MainContext';
 import { getMusicList } from '../../utilities/tjmedia';
 
-export type Type = '1' | '2' | '3';
 export interface ControlsProperties {}
 export interface ControlsState {
   type: Type;

@@ -1,4 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { faBackward, faForward } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classnames from 'classnames';
 import {
   FunctionComponent,
   MouseEvent,
@@ -9,14 +11,8 @@ import {
   useRef,
   useState,
 } from 'react';
-
-import { faBackward, faForward } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classnames from 'classnames';
-
 import { useMainContext } from '../../contexts/MainContext';
-import { MusicItem } from '../../utilities/tjmedia';
-import { getVideoList, VideoItem } from '../../utilities/youtube';
+import { getVideoList } from '../../utilities/youtube';
 import { Loading } from '../Loading/Loading';
 
 export interface ItemProperties {
