@@ -1,3 +1,5 @@
+import { styles } from './styles';
+
 export const EmptyList = () => {
-  return <li className="item">검색 결과가 없습니다.</li>;
+  return <li css={styles.emptyListContainer}>검색 결과가 없습니다.</li>;
 };

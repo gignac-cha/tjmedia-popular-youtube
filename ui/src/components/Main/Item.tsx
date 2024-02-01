@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { faBackward, faForward } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classnames from 'classnames';
 import {
   MouseEvent,
   SyntheticEvent,
@@ -12,8 +11,10 @@ import {
   useState,
 } from 'react';
 import { useQueryContext } from '../../contexts/QueryContext';
+import { commonStyles } from '../../styles/common';
 import { getVideoList } from '../../utilities/youtube';
 import { Loading } from '../Loading/Loading';
+import { styles } from './styles';
 
 export const Item = ({ item }: { item: MusicItem }) => {
   const { index, title, artist } = item;
@@ -93,58 +94,69 @@ export const Item = ({ item }: { item: MusicItem }) => {
 
   return (
     <li
-      className={classnames([
-        'item',
-        isLoading && 'item-loading',
-        isExpanded && 'expanded',
-      ])}
+      css={[
+        styles.item.container,
+        isLoading && styles.item.loadingContainer,
+        isExpanded && styles.item.expandedContainer,
+      ]}
     >
-      <button className="empty-button" onClick={onClicks.item}>
-        <section className="row-1">
-          <span className="index">{index}</span>
-          <h1 className="title">{title}</h1>
+      <button
+        css={styles.item.expandButton}
+        title={`${index}위: ${artist} - ${title}`}
+        onClick={onClicks.item}
+      >
+        <section css={styles.item.leftContainer}>
+          <sup>{index}</sup>
+          <h1 css={styles.item.title}>{title}</h1>
         </section>
-        <section className="row-2">
-          <span className="artist">{artist}</span>
+        <section css={styles.item.rightContainer}>
+          <sub css={styles.item.artist}>{artist}</sub>
         </section>
       </button>
-      <Loading isLoading={isListLoading} />
-      <section className="row-3"></section>
+      {isExpanded && isListLoading && <Loading />}
       <section
         ref={refs.row4}
-        className={classnames(['row-4', !isExpanded && 'hide'])}
+        css={[
+          styles.item.middleContainer,
+          isExpanded && styles.item.showMiddleContainer,
+        ]}
       >
-        {video.src && (
-          <iframe
-            ref={refs.video}
-            className={classnames([
-              'video',
-              !isExpanded && 'hide',
-              isVideoLoading && 'video-loading',
-            ])}
-            {...video}
-            onLoad={onLoad}
-            title={`${artist} - ${title}`}
-          ></iframe>
-        )}
+        <iframe
+          ref={refs.video}
+          css={[
+            styles.item.video,
+            isExpanded && styles.item.showVideo,
+            isVideoLoading && styles.item.loadingVideo,
+          ]}
+          {...video}
+          onLoad={onLoad}
+          title={`${artist} - ${title}`}
+        ></iframe>
       </section>
-      <section className={classnames(['row-5', !isExpanded && 'hide'])}>
+      <section
+        css={[
+          styles.item.bottomContainer,
+          isExpanded && styles.item.showBottomContainer,
+        ]}
+      >
         <button
-          className="previous"
+          css={commonStyles.button}
           onClick={onClicks.previous}
           disabled={selectedIndex === 0}
+          title="이전 영상"
         >
           <FontAwesomeIcon icon={faBackward} /> 이전
         </button>
         {items && items.length && (
-          <span className="indicator">
+          <b title={`총 ${items.length}개의 영상 중 ${selectedIndex + 1}번째`}>
             {selectedIndex + 1} / {items.length}
-          </span>
+          </b>
         )}
         <button
-          className="next"
+          css={commonStyles.button}
           onClick={onClicks.next}
           disabled={items && selectedIndex === items.length - 1}
+          title="다음 영상"
         >
           <FontAwesomeIcon icon={faForward} /> 다음
         </button>

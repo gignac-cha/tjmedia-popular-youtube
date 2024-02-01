@@ -1,5 +1,6 @@
 import { PropsWithChildren } from 'react';
+import { styles } from './styles';
 
 export const Navigation = ({ children }: PropsWithChildren) => {
-  return <nav>{children}</nav>;
+  return <nav css={styles.container}>{children}</nav>;
 };

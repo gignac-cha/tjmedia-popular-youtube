@@ -5,7 +5,9 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from 'react';
 import { defaultValue, useQueryContext } from '../../contexts/QueryContext';
+import { commonStyles } from '../../styles/common';
 import { getMusicList } from '../../utilities/tjmedia';
+import { styles } from './styles';
 
 export const Controls = () => {
   const { type, setType, start, setStart, end, setEnd, setLoading, setItems } =
@@ -76,40 +78,55 @@ export const Controls = () => {
   const today = useMemo(() => dayjs(), []);
 
   return (
-    <section className="controls">
-      <section className="row">
-        <select
-          id="type"
-          ref={refs.type}
-          value={type}
-          onChange={onChanges.type}
+    <section css={styles.controls.container}>
+      <section css={styles.controls.queryContainer}>
+        <section
+          css={[commonStyles.selectContainer, styles.controls.selectContainer]}
+          title="가요 / POP / JPOP 선택"
         >
-          <option value="1">가요</option>
-          <option value="2">POP</option>
-          <option value="3">JPOP</option>
-        </select>
+          <select
+            css={commonStyles.select}
+            ref={refs.type}
+            value={type}
+            onChange={onChanges.type}
+          >
+            <option value="1">가요</option>
+            <option value="2">POP</option>
+            <option value="3">JPOP</option>
+          </select>
+        </section>
         <input
-          id="start"
+          css={[commonStyles.date, styles.controls.date]}
           ref={refs.start}
           type="month"
           value={start.format('YYYY-MM')}
           max={today.format('YYYY-MM')}
+          title="검색 범위 처음"
           onChange={onChanges.start}
         />
         <input
-          id="end"
+          css={[commonStyles.date, styles.controls.date]}
           ref={refs.end}
           type="month"
           value={end.format('YYYY-MM')}
           max={today.format('YYYY-MM')}
+          title="검색 범위 끝"
           onChange={onChanges.end}
         />
       </section>
-      <section className="row">
-        <button id="query" onClick={_.throttle(onClicks.query, 1000)}>
+      <section css={styles.controls.buttonContainer}>
+        <button
+          css={[commonStyles.button, styles.controls.button]}
+          title="인기곡 조회"
+          onClick={_.throttle(onClicks.query, 1000)}
+        >
           <FontAwesomeIcon icon={faMagnifyingGlass} /> 조회
         </button>
-        <button id="reset" onClick={onClicks.reset}>
+        <button
+          css={[commonStyles.button, styles.controls.button]}
+          title="검색 조건 초기화"
+          onClick={onClicks.reset}
+        >
           <FontAwesomeIcon icon={faTrash} /> 초기화
         </button>
       </section>
