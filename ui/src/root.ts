@@ -4,7 +4,7 @@ import { Root } from './components/Root';
 
 const createRootElement = (id: string) => {
   const element = document.createElement('div');
-  element.setAttribute('id', 'root');
+  element.setAttribute('id', id);
   return document.body.appendChild(element);
 };
 
