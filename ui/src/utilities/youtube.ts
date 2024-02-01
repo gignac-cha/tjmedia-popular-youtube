@@ -1,11 +1,11 @@
-import { HTML } from './htmlParser';
+import { parseDOM } from './htmlParser';
 
 export const getVideoList = async (item: MusicItem): Promise<VideoItem[]> => {
   const url = new URL(import.meta.env.VITE_YOUTUBE_API_URL);
   url.searchParams.set('search_query', `${item.title} ${item.artist}`);
   const response: Response = await fetch(url);
   const html: string = await response.text();
-  const newDocument: Document = HTML.parse(html);
+  const newDocument: Document = parseDOM(html);
   const scripts: HTMLScriptElement[] = Array.from(
     newDocument.querySelectorAll<HTMLScriptElement>('script')
   );

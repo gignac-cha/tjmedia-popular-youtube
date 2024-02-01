@@ -5,23 +5,12 @@ import {
   MainContextValues,
   defaultValues,
 } from '../../contexts/MainContext';
+import { getType } from '../../utilities/tjmedia';
 import { Controls } from '../Navigation/Controls';
 import { List } from './List';
 
 export interface MainProperties {}
 export interface MainState {}
-
-const getType = (): Type => {
-  switch (localStorage.getItem('type')) {
-    default:
-    case '1':
-      return '1';
-    case '2':
-      return '2';
-    case '3':
-      return '3';
-  }
-};
 
 export const Main: FunctionComponent<MainProperties> = () => {
   const [type, setType] = useState<Type>(getType() ?? defaultValues.type);

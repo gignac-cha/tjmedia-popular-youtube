@@ -1,5 +1,4 @@
 const domParser = new DOMParser();
 
-const parse = (html: string): Document => domParser.parseFromString(html, 'text/html');
-
-export const HTML = { parse };
+export const parseDOM = (html: string): Document =>
+  domParser.parseFromString(html, 'text/html');

@@ -1,4 +1,16 @@
-import { HTML } from './htmlParser';
+import { parseDOM } from './htmlParser';
+
+export const getType = (): Type => {
+  switch (localStorage.getItem('type')) {
+    default:
+    case '1':
+      return '1';
+    case '2':
+      return '2';
+    case '3':
+      return '3';
+  }
+};
 
 export const getMusicList = async (
   query: TJMediaQuery
@@ -12,7 +24,7 @@ export const getMusicList = async (
   }
   const response: Response = await fetch(url);
   const html: string = await response.text();
-  const newDocument: Document = HTML.parse(html);
+  const newDocument: Document = parseDOM(html);
   const trs: HTMLTableRowElement[] = Array.from(
     newDocument.querySelectorAll<HTMLTableRowElement>('#BoardType1 tr')
   ).slice(1);

@@ -8,16 +8,13 @@ import {
   ControlsProperties,
   ControlsState,
 } from '../components/Navigation/Controls';
+import { doNothing } from '../utilities/common';
 
 export type MainContextProperties = MainProperties &
   ListProperties &
   ControlsProperties;
 export type MainContextStates = MainState & ListState & ControlsState;
 export type MainContextValues = MainContextProperties & MainContextStates;
-
-const doNothing = () => {
-  // DO NOTHING
-};
 
 export const defaultValues: MainContextValues = {
   type: '1',
