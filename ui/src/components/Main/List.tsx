@@ -1,10 +1,10 @@
 import { Dispatch, FunctionComponent, SetStateAction } from 'react';
-import { useMainContext } from '../contexts/main';
+import { useMainContext } from '../../contexts/MainContext';
 
-import { MusicItem } from '../utilities/tjmedia';
-import { Item } from './Item';
-import { Loading } from './Loading';
+import { MusicItem } from '../../utilities/tjmedia';
+import { Loading } from '../Loading/Loading';
 import { EmptyList } from './EmptyList';
+import { Item } from './Item';
 
 export interface ListProperties {}
 export interface ListState {
@@ -19,7 +19,8 @@ export const List: FunctionComponent<ListProperties> = () => {
   return (
     <div id="list">
       <Loading isLoading={isLoading} />
-      {items.length > 0 && items.map((item: MusicItem, i: number) => <Item key={i} item={item} />)}
+      {items.length > 0 &&
+        items.map((item: MusicItem, i: number) => <Item key={i} item={item} />)}
       {!isLoading && items.length === 0 && <EmptyList />}
     </div>
   );

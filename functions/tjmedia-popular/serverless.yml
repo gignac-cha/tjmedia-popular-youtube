@@ -1,24 +1,32 @@
-service: 'tjmedia-popular'
+service: tjmedia-popular
 frameworkVersion: '3'
+
+configValidationMode: error
 useDotenv: true
 deprecationNotificationMode: warn:summary
+
 provider:
   name: aws
   stage: ${sls:stage}
-  region: ap-northeast-2
-  runtime: nodejs18.x
+  region: ${env:REGION}
+  runtime: nodejs20.x
   runtimeManagement: auto
   memorySize: 128
   timeout: 10
   architecture: arm64
+
   iam:
-    role: arn:aws:iam::170930780491:role/serverless-framework
+    role: ${env:ROLE}
+
   httpApi:
-    payload: "2.0"
+    payload: '2.0'
+    metrics: true
     disableDefaultEndpoint: false
     cors:
       allowedOrigins:
         - https://gignac-cha.github.io
+    shouldStartNameWithService: true
+
 functions:
   tjmedia-popular:
     handler: index.handler

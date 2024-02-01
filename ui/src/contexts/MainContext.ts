@@ -1,12 +1,17 @@
 import { createContext, useContext } from 'react';
 
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 
-import { ControlsProperties, ControlsState, Type } from '../components/Controls';
-import { ListProperties, ListState } from '../components/List';
-import { MainProperties, MainState } from '../components/Main';
+import { ListProperties, ListState } from '../components/Main/List';
+import { MainProperties, MainState } from '../components/Main/Main';
+import {
+  ControlsProperties,
+  ControlsState,
+} from '../components/Navigation/Controls';
 
-export type MainContextProperties = MainProperties & ListProperties & ControlsProperties;
+export type MainContextProperties = MainProperties &
+  ListProperties &
+  ControlsProperties;
 export type MainContextStates = MainState & ListState & ControlsState;
 export type MainContextValues = MainContextProperties & MainContextStates;
 

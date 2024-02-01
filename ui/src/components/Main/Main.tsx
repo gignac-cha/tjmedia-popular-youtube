@@ -2,9 +2,13 @@ import { FunctionComponent, useState } from 'react';
 
 import dayjs, { Dayjs } from 'dayjs';
 
-import { defaultValues, MainContext, MainContextValues } from '../contexts/main';
-import { MusicItem } from '../utilities/tjmedia';
-import { Controls, Type } from './Controls';
+import {
+  defaultValues,
+  MainContext,
+  MainContextValues,
+} from '../../contexts/MainContext';
+import { MusicItem } from '../../utilities/tjmedia';
+import { Controls, Type } from '../Navigation/Controls';
 import { List } from './List';
 
 export interface MainProperties {}
@@ -24,8 +28,12 @@ const getType = (): Type => {
 
 export const Main: FunctionComponent<MainProperties> = () => {
   const [type, setType] = useState<Type>(getType() ?? defaultValues.type);
-  const [start, setStart] = useState<Dayjs>(dayjs(localStorage.getItem('start') ?? defaultValues.start));
-  const [end, setEnd] = useState<Dayjs>(dayjs(localStorage.getItem('end') ?? defaultValues.end));
+  const [start, setStart] = useState<Dayjs>(
+    dayjs(localStorage.getItem('start') ?? defaultValues.start)
+  );
+  const [end, setEnd] = useState<Dayjs>(
+    dayjs(localStorage.getItem('end') ?? defaultValues.end)
+  );
   const [isLoading, setLoading] = useState<boolean>(false);
   const [items, setItems] = useState<MusicItem[]>(defaultValues.items);
 

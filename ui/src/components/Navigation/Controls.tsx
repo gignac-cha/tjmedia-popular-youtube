@@ -1,13 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ChangeEvent, Dispatch, FunctionComponent, SetStateAction, useCallback, useEffect, useMemo, useRef } from 'react';
+import {
+  ChangeEvent,
+  Dispatch,
+  FunctionComponent,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 
 import { faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs, { Dayjs } from 'dayjs';
 import _ from 'lodash';
 
-import { defaultValues, useMainContext } from '../contexts/main';
-import { getMusicList } from '../utilities/tjmedia';
+import { defaultValues, useMainContext } from '../../contexts/MainContext';
+import { getMusicList } from '../../utilities/tjmedia';
 
 export type Type = '1' | '2' | '3';
 export interface ControlsProperties {}
@@ -21,7 +30,8 @@ export interface ControlsState {
 }
 
 export const Controls: FunctionComponent<ControlsProperties> = () => {
-  const { type, setType, start, setStart, end, setEnd, setLoading, setItems } = useMainContext();
+  const { type, setType, start, setStart, end, setEnd, setLoading, setItems } =
+    useMainContext();
   const refs = {
     type: useRef<HTMLSelectElement>(null),
     start: useRef<HTMLInputElement>(null),
@@ -83,13 +93,32 @@ export const Controls: FunctionComponent<ControlsProperties> = () => {
   return (
     <div className="controls">
       <div className="row">
-        <select id="type" ref={refs.type} value={type} onChange={onChanges.type}>
+        <select
+          id="type"
+          ref={refs.type}
+          value={type}
+          onChange={onChanges.type}
+        >
           <option value="1">가요</option>
           <option value="2">POP</option>
           <option value="3">JPOP</option>
         </select>
-        <input id="start" ref={refs.start} type="month" value={start.format('YYYY-MM')} max={today.format('YYYY-MM')} onChange={onChanges.start} />
-        <input id="end" ref={refs.end} type="month" value={end.format('YYYY-MM')} max={today.format('YYYY-MM')} onChange={onChanges.end} />
+        <input
+          id="start"
+          ref={refs.start}
+          type="month"
+          value={start.format('YYYY-MM')}
+          max={today.format('YYYY-MM')}
+          onChange={onChanges.start}
+        />
+        <input
+          id="end"
+          ref={refs.end}
+          type="month"
+          value={end.format('YYYY-MM')}
+          max={today.format('YYYY-MM')}
+          onChange={onChanges.end}
+        />
       </div>
       <div className="row">
         <button id="query" onClick={_.throttle(onClicks.query, 1000)}>

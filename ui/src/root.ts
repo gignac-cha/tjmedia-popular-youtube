@@ -1,6 +1,14 @@
 import { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Main } from './components/Main';
+import { Root } from './components/Root';
+
+const createRootElement = (id: string) => {
+  const element = document.createElement('div');
+  element.setAttribute('id', 'root');
+  return document.body.appendChild(element);
+};
 
 export const initializeRoot = () =>
-  createRoot(document.body.appendChild(document.querySelector('main') ?? document.createElement('main'))).render(createElement(Main));
+  createRoot(
+    document.querySelector('#root') ?? createRootElement('root')
+  ).render(createElement(Root));

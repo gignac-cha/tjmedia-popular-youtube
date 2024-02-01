@@ -1,14 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { FunctionComponent, MouseEvent, SyntheticEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  FunctionComponent,
+  MouseEvent,
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { faBackward, faForward } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import { useMainContext } from '../contexts/main';
-import { MusicItem } from '../utilities/tjmedia';
-import { getVideoList, VideoItem } from '../utilities/youtube';
-import { Loading } from './Loading';
+import { useMainContext } from '../../contexts/MainContext';
+import { MusicItem } from '../../utilities/tjmedia';
+import { getVideoList, VideoItem } from '../../utilities/youtube';
+import { Loading } from '../Loading/Loading';
 
 export interface ItemProperties {
   item: MusicItem;
@@ -47,7 +56,7 @@ export const Item: FunctionComponent<ItemProperties> = ({ item }) => {
         setVideoLoading(true);
       }
     },
-    [refs.video, selectedIndex, setSelectedIndex, setVideoLoading],
+    [refs.video, selectedIndex, setSelectedIndex, setVideoLoading]
   );
   const onClicks = {
     item: async (event: MouseEvent<HTMLDivElement>) => {
@@ -84,7 +93,14 @@ export const Item: FunctionComponent<ItemProperties> = ({ item }) => {
     }
   };
   return (
-    <div className={classnames(['item', isLoading && 'item-loading', isExpanded && 'expanded'])} onClick={onClicks.item}>
+    <div
+      className={classnames([
+        'item',
+        isLoading && 'item-loading',
+        isExpanded && 'expanded',
+      ])}
+      onClick={onClicks.item}
+    >
       <div className="row-1">
         <div className="index">{index}</div>
         <div className="title">{title}</div>
@@ -94,18 +110,29 @@ export const Item: FunctionComponent<ItemProperties> = ({ item }) => {
       </div>
       <Loading isLoading={isListLoading} />
       <div className="row-3"></div>
-      <div ref={refs.row4} className={classnames(['row-4', !isExpanded && 'hide'])}>
+      <div
+        ref={refs.row4}
+        className={classnames(['row-4', !isExpanded && 'hide'])}
+      >
         {video.src && (
           <iframe
             ref={refs.video}
-            className={classnames(['video', !isExpanded && 'hide', isVideoLoading && 'video-loading'])}
+            className={classnames([
+              'video',
+              !isExpanded && 'hide',
+              isVideoLoading && 'video-loading',
+            ])}
             {...video}
             onLoad={onLoad}
           ></iframe>
         )}
       </div>
       <div className={classnames(['row-5', !isExpanded && 'hide'])}>
-        <button className="previous" onClick={onClicks.previous} disabled={selectedIndex === 0}>
+        <button
+          className="previous"
+          onClick={onClicks.previous}
+          disabled={selectedIndex === 0}
+        >
           <FontAwesomeIcon icon={faBackward} /> 이전
         </button>
         {items && items.length && (
@@ -113,7 +140,11 @@ export const Item: FunctionComponent<ItemProperties> = ({ item }) => {
             {selectedIndex + 1} / {items.length}
           </div>
         )}
-        <button className="next" onClick={onClicks.next} disabled={items && selectedIndex === items.length - 1}>
+        <button
+          className="next"
+          onClick={onClicks.next}
+          disabled={items && selectedIndex === items.length - 1}
+        >
           <FontAwesomeIcon icon={faForward} /> 다음
         </button>
       </div>
