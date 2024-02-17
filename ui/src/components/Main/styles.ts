@@ -43,7 +43,7 @@ export const styles = {
       justify-content: center;
       align-items: center;
       width: 100%;
-      padding: 1rem;
+      height: 100%;
     `,
   },
 
