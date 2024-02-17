@@ -2,28 +2,29 @@ import dayjs, { Dayjs } from 'dayjs';
 import { Reducer } from 'react';
 import { getType } from '../utilities/tjmedia';
 
-const initialStateValues: typeof initialState = {
+const initialQuery: {
+  type: Type;
+  start: Dayjs;
+  end: Dayjs;
+} = {
   type: '1',
   start: dayjs().subtract(1, 'month'),
   end: dayjs(),
 };
-export const initialState: {
-  type: Type;
-  start: Dayjs;
-  end: Dayjs;
+export const initialState: typeof initialQuery & {
   cachedItems?: MusicItem[];
 } = {
   type: getType(),
-  start: dayjs(localStorage.getItem('start') ?? initialStateValues.start),
-  end: dayjs(localStorage.getItem('end') ?? initialStateValues.end),
+  start: dayjs(localStorage.getItem('start') ?? initialQuery.start),
+  end: dayjs(localStorage.getItem('end') ?? initialQuery.end),
 };
 
 type QueryAction =
   | { name: 'CHANGE_TYPE'; type: Type }
   | { name: 'CHANGE_START'; start: Dayjs }
   | { name: 'CHANGE_END'; end: Dayjs }
-  | { name: 'RESET' }
-  | { name: 'CACHE'; items: MusicItem[] };
+  | { name: 'RESET_QUERY' }
+  | { name: 'CACHE_ITEMS'; items: MusicItem[] };
 
 export const queryReducer: Reducer<typeof initialState, QueryAction> = (
   prevState,
@@ -39,12 +40,12 @@ export const queryReducer: Reducer<typeof initialState, QueryAction> = (
     case 'CHANGE_END':
       localStorage.setItem('end', action.end.format('YYYY-MM'));
       return { ...prevState, end: action.end };
-    case 'RESET':
-      localStorage.setItem('type', initialStateValues.type);
-      localStorage.setItem('start', initialStateValues.start.format('YYYY-MM'));
-      localStorage.setItem('end', initialStateValues.end.format('YYYY-MM'));
-      return { ...prevState, ...initialStateValues };
-    case 'CACHE':
+    case 'RESET_QUERY':
+      localStorage.setItem('type', initialQuery.type);
+      localStorage.setItem('start', initialQuery.start.format('YYYY-MM'));
+      localStorage.setItem('end', initialQuery.end.format('YYYY-MM'));
+      return { ...prevState, ...initialQuery };
+    case 'CACHE_ITEMS':
       return { ...prevState, cachedItems: action.items };
   }
 };

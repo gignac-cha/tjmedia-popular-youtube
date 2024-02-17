@@ -10,8 +10,16 @@ import { commonStyles } from '../../styles/common';
 import { styles } from './styles';
 
 export const Controls = () => {
-  const { type, changeType, start, changeStart, end, changeEnd, reset, query } =
-    useQueryContext();
+  const {
+    type,
+    changeType,
+    start,
+    changeStart,
+    end,
+    changeEnd,
+    resetQuery,
+    query,
+  } = useQueryContext();
 
   const onChanges = {
     type: useCallback(
@@ -60,9 +68,9 @@ export const Controls = () => {
     ),
     reset: useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
-        reset();
+        resetQuery();
       },
-      [reset],
+      [resetQuery],
     ),
   };
 

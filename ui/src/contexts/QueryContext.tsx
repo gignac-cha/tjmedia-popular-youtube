@@ -24,17 +24,17 @@ export const defaultValue: typeof initialState & {
   changeType: (type: Type) => void;
   changeStart: (start: Dayjs) => void;
   changeEnd: (end: Dayjs) => void;
-  reset: () => void;
+  resetQuery: () => void;
   query: TJMediaQuery;
-  cache: (items: MusicItem[]) => void;
+  cacheItems: (items: MusicItem[]) => void;
 } = {
   ...initialState,
   changeType: doNothing,
   changeStart: doNothing,
   changeEnd: doNothing,
-  reset: doNothing,
+  resetQuery: doNothing,
   query: convertToQuery(initialState),
-  cache: doNothing,
+  cacheItems: doNothing,
 };
 
 const QueryContext = createContext<typeof defaultValue>(defaultValue);
@@ -54,9 +54,9 @@ export const QueryContextProvider = ({ children }: PropsWithChildren) => {
     (end: Dayjs) => dispatch({ name: 'CHANGE_END', end }),
     [],
   );
-  const reset = useCallback(() => dispatch({ name: 'RESET' }), []);
-  const cache = useCallback(
-    (items: MusicItem[]) => dispatch({ name: 'CACHE', items }),
+  const resetQuery = useCallback(() => dispatch({ name: 'RESET_QUERY' }), []);
+  const cacheItems = useCallback(
+    (items: MusicItem[]) => dispatch({ name: 'CACHE_ITEMS', items }),
     [],
   );
 
@@ -69,9 +69,9 @@ export const QueryContextProvider = ({ children }: PropsWithChildren) => {
         changeType,
         changeStart,
         changeEnd,
-        reset,
+        resetQuery,
         query,
-        cache,
+        cacheItems,
       }}
     >
       {children}

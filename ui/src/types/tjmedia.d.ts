@@ -1,7 +1,7 @@
 declare type Type = '1' | '2' | '3';
 
 declare interface TJMediaQuery {
-  strType: string;
+  strType: Type;
   SYY: string;
   SMM: string;
   EYY: string;

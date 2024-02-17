@@ -7,14 +7,14 @@ import { ListLoading } from './ListLoading';
 import { styles } from './styles';
 
 export const List = () => {
-  const { query, cache, cachedItems } = useQueryContext();
+  const { query, cacheItems, cachedItems } = useQueryContext();
   const { data: items, isFetching, isRefetching } = useMusicListQuery(query);
 
   useEffect(() => {
     if (items) {
-      cache(items);
+      cacheItems(items);
     }
-  }, [cache, items]);
+  }, [cacheItems, items]);
 
   return (
     <section css={styles.list.container}>
