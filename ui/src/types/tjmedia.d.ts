@@ -1,7 +1,5 @@
 declare type Type = '1' | '2' | '3';
 
-declare type SearchParams = { [key: string]: boolean | number | string };
-
 declare interface TJMediaQuery {
   strType: string;
   SYY: string;
