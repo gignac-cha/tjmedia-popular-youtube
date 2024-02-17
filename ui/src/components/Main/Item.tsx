@@ -10,7 +10,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useQueryContext } from '../../contexts/QueryContext';
 import { commonStyles } from '../../styles/common';
 import { getVideoList } from '../../utilities/youtube';
 import { Loading } from '../Loading/Loading';
@@ -18,7 +17,6 @@ import { styles } from './styles';
 
 export const Item = ({ item }: { item: MusicItem }) => {
   const { index, title, artist } = item;
-  const { isLoading } = useQueryContext();
   const [isListLoading, setListLoading] = useState<boolean>(false);
   const [isExpanded, setExpanded] = useState<boolean>(false);
   const [items, setItems] = useState<VideoItem[]>();
@@ -53,7 +51,7 @@ export const Item = ({ item }: { item: MusicItem }) => {
         setVideoLoading(true);
       }
     },
-    [refs.video, selectedIndex, setSelectedIndex, setVideoLoading]
+    [refs.video, selectedIndex, setSelectedIndex, setVideoLoading],
   );
 
   const onClicks = {
@@ -94,11 +92,7 @@ export const Item = ({ item }: { item: MusicItem }) => {
 
   return (
     <li
-      css={[
-        styles.item.container,
-        isLoading && styles.item.loadingContainer,
-        isExpanded && styles.item.expandedContainer,
-      ]}
+      css={[styles.item.container, isExpanded && styles.item.expandedContainer]}
     >
       <button
         css={styles.item.expandButton}

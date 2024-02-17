@@ -1,79 +1,70 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from 'react';
-import { defaultValue, useQueryContext } from '../../contexts/QueryContext';
+import { ChangeEvent, useCallback, useMemo } from 'react';
+import { useQueryContext } from '../../contexts/QueryContext';
 import { commonStyles } from '../../styles/common';
-import { getMusicList } from '../../utilities/tjmedia';
 import { styles } from './styles';
 
 export const Controls = () => {
-  const { type, setType, start, setStart, end, setEnd, setLoading, setItems } =
+  const { type, changeType, start, changeStart, end, changeEnd, reset, query } =
     useQueryContext();
 
-  const refs = {
-    type: useRef<HTMLSelectElement>(null),
-    start: useRef<HTMLInputElement>(null),
-    end: useRef<HTMLInputElement>(null),
-    query: useRef<HTMLButtonElement>(null),
-    reset: useRef<HTMLButtonElement>(null),
-  };
-
   const onChanges = {
-    type: (event: ChangeEvent<HTMLSelectElement>) => {
-      switch (refs.type.current?.value) {
-        case '1':
-        case '2':
-        case '3':
-          setType(refs.type.current.value);
-          localStorage.setItem('type', refs.type.current.value);
-          return;
-      }
-    },
-    start: (event: ChangeEvent<HTMLInputElement>) => {
-      setStart(dayjs(refs.start.current?.value));
-      localStorage.setItem('start', `${refs.start.current?.value}`);
-    },
-    end: (event: ChangeEvent<HTMLInputElement>) => {
-      setEnd(dayjs(refs.end.current?.value));
-      localStorage.setItem('end', `${refs.end.current?.value}`);
-    },
+    type: useCallback(
+      (event: ChangeEvent<HTMLSelectElement>) => {
+        switch (event.currentTarget.value) {
+          case '1':
+          case '2':
+          case '3':
+            changeType(event.currentTarget.value);
+            return;
+        }
+      },
+      [changeType],
+    ),
+    start: useCallback(
+      (event: ChangeEvent<HTMLInputElement>) => {
+        changeStart(dayjs(event.currentTarget.value));
+      },
+      [changeStart],
+    ),
+    end: useCallback(
+      (event: ChangeEvent<HTMLInputElement>) => {
+        changeEnd(dayjs(event.currentTarget.value));
+      },
+      [changeEnd],
+    ),
   };
 
-  const query = useCallback(async () => {
-    localStorage.setItem('type', type);
-    localStorage.setItem('start', start.format('YYYY-MM'));
-    localStorage.setItem('end', end.format('YYYY-MM'));
-    const [SYY, SMM]: string[] = start.format('YYYY-MM').split('-');
-    const [EYY, EMM]: string[] = end.format('YYYY-MM').split('-');
-    setLoading(true);
-    try {
-      setItems(await getMusicList({ strType: type, SYY, SMM, EYY, EMM }));
-    } catch (error) {
-      // API error
-    }
-    setLoading(false);
-  }, [end, setItems, setLoading, start, type]);
+  const queryClient = useQueryClient();
 
   const onClicks = {
-    query: async (event: React.MouseEvent<HTMLButtonElement>) => {
-      await query();
-    },
-    reset: (event: React.MouseEvent<HTMLButtonElement>) => {
-      setType(defaultValue.type);
-      setStart(defaultValue.start);
-      setEnd(defaultValue.end);
-      localStorage.setItem('type', defaultValue.type);
-      localStorage.setItem('start', defaultValue.start.format('YYYY-MM'));
-      localStorage.setItem('end', defaultValue.end.format('YYYY-MM'));
-    },
+    query: useCallback(
+      async (event: React.MouseEvent<HTMLButtonElement>) => {
+        await queryClient.invalidateQueries({
+          queryKey: [
+            'tjmedia-music-list',
+            query.strType,
+            query.SYY,
+            query.SMM,
+            query.EYY,
+            query.EMM,
+          ],
+        });
+      },
+      [query.EMM, query.EYY, query.SMM, query.SYY, query.strType, queryClient],
+    ),
+    reset: useCallback(
+      (event: React.MouseEvent<HTMLButtonElement>) => {
+        reset();
+      },
+      [reset],
+    ),
   };
-
-  useEffect(() => {
-    query();
-  }, [query]);
 
   const today = useMemo(() => dayjs(), []);
 
@@ -86,7 +77,6 @@ export const Controls = () => {
         >
           <select
             css={commonStyles.select}
-            ref={refs.type}
             value={type}
             onChange={onChanges.type}
           >
@@ -97,7 +87,6 @@ export const Controls = () => {
         </section>
         <input
           css={[commonStyles.date, styles.controls.date]}
-          ref={refs.start}
           type="month"
           value={start.format('YYYY-MM')}
           max={today.format('YYYY-MM')}
@@ -106,7 +95,6 @@ export const Controls = () => {
         />
         <input
           css={[commonStyles.date, styles.controls.date]}
-          ref={refs.end}
           type="month"
           value={end.format('YYYY-MM')}
           max={today.format('YYYY-MM')}

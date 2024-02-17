@@ -1,65 +1,77 @@
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 import {
-  Dispatch,
   PropsWithChildren,
-  SetStateAction,
   createContext,
+  useCallback,
   useContext,
-  useState,
+  useMemo,
+  useReducer,
 } from 'react';
+import { initialState, queryReducer } from '../reducers/queryReducer';
 import { doNothing } from '../utilities/common';
-import { getType } from '../utilities/tjmedia';
 
-export const defaultValue: {
-  type: Type;
-  setType: Dispatch<SetStateAction<Type>>;
-  start: Dayjs;
-  setStart: Dispatch<SetStateAction<Dayjs>>;
-  end: Dayjs;
-  setEnd: Dispatch<SetStateAction<Dayjs>>;
-  isLoading: boolean;
-  setLoading: Dispatch<SetStateAction<boolean>>;
-  items: MusicItem[];
-  setItems: Dispatch<SetStateAction<MusicItem[]>>;
+const convertToQuery = ({
+  type,
+  start,
+  end,
+}: typeof initialState): TJMediaQuery => {
+  const [SYY, SMM]: string[] = start.format('YYYY-MM').split('-');
+  const [EYY, EMM]: string[] = end.format('YYYY-MM').split('-');
+  return { strType: type, SYY, SMM, EYY, EMM };
+};
+
+export const defaultValue: typeof initialState & {
+  changeType: (type: Type) => void;
+  changeStart: (start: Dayjs) => void;
+  changeEnd: (end: Dayjs) => void;
+  reset: () => void;
+  query: TJMediaQuery;
+  cache: (items: MusicItem[]) => void;
 } = {
-  type: '1',
-  setType: doNothing,
-  start: dayjs().subtract(1, 'month'),
-  setStart: doNothing,
-  end: dayjs(),
-  setEnd: doNothing,
-  isLoading: false,
-  setLoading: doNothing,
-  items: [],
-  setItems: doNothing,
+  ...initialState,
+  changeType: doNothing,
+  changeStart: doNothing,
+  changeEnd: doNothing,
+  reset: doNothing,
+  query: convertToQuery(initialState),
+  cache: doNothing,
 };
 
 const QueryContext = createContext<typeof defaultValue>(defaultValue);
 
 export const QueryContextProvider = ({ children }: PropsWithChildren) => {
-  const [type, setType] = useState<Type>(getType() ?? defaultValue.type);
-  const [start, setStart] = useState<Dayjs>(
-    dayjs(localStorage.getItem('start') ?? defaultValue.start)
+  const [state, dispatch] = useReducer(queryReducer, initialState);
+
+  const changeType = useCallback(
+    (type: Type) => dispatch({ name: 'CHANGE_TYPE', type }),
+    [],
   );
-  const [end, setEnd] = useState<Dayjs>(
-    dayjs(localStorage.getItem('end') ?? defaultValue.end)
+  const changeStart = useCallback(
+    (start: Dayjs) => dispatch({ name: 'CHANGE_START', start }),
+    [],
   );
-  const [isLoading, setLoading] = useState<boolean>(false);
-  const [items, setItems] = useState<MusicItem[]>(defaultValue.items);
+  const changeEnd = useCallback(
+    (end: Dayjs) => dispatch({ name: 'CHANGE_END', end }),
+    [],
+  );
+  const reset = useCallback(() => dispatch({ name: 'RESET' }), []);
+  const cache = useCallback(
+    (items: MusicItem[]) => dispatch({ name: 'CACHE', items }),
+    [],
+  );
+
+  const query = useMemo(() => convertToQuery(state), [state]);
 
   return (
     <QueryContext.Provider
       value={{
-        type,
-        setType,
-        start,
-        setStart,
-        end,
-        setEnd,
-        isLoading,
-        setLoading,
-        items,
-        setItems,
+        ...state,
+        changeType,
+        changeStart,
+        changeEnd,
+        reset,
+        query,
+        cache,
       }}
     >
       {children}

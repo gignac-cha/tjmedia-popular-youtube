@@ -1,25 +1,32 @@
+import { useEffect } from 'react';
 import { useQueryContext } from '../../contexts/QueryContext';
-import { Loading } from '../Loading/Loading';
+import { useMusicListQuery } from '../../queries/useTJMediaQuery';
 import { EmptyList } from './EmptyList';
-import { Item } from './Item';
+import { Items } from './Items';
+import { ListLoading } from './ListLoading';
 import { styles } from './styles';
 
 export const List = () => {
-  const { isLoading, items } = useQueryContext();
+  const { query, cache, cachedItems } = useQueryContext();
+  const { data: items, isFetching, isRefetching } = useMusicListQuery(query);
+
+  useEffect(() => {
+    if (items) {
+      cache(items);
+    }
+  }, [cache, items]);
 
   return (
-    <section>
-      <ul css={styles.list.container}>
-        {isLoading && (
-          <li>
-            <Loading />
-          </li>
-        )}
-        {items.length > 0 &&
-          items.map((item: MusicItem, i: number) => (
-            <Item key={i} item={item} />
-          ))}
-        {!isLoading && items.length === 0 && <EmptyList />}
+    <section css={styles.list.container}>
+      {(isFetching || isRefetching) && <ListLoading />}
+      <ul
+        css={[
+          styles.list.innerContainer,
+          (isFetching || isRefetching) && styles.list.loadingContainer,
+        ]}
+      >
+        {cachedItems && cachedItems.length === 0 && <EmptyList />}
+        {cachedItems && cachedItems.length > 0 && <Items items={cachedItems} />}
       </ul>
     </section>
   );

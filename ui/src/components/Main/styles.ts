@@ -15,12 +15,35 @@ export const styles = {
       ${commonStyles.row}
       label: list-container;
 
-      margin: 0;
-      padding: 0;
+      position: relative;
+      min-height: 10rem;
       outline: 1px solid black;
       border-radius: 4px;
+    `,
+    innerContainer: css`
+      label: list-inner-container;
+
       list-style: none;
-      transition: opacity 0.2s;
+      margin: 0;
+      padding: 0;
+      filter: blur(0rem);
+      transition: filter 0.2s;
+    `,
+    loadingContainer: css`
+      label: list-loading-container;
+
+      filter: blur(1rem);
+    `,
+
+    loading: css`
+      ${commonStyles.row}
+      label: list-loading;
+
+      position: absolute;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 1rem;
     `,
   },
 
@@ -42,7 +65,10 @@ export const styles = {
       position: relative;
       padding: 1rem;
       max-height: 4rem;
-      transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+      transition:
+        background-color 0.2s,
+        border-color 0.2s,
+        transform 0.2s;
 
       &:not(:last-child) {
         border-bottom: 1px solid black;
@@ -151,7 +177,10 @@ export const styles = {
       border: none;
       outline: none;
       filter: blur(0rem);
-      transition: width 0.2s, height 0.2s, filter 0.2s;
+      transition:
+        width 0.2s,
+        height 0.2s,
+        filter 0.2s;
     `,
     showVideo: css`
       label: item-show-video;

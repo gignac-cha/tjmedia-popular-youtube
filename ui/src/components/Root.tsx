@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { StrictMode } from 'react';
 import { QueryContextProvider } from '../contexts/QueryContext';
 import { List } from './Main/List';
 import { Main } from './Main/Main';
@@ -9,17 +10,19 @@ const queryClient = new QueryClient();
 
 export const Root = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <QueryContextProvider>
-        <header></header>
-        <Navigation>
-          <Controls />
-        </Navigation>
-        <Main>
-          <List />
-        </Main>
-        <footer></footer>
-      </QueryContextProvider>
-    </QueryClientProvider>
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <QueryContextProvider>
+          <header></header>
+          <Navigation>
+            <Controls />
+          </Navigation>
+          <Main>
+            <List />
+          </Main>
+          <footer></footer>
+        </QueryContextProvider>
+      </QueryClientProvider>
+    </StrictMode>
   );
 };
