@@ -10,8 +10,8 @@ import {
   useRef,
   useState,
 } from 'react';
+import { useVideoListQuery } from '../../queries/useYouTubeQuery';
 import { commonStyles } from '../../styles/common';
-import { getVideoList } from '../../utilities/youtube';
 import { Loading } from '../Loading/Loading';
 import { styles } from './styles';
 
@@ -19,18 +19,18 @@ export const Item = ({ item }: { item: MusicItem }) => {
   const { index, title, artist } = item;
   const [isListLoading, setListLoading] = useState<boolean>(false);
   const [isExpanded, setExpanded] = useState<boolean>(false);
-  const [items, setItems] = useState<VideoItem[]>();
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isVideoLoading, setVideoLoading] = useState<boolean>(false);
 
+  const { data: items, refetch: getItems } = useVideoListQuery(item);
+
   useEffect(() => {
     setExpanded(false);
-    setItems(undefined);
     setSelectedIndex(0);
   }, [item]);
 
   const video = useMemo(() => {
-    if (items && items.length > 0) {
+    if (items.length > 0) {
       const { videoId, title, width, height } = items[selectedIndex];
       const src = `https://www.youtube.com/embed/${videoId}`;
       return { src, title, width, height };
@@ -57,13 +57,9 @@ export const Item = ({ item }: { item: MusicItem }) => {
   const onClicks = {
     item: async (event: MouseEvent<HTMLButtonElement>) => {
       setExpanded(!isExpanded);
-      if (!items) {
+      if (items.length === 0) {
         setListLoading(true);
-        try {
-          setItems(await getVideoList(item));
-        } catch (error) {
-          // API error
-        }
+        await getItems();
         setListLoading(false);
       }
     },
@@ -81,7 +77,7 @@ export const Item = ({ item }: { item: MusicItem }) => {
 
   const onLoad = (event: SyntheticEvent<HTMLIFrameElement>) => {
     setVideoLoading(false);
-    if (refs.row4.current && refs.video.current && items) {
+    if (refs.row4.current && refs.video.current && items.length > 0) {
       const { clientWidth } = refs.row4.current;
       refs.video.current.setAttribute('width', `${clientWidth}`);
       const { width, height } = items[selectedIndex];
