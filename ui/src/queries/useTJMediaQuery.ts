@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { getMusicList } from '../utilities/tjmedia';
 
 export const useMusicListQuery = (query: TJMediaQuery) =>
-  useQuery({
+  useSuspenseQuery({
     queryKey: [
       'tjmedia-music-list',
       query.strType,

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useQueryContext } from '../../contexts/QueryContext';
 import { useMusicListQuery } from '../../queries/useTJMediaQuery';
 import { EmptyList } from './EmptyList';
@@ -6,9 +6,9 @@ import { Items } from './Items';
 import { ListLoading } from './ListLoading';
 import { styles } from './styles';
 
-export const List = () => {
-  const { query, cacheItems, cachedItems } = useQueryContext();
-  const { data: items, isFetching, isRefetching } = useMusicListQuery(query);
+const SuspenseContainer = () => {
+  const { query, cacheItems } = useQueryContext();
+  const { data: items } = useMusicListQuery(query);
 
   useEffect(() => {
     if (items) {
@@ -16,13 +16,21 @@ export const List = () => {
     }
   }, [cacheItems, items]);
 
+  return <></>;
+};
+
+export const List = () => {
+  const { cachedItems, isLoading } = useQueryContext();
+
   return (
     <section css={styles.list.container}>
-      {(isFetching || isRefetching) && <ListLoading />}
+      <Suspense fallback={<ListLoading />}>
+        <SuspenseContainer />
+      </Suspense>
       <ul
         css={[
           styles.list.innerContainer,
-          (isFetching || isRefetching) && styles.list.loadingContainer,
+          isLoading && styles.list.loadingContainer,
         ]}
       >
         {cachedItems && cachedItems.length === 0 && <EmptyList />}
