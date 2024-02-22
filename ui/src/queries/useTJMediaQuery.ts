@@ -12,4 +12,5 @@ export const useMusicListQuery = (query: TJMediaQuery) =>
       query.EMM,
     ],
     queryFn: () => getMusicList(query),
+    staleTime: 60 * 60 * 1000,
   });
