@@ -18,11 +18,13 @@ export const VideoControls = () => {
       >
         <FontAwesomeIcon icon={faBackward} /> 이전
       </button>
-      <b
-        title={`총 ${cachedItems.length}개의 영상 중 ${selectedIndex + 1}번째`}
-      >
-        {selectedIndex + 1} / {cachedItems.length}
-      </b>
+      {cachedItems.length > 0 && (
+        <b
+          title={`총 ${cachedItems.length}개의 영상 중 ${selectedIndex + 1}번째`}
+        >
+          {selectedIndex + 1} / {cachedItems.length}
+        </b>
+      )}
       <button
         css={commonStyles.button}
         onClick={nextItem}

@@ -109,7 +109,6 @@ export const styles = {
       column-gap: 1rem;
       padding: 1rem;
       color: inherit;
-      letter-spacing: -0.1rem;
       cursor: pointer;
       transition: color 0.2s;
 
@@ -130,7 +129,6 @@ export const styles = {
       column-gap: 1rem;
       padding: 0;
       color: inherit;
-      letter-spacing: -0.1rem;
       transition: color 0.2s;
     `,
     leftContainer: css`
@@ -154,6 +152,7 @@ export const styles = {
       }
     `,
     title: css`
+      ${commonStyles.ellipsis}
       label: item-title;
 
       flex-grow: 1;
@@ -164,7 +163,6 @@ export const styles = {
         letter-spacing 0.2s;
 
       @media screen and (max-width: 40rem) {
-        height: 4rem;
         font-size: 2rem;
         line-height: 2rem;
         letter-spacing: -0.2rem;
@@ -188,7 +186,7 @@ export const styles = {
 
       @media screen and (max-width: 40rem) {
         font-size: 1.5rem;
-        letter-spacing: -0.2rem;
+        letter-spacing: -0.1rem;
       }
       @media screen and (min-width: 40rem) {
         font-size: 1rem;

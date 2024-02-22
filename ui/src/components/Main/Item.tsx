@@ -5,8 +5,33 @@ import { VideoControls } from './VideoControls';
 import { styles } from './styles';
 
 export const Item = ({ item }: { item: MusicItem }) => {
-  const { isExpanded, expandItem, collapseItem, removeItemsCache } =
-    useVideoContext();
+  const {
+    prepareVideoFrame,
+    isExpanded,
+    expandItem,
+    collapseItem,
+    removeItemsCache,
+  } = useVideoContext();
+
+  const itemRef = useRef<HTMLLIElement>(null);
+
+  useEffect(() => {
+    if (itemRef.current) {
+      const observer = new IntersectionObserver(
+        (entries: IntersectionObserverEntry[]) => {
+          const isIntersected = entries.some(
+            (entry: IntersectionObserverEntry) => entry.isIntersecting,
+          );
+          if (isIntersected) {
+            prepareVideoFrame();
+          }
+        },
+      );
+      const target = itemRef.current;
+      observer.observe(target);
+      return () => target && observer.unobserve(target);
+    }
+  }, [prepareVideoFrame]);
 
   const expandableRef = useRef<HTMLDetailsElement>(null);
 
@@ -29,7 +54,7 @@ export const Item = ({ item }: { item: MusicItem }) => {
   );
 
   return (
-    <li css={styles.item.container}>
+    <li ref={itemRef} css={styles.item.container}>
       <details
         ref={expandableRef}
         css={[
