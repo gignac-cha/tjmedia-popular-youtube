@@ -59,43 +59,67 @@ export const styles = {
 
   item: {
     container: css`
-      ${commonStyles.row}
       label: item-container;
 
-      position: relative;
-      padding: 1rem;
-      max-height: 4rem;
-      transition:
-        background-color 0.2s,
-        border-color 0.2s,
-        transform 0.2s;
+      transition: border-color 0.2s;
 
       &:not(:last-child) {
         border-bottom: 1px solid black;
       }
 
       &:hover {
-        background-color: #333;
-        color: white;
-        transform: scale(1.05);
-
         &:not(:last-child) {
-          border-bottom: 1px solid #333;
+          border-color: transparent;
         }
       }
     `,
-    loadingContainer: css`
-      label: item-loading-container;
 
-      filter: blur(1rem);
+    expandable: {
+      container: css`
+        ${commonStyles.row}
+        label: item-expandable-container;
+
+        position: relative;
+        overflow: hidden;
+        transition:
+          height 0.2s,
+          background-color 0.2s,
+          transform 0.2s;
+
+        &:hover {
+          background-color: #333;
+          color: white;
+          transform: scale(1.05);
+        }
+      `,
+      expanded: css`
+        label: item-expanded-container;
+
+        row-gap: 1rem;
+        overflow: initial;
+      `,
+    },
+
+    topContainer: css`
+      label: item-expandable-container;
+
+      list-style: none;
+      justify-content: space-between;
+      align-items: stretch;
+      column-gap: 1rem;
+      padding: 1rem;
+      color: inherit;
+      letter-spacing: -0.1rem;
+      cursor: pointer;
+      transition: color 0.2s;
+
+      @media screen and (max-width: 40rem) {
+        ${commonStyles.row}
+      }
+      @media screen and (min-width: 40rem) {
+        ${commonStyles.column}
+      }
     `,
-    expandedContainer: css`
-      label: item-expanded-container;
-
-      row-gap: 1rem;
-      max-height: 100rem;
-    `,
-
     expandButton: css`
       ${commonStyles.emptyButton}
       ${commonStyles.column}
@@ -122,23 +146,33 @@ export const styles = {
       ${commonStyles.column}
       label: item-end-container;
 
-      align-items: flex-end;
+      @media screen and (max-width: 40rem) {
+        justify-content: flex-end;
+      }
+      @media screen and (min-width: 40rem) {
+        align-items: flex-end;
+      }
     `,
     title: css`
-      ${commonStyles.ellipsis}
       label: item-title;
 
       flex-grow: 1;
       margin: 0;
       text-align: initial;
+      transform: font-size 0.2s;
 
       @media screen and (max-width: 40rem) {
-        font-size: 1rem;
+        height: 4rem;
+        font-size: 2rem;
+        line-height: 2rem;
+        letter-spacing: -0.1rem;
       }
       @media screen and (min-width: 40rem) and (max-width: 60rem) {
-        font-size: 2rem;
+        ${commonStyles.ellipsis}
+        font-size: 1.75rem;
       }
       @media screen and (min-width: 60rem) {
+        ${commonStyles.ellipsis}
         font-size: 2rem;
       }
     `,
@@ -147,12 +181,10 @@ export const styles = {
       label: item-artist;
 
       @media screen and (max-width: 40rem) {
-        font-size: 0.5rem;
+        font-size: 1.5rem;
+        letter-spacing: -0.1rem;
       }
-      @media screen and (min-width: 40rem) and (max-width: 60rem) {
-        font-size: 1rem;
-      }
-      @media screen and (min-width: 60rem) {
+      @media screen and (min-width: 40rem) {
         font-size: 1rem;
       }
     `,
@@ -173,24 +205,21 @@ export const styles = {
     video: css`
       label: item-video;
 
-      display: none;
+      max-width: 100%;
       border: none;
       outline: none;
       filter: blur(0rem);
       transition:
         width 0.2s,
         height 0.2s,
-        filter 0.2s;
-    `,
-    showVideo: css`
-      label: item-show-video;
-
-      display: inherit;
+        filter 0.2s,
+        transform 0.2s;
     `,
     loadingVideo: css`
       label: item-loading-video;
 
       filter: blur(1rem);
+      transform: scale(0.9);
     `,
 
     bottomContainer: css`
@@ -199,12 +228,7 @@ export const styles = {
 
       justify-content: space-between;
       align-items: center;
-      display: none;
-    `,
-    showBottomContainer: css`
-      label: item-show-bottom-container;
-
-      display: inherit;
+      padding: 1rem;
     `,
   },
 };
