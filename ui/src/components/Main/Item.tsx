@@ -13,8 +13,8 @@ export const Item = ({ item }: { item: MusicItem }) => {
   useEffect(() => {
     if (expandableRef.current) {
       expandableRef.current.open = false;
-      removeItemsCache();
     }
+    removeItemsCache();
   }, [item, removeItemsCache]);
 
   const onToggle = useCallback(

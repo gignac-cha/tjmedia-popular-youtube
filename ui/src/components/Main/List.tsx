@@ -8,13 +8,15 @@ import { styles } from './styles';
 
 const SuspenseContainer = () => {
   const { query, cacheItems } = useQueryContext();
-  const { data: items } = useMusicListQuery(query);
+  const { data: items, isStale: isCachedItems } = useMusicListQuery(query);
 
   useEffect(() => {
-    if (items) {
-      cacheItems(items);
+    if (!items) {
+      return;
     }
-  }, [cacheItems, items]);
+
+    cacheItems(items);
+  }, [cacheItems, isCachedItems, items]);
 
   return <></>;
 };

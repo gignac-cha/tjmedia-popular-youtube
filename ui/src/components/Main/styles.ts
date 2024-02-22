@@ -159,13 +159,15 @@ export const styles = {
       flex-grow: 1;
       margin: 0;
       text-align: initial;
-      transform: font-size 0.2s;
+      transition:
+        font-size 0.2s,
+        letter-spacing 0.2s;
 
       @media screen and (max-width: 40rem) {
         height: 4rem;
         font-size: 2rem;
         line-height: 2rem;
-        letter-spacing: -0.1rem;
+        letter-spacing: -0.2rem;
       }
       @media screen and (min-width: 40rem) and (max-width: 60rem) {
         ${commonStyles.ellipsis}
@@ -180,9 +182,13 @@ export const styles = {
       ${commonStyles.ellipsis}
       label: item-artist;
 
+      transition:
+        font-size 0.2s,
+        letter-spacing 0.2s;
+
       @media screen and (max-width: 40rem) {
         font-size: 1.5rem;
-        letter-spacing: -0.1rem;
+        letter-spacing: -0.2rem;
       }
       @media screen and (min-width: 40rem) {
         font-size: 1rem;
