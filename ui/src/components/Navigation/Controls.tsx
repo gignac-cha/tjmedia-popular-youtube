@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQueryClient } from '@tanstack/react-query';
@@ -52,8 +51,8 @@ export const Controls = () => {
 
   const onClicks = {
     query: useCallback(
-      async (event: React.MouseEvent<HTMLButtonElement>) => {
-        await queryClient.invalidateQueries({
+      () =>
+        queryClient.invalidateQueries({
           queryKey: [
             'tjmedia-music-list',
             query.strType,
@@ -62,16 +61,10 @@ export const Controls = () => {
             query.EYY,
             query.EMM,
           ],
-        });
-      },
+        }),
       [query.EMM, query.EYY, query.SMM, query.SYY, query.strType, queryClient],
     ),
-    reset: useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        resetQuery();
-      },
-      [resetQuery],
-    ),
+    reset: useCallback(() => resetQuery(), [resetQuery]),
   };
 
   const today = useMemo(() => dayjs(), []);
