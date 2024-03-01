@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 
 export const styles = {
   container: css`
-    label: loading-container;
+    label: common-loading-container;
 
     display: flex;
     justify-content: center;

@@ -1,7 +1,7 @@
 import { Suspense, useEffect } from 'react';
 import { useVideoContext } from '../../contexts/VideoContext';
 import { useVideoListQuery } from '../../queries/useYouTubeQuery';
-import { Loading } from '../Loading/Loading';
+import { Loading } from '../common/Loading/Loading';
 import { VideoFrame } from './VideoFrame';
 import { styles } from './styles';
 
