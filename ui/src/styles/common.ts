@@ -7,7 +7,10 @@ const control = css`
   border-radius: 4px;
   font-size: 1rem;
   font-weight: bold;
-  transition: width 0.2s, background-color 0.2s, outline 0.2s;
+  transition:
+    width 0.2s,
+    background-color 0.2s,
+    outline 0.2s;
 
   &:hover {
     background-color: #eee;
@@ -34,6 +37,7 @@ export const commonStyles = {
     flex-direction: row;
   `,
 
+  control,
   selectContainer: css`
     label: common-select-container;
 
@@ -41,7 +45,10 @@ export const commonStyles = {
     padding-right: 1rem;
     outline: 1px solid gray;
     border-radius: 4px;
-    transition: width 0.2s, background-color 0.2s, outline 0.2s;
+    transition:
+      width 0.2s,
+      background-color 0.2s,
+      outline 0.2s;
 
     &:hover {
       background-color: #eee;
