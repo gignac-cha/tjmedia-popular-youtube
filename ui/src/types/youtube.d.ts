@@ -8,7 +8,7 @@ declare interface YtThumbnail {
   height: number;
 }
 declare interface YtVideoRenderer {
-  videoId: number;
+  videoId: string;
   thumbnail: {
     thumbnails: YtThumbnail[];
   };
@@ -16,7 +16,7 @@ declare interface YtVideoRenderer {
     runs: [
       {
         text: string;
-      }
+      },
     ];
   };
 }
@@ -31,10 +31,10 @@ declare interface YtInitialData {
                 contents: [
                   {
                     videoRenderer: YtVideoRenderer;
-                  }
+                  },
                 ];
               };
-            }
+            },
           ];
         };
       };
@@ -43,7 +43,7 @@ declare interface YtInitialData {
 }
 
 declare interface VideoItem {
-  videoId: number;
+  videoId: string;
   title: string;
   width: number;
   height: number;

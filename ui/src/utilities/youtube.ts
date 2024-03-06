@@ -1,7 +1,7 @@
 import { parseDOM } from './htmlParser';
 
 const getVideoItems = function* (videoRenderer: YtVideoRenderer) {
-  const videoId: number = videoRenderer.videoId;
+  const videoId: string = videoRenderer.videoId;
   const { width, height }: YtThumbnail =
     videoRenderer.thumbnail.thumbnails.reduce(
       (previousValue: YtThumbnail, currentValue: YtThumbnail) => {
