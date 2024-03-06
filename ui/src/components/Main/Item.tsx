@@ -2,7 +2,6 @@ import { SyntheticEvent, useCallback, useEffect, useRef } from 'react';
 import { useVideoContext } from '../../contexts/VideoContext';
 import { Details } from '../common/Details/Details';
 import { Video } from './Video';
-import { VideoControls } from './VideoControls';
 import { styles } from './styles';
 
 export const Item = ({ item }: { item: MusicItem }) => {
@@ -75,7 +74,6 @@ export const Item = ({ item }: { item: MusicItem }) => {
           </section>
         </Details.Summary>
         <Video item={item} />
-        <VideoControls />
       </Details>
     </li>
   );

@@ -36,11 +36,16 @@ export const VideoFrame = ({ item }: { item: MusicItem }) => {
   );
 
   return (
-    <iframe
-      css={[styles.item.video, isVideoLoading && styles.item.loadingVideo]}
-      title={`${item.artist} - ${item.title}`}
-      {...video}
-      onLoad={onLoad}
-    ></iframe>
+    <section css={styles.video.frame.container}>
+      <iframe
+        css={[
+          styles.video.frame.iframe,
+          isVideoLoading && styles.video.frame.loadingIframe,
+        ]}
+        title={`${item.artist} - ${item.title}`}
+        {...video}
+        onLoad={onLoad}
+      ></iframe>
+    </section>
   );
 };

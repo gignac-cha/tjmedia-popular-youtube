@@ -192,43 +192,53 @@ export const styles = {
         font-size: 1rem;
       }
     `,
+  },
 
-    middleContainer: css`
+  video: {
+    container: css`
       ${commonStyles.row}
-      label: item-middle-container;
+      label: video-container;
 
-      justify-content: center;
-      align-items: center;
       height: 0;
     `,
-    showMiddleContainer: css`
-      label: item-show-middle-container;
+    showContainer: css`
+      label: video-show-container;
 
       height: fit-content;
     `,
-    video: css`
-      label: item-video;
 
-      max-width: 100%;
-      border: none;
-      outline: none;
-      filter: blur(0rem);
-      transition:
-        width 0.2s,
-        height 0.2s,
-        filter 0.2s,
-        transform 0.2s;
-    `,
-    loadingVideo: css`
-      label: item-loading-video;
+    frame: {
+      container: css`
+        ${commonStyles.row}
+        label: video-frame-container;
 
-      filter: blur(1rem);
-      transform: scale(0.9);
-    `,
+        justify-content: center;
+        align-items: center;
+      `,
+      iframe: css`
+        label: video-frame-iframe;
 
-    bottomContainer: css`
+        max-width: 100%;
+        border: none;
+        outline: none;
+        filter: blur(0rem);
+        transition:
+          width 0.2s,
+          height 0.2s,
+          filter 0.2s,
+          transform 0.2s;
+      `,
+      loadingIframe: css`
+        label: video-frame-loading-iframe;
+
+        filter: blur(1rem);
+        transform: scale(0.9);
+      `,
+    },
+
+    controlsContainer: css`
       ${commonStyles.column}
-      label: item-bottom-container;
+      label: video-controls-container;
 
       justify-content: space-between;
       align-items: center;
