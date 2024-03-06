@@ -77,7 +77,7 @@ export const Controls = () => {
         <Select
           css={styles.controls.selectContainer}
           title="가요 / POP / JPOP 선택"
-          value={type}
+          defaultValue={type}
           onChange={onChanges.type}
         >
           <Select.Option value={'1'}>가요</Select.Option>
@@ -87,7 +87,7 @@ export const Controls = () => {
         <InputDate
           css={styles.controls.date}
           type="month"
-          value={start}
+          defaultValue={start}
           max={today}
           title="검색 범위 처음"
           onChange={onChanges.start}
@@ -95,7 +95,7 @@ export const Controls = () => {
         <InputDate
           css={styles.controls.date}
           type="month"
-          value={end}
+          defaultValue={end}
           max={today}
           title="검색 범위 끝"
           onChange={onChanges.end}

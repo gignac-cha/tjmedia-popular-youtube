@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 import { InputDate } from './InputDate';
 
 export default {
-  title: 'InputDate',
   component: InputDate,
 } satisfies Meta;
 
@@ -18,7 +17,7 @@ export const WithTypeWithEmptyDate: StoryObj<typeof InputDate> = {
         grid-template-columns: 1fr 1fr 1fr;
       `}
     >
-      <p>
+      <section>
         <h2>Month</h2>
         <h3>
           <small>
@@ -26,8 +25,8 @@ export const WithTypeWithEmptyDate: StoryObj<typeof InputDate> = {
           </small>
         </h3>
         <InputDate type="month" />
-      </p>
-      <p>
+      </section>
+      <section>
         <h2>Week</h2>
         <h3>
           <small>
@@ -35,8 +34,8 @@ export const WithTypeWithEmptyDate: StoryObj<typeof InputDate> = {
           </small>
         </h3>
         <InputDate type="week" />
-      </p>
-      <p>
+      </section>
+      <section>
         <h2>Date</h2>
         <h3>
           <small>
@@ -44,7 +43,7 @@ export const WithTypeWithEmptyDate: StoryObj<typeof InputDate> = {
           </small>
         </h3>
         <InputDate type="date" />
-      </p>
+      </section>
     </section>
   ),
 };
@@ -57,33 +56,33 @@ export const WithTypeWithDateWithString: StoryObj<typeof InputDate> = {
         grid-template-columns: 1fr 1fr 1fr;
       `}
     >
-      <p>
+      <section>
         <h2>Month</h2>
         <h3>
           <small>
             (type: <code>month</code>)
           </small>
         </h3>
-        <InputDate type="month" value={'2000-01'} />
-      </p>
-      <p>
+        <InputDate type="month" defaultValue={'2000-01'} />
+      </section>
+      <section>
         <h2>Week</h2>
         <h3>
           <small>
             (type: <code>week</code>)
           </small>
         </h3>
-        <InputDate type="week" value={'2000-W01'} />
-      </p>
-      <p>
+        <InputDate type="week" defaultValue={'2000-W01'} />
+      </section>
+      <section>
         <h2>Date</h2>
         <h3>
           <small>
             (type: <code>date</code>)
           </small>
         </h3>
-        <InputDate type="date" value={'2000-01-01'} />
-      </p>
+        <InputDate type="date" defaultValue={'2000-01-01'} />
+      </section>
     </section>
   ),
 };
@@ -96,33 +95,33 @@ export const WithTypeWithDateWithDayjs = {
         grid-template-columns: 1fr 1fr 1fr;
       `}
     >
-      <p>
+      <section>
         <h2>Month</h2>
         <h3>
           <small>
             (type: <code>month</code>)
           </small>
         </h3>
-        <InputDate type="month" value={dayjs()} />
-      </p>
-      <p>
+        <InputDate type="month" defaultValue={dayjs()} />
+      </section>
+      <section>
         <h2>Week</h2>
         <h3>
           <small>
             (type: <code>week</code>)
           </small>
         </h3>
-        <InputDate type="week" value={dayjs()} />
-      </p>
-      <p>
+        <InputDate type="week" defaultValue={dayjs()} />
+      </section>
+      <section>
         <h2>Date</h2>
         <h3>
           <small>
             (type: <code>date</code>)
           </small>
         </h3>
-        <InputDate type="date" value={dayjs()} />
-      </p>
+        <InputDate type="date" defaultValue={dayjs()} />
+      </section>
     </section>
   ),
 };

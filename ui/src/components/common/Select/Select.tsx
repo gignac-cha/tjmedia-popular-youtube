@@ -1,5 +1,4 @@
 import {
-  HTMLAttributes,
   OptionHTMLAttributes,
   PropsWithChildren,
   SelectHTMLAttributes,
@@ -18,14 +17,12 @@ export const Select = Object.assign(
     children,
     className,
     title,
-    value,
+    defaultValue,
     onChange,
-  }: PropsWithChildren<
-    HTMLAttributes<HTMLElement> & SelectHTMLAttributes<HTMLSelectElement>
-  >) => {
+  }: PropsWithChildren<SelectHTMLAttributes<HTMLSelectElement>>) => {
     return (
       <section css={styles.container} {...{ className, title }}>
-        <select css={styles.select} {...{ value, onChange }}>
+        <select css={styles.select} {...{ defaultValue, onChange }}>
           {children}
         </select>
       </section>

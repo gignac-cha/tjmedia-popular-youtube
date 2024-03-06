@@ -18,32 +18,33 @@ const convertDayjsByType = (type: InputDateType, value: Dayjs) => {
 export const InputDate = ({
   className,
   type = 'date',
-  value: rawValue,
+  defaultValue: rawDefaultValue,
   max: rawMax,
   title,
   onChange,
-}: Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'max'> & {
+}: Omit<InputHTMLAttributes<HTMLInputElement>, 'defaultValue' | 'max'> & {
   type: InputDateType;
 } & (
-    | { value?: InputHTMLAttributes<HTMLInputElement>['value'] }
-    | { value?: Dayjs }
+    | { defaultValue?: InputHTMLAttributes<HTMLInputElement>['defaultValue'] }
+    | { defaultValue?: Dayjs }
   ) &
   (
     | { max?: InputHTMLAttributes<HTMLInputElement>['max'] }
     | { max?: Dayjs }
   )) => {
-  const value =
-    typeof rawValue === 'object' && 'format' in rawValue
-      ? convertDayjsByType(type, rawValue)
-      : rawValue;
+  const defaultValue =
+    typeof rawDefaultValue === 'object' && 'format' in rawDefaultValue
+      ? convertDayjsByType(type, rawDefaultValue)
+      : `${rawDefaultValue}`;
   const max =
     typeof rawMax === 'object' && 'format' in rawMax
       ? convertDayjsByType(type, rawMax)
       : rawMax;
   return (
     <input
+      ref={(ref: HTMLInputElement) => ref && (ref.value = defaultValue)}
       css={styles.container}
-      {...{ className, type, value, max, title, onChange }}
+      {...{ className, type, defaultValue, max, title, onChange }}
     />
   );
 };
