@@ -1,5 +1,6 @@
 import { SyntheticEvent, useCallback, useEffect, useRef } from 'react';
 import { useVideoContext } from '../../contexts/VideoContext';
+import { Details } from '../common/Details/Details';
 import { Video } from './Video';
 import { VideoControls } from './VideoControls';
 import { styles } from './styles';
@@ -55,7 +56,7 @@ export const Item = ({ item }: { item: MusicItem }) => {
 
   return (
     <li ref={itemRef} css={styles.item.container}>
-      <details
+      <Details
         ref={expandableRef}
         css={[
           styles.item.expandable.container,
@@ -64,7 +65,7 @@ export const Item = ({ item }: { item: MusicItem }) => {
         title={`${item.index}위: ${item.artist} - ${item.title}`}
         onToggle={onToggle}
       >
-        <summary css={styles.item.topContainer}>
+        <Details.Summary css={styles.item.topContainer}>
           <section css={styles.item.leftContainer}>
             <sup>{item.index}</sup>
             <h1 css={styles.item.title}>{item.title}</h1>
@@ -72,10 +73,10 @@ export const Item = ({ item }: { item: MusicItem }) => {
           <section css={styles.item.rightContainer}>
             <sub css={styles.item.artist}>{item.artist}</sub>
           </section>
-        </summary>
+        </Details.Summary>
         <Video item={item} />
         <VideoControls />
-      </details>
+      </Details>
     </li>
   );
 };
