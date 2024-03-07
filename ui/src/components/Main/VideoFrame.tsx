@@ -2,23 +2,27 @@ import { SyntheticEvent, useCallback, useMemo } from 'react';
 import { useVideoContext } from '../../contexts/VideoContext';
 import { styles } from './styles';
 
-export const VideoFrame = ({ item }: { item: MusicItem }) => {
-  const { cachedItems, selectedIndex, isVideoLoading, videoLoaded } =
-    useVideoContext();
+export const VideoFrame = ({
+  musicItem,
+  videoItem,
+}: {
+  musicItem: MusicItem;
+  videoItem?: VideoItem;
+}) => {
+  const { isVideoLoading, videoLoaded } = useVideoContext();
 
   const video = useMemo(() => {
-    if (cachedItems.length === 0) {
+    if (!videoItem) {
       return;
     }
-
-    const { videoId, title, width, height } = cachedItems[selectedIndex];
+    const { videoId, title, width, height } = videoItem;
     const src = `https://www.youtube.com/embed/${videoId}`;
     return { src, title, width, height };
-  }, [cachedItems, selectedIndex]);
+  }, [videoItem]);
 
   const onLoad = useCallback(
     (event: SyntheticEvent<HTMLIFrameElement>) => {
-      if (cachedItems.length === 0) {
+      if (!videoItem) {
         return;
       } else if (!event.currentTarget.parentElement) {
         return;
@@ -26,13 +30,13 @@ export const VideoFrame = ({ item }: { item: MusicItem }) => {
 
       const { clientWidth } = event.currentTarget.parentElement;
       event.currentTarget.setAttribute('width', `${clientWidth}`);
-      const { width, height } = cachedItems[selectedIndex];
+      const { width, height } = videoItem;
       const clientHeight = clientWidth * (height / width);
       event.currentTarget.setAttribute('height', `${clientHeight}`);
 
       videoLoaded();
     },
-    [cachedItems, selectedIndex, videoLoaded],
+    [videoItem, videoLoaded],
   );
 
   return (
@@ -42,7 +46,7 @@ export const VideoFrame = ({ item }: { item: MusicItem }) => {
           styles.video.frame.iframe,
           isVideoLoading && styles.video.frame.loadingIframe,
         ]}
-        title={`${item.artist} - ${item.title}`}
+        title={`${musicItem.artist} - ${musicItem.title}`}
         {...video}
         onLoad={onLoad}
       ></iframe>

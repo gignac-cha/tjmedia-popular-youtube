@@ -1,4 +1,4 @@
-import { SyntheticEvent, useCallback, useEffect, useRef } from 'react';
+import { SyntheticEvent, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVideoContext } from '../../contexts/VideoContext';
 import { Details } from '../common/Details/Details';
 import { Video } from './Video';
@@ -11,6 +11,9 @@ export const Item = ({ item }: { item: MusicItem }) => {
     expandItem,
     collapseItem,
     removeItemsCache,
+    isPrepared,
+    selectedIndex,
+    cachedItems,
   } = useVideoContext();
 
   const itemRef = useRef<HTMLLIElement>(null);
@@ -53,6 +56,11 @@ export const Item = ({ item }: { item: MusicItem }) => {
     [collapseItem, expandItem],
   );
 
+  const videoItem = useMemo(
+    () => (cachedItems.length > 0 ? cachedItems[selectedIndex] : undefined),
+    [cachedItems, selectedIndex],
+  );
+
   return (
     <li ref={itemRef} css={styles.item.container}>
       <Details
@@ -73,7 +81,10 @@ export const Item = ({ item }: { item: MusicItem }) => {
             <sub css={styles.item.artist}>{item.artist}</sub>
           </section>
         </Details.Summary>
-        <Video item={item} />
+        <Video item={item}>
+          {isPrepared && <Video.Frame musicItem={item} videoItem={videoItem} />}
+          {isPrepared && <Video.Controls />}
+        </Video>
       </Details>
     </li>
   );
