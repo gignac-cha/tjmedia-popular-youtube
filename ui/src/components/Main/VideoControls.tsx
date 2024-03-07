@@ -12,8 +12,8 @@ export const VideoControls = () => {
     <section css={styles.video.controlsContainer}>
       <Button
         onClick={previousItem}
-        disabled={selectedIndex === 0}
         title="이전 영상"
+        disabled={!(selectedIndex > 0)}
       >
         <FontAwesomeIcon icon={faBackward} /> 이전
       </Button>
@@ -26,8 +26,8 @@ export const VideoControls = () => {
       )}
       <Button
         onClick={nextItem}
-        disabled={selectedIndex === cachedItems.length - 1}
         title="다음 영상"
+        disabled={!(selectedIndex < cachedItems.length - 1)}
       >
         <FontAwesomeIcon icon={faForward} /> 다음
       </Button>
