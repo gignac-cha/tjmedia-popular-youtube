@@ -7,7 +7,7 @@ import { ChangeEvent, useCallback, useMemo } from 'react';
 import { useQueryContext } from '../../contexts/QueryContext';
 import { Button } from '../common/Button/Button';
 import { InputDate } from '../common/InputDate/InputDate';
-import { Select } from '../common/Select/Select';
+import { InputRadioGroup } from '../common/InputRadioGroup/InputRadioGroup';
 import { styles } from './styles';
 
 export const Controls = () => {
@@ -24,7 +24,7 @@ export const Controls = () => {
 
   const onChanges = {
     type: useCallback(
-      (event: ChangeEvent<HTMLSelectElement>) => {
+      (event: ChangeEvent<HTMLInputElement>) => {
         switch (event.currentTarget.value) {
           case '1':
           case '2':
@@ -73,17 +73,16 @@ export const Controls = () => {
 
   return (
     <section css={styles.controls.container}>
+      <InputRadioGroup
+        name="type"
+        defaultValue={type}
+        onChange={onChanges.type}
+      >
+        <InputRadioGroup.Option value={'1'}>가요</InputRadioGroup.Option>
+        <InputRadioGroup.Option value={'2'}>POP</InputRadioGroup.Option>
+        <InputRadioGroup.Option value={'3'}>JPOP</InputRadioGroup.Option>
+      </InputRadioGroup>
       <section css={styles.controls.queryContainer}>
-        <Select
-          css={styles.controls.selectContainer}
-          title="가요 / POP / JPOP 선택"
-          defaultValue={type}
-          onChange={onChanges.type}
-        >
-          <Select.Option value={'1'}>가요</Select.Option>
-          <Select.Option value={'2'}>POP</Select.Option>
-          <Select.Option value={'3'}>JPOP</Select.Option>
-        </Select>
         <InputDate
           css={styles.controls.date}
           type="month"

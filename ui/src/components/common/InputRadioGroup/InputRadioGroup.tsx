@@ -4,13 +4,19 @@ import {
   createContext,
   useContext,
 } from 'react';
+import { styles } from './styles';
 
-const defaultValue: InputHTMLAttributes<HTMLInputElement> = {};
+const defaultContextValue: InputHTMLAttributes<HTMLInputElement> & {
+  position?: 'left' | 'right';
+} = {
+  position: 'right',
+};
 
-const InputRadioContext = createContext<typeof defaultValue>(defaultValue);
+const InputRadioContext =
+  createContext<typeof defaultContextValue>(defaultContextValue);
 
 const Label = ({ children }: PropsWithChildren) => {
-  return <label>{children}</label>;
+  return <label css={styles.option.label}>{children}</label>;
 };
 
 const InputRadio = ({
@@ -21,6 +27,7 @@ const InputRadio = ({
 }: InputHTMLAttributes<HTMLInputElement>) => {
   return (
     <input
+      css={styles.option.input}
       type="radio"
       name={name}
       value={value}
@@ -34,17 +41,19 @@ const Option = ({
   children,
   value,
 }: PropsWithChildren<InputHTMLAttributes<HTMLInputElement>>) => {
-  const { name, defaultValue, onChange } = useContext(InputRadioContext);
+  const { name, defaultValue, onChange, position } =
+    useContext(InputRadioContext);
 
   return (
     <Label>
+      {position === 'left' && children}
       <InputRadio
         name={name}
         value={value}
         defaultChecked={value === defaultValue}
         onChange={onChange}
       />
-      {children}
+      {position === 'right' && children}
     </Label>
   );
 };
@@ -55,10 +64,13 @@ export const InputRadioGroup = Object.assign(
     name,
     defaultValue,
     onChange,
-  }: PropsWithChildren<InputHTMLAttributes<HTMLInputElement>>) => {
+    position = defaultContextValue.position,
+  }: PropsWithChildren<typeof defaultContextValue>) => {
     return (
-      <InputRadioContext.Provider value={{ name, defaultValue, onChange }}>
-        <section>{children}</section>
+      <InputRadioContext.Provider
+        value={{ name, defaultValue, onChange, position }}
+      >
+        <section css={styles.container}>{children}</section>
       </InputRadioContext.Provider>
     );
   },
