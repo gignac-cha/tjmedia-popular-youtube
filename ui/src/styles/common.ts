@@ -39,6 +39,11 @@ export const commonStyles = {
     display: flex;
     flex-direction: row;
   `,
+  grid: css`
+    label: common-grid;
+
+    display: grid;
+  `,
 
   control,
   focusableControl,

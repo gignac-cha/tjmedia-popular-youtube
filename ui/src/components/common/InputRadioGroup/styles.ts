@@ -3,11 +3,11 @@ import { commonStyles } from '../../../styles/common';
 
 export const styles = {
   container: css`
-    ${commonStyles.column}
+    ${commonStyles.grid}
     ${commonStyles.control}
     label: common-input-radio-group-container;
 
-    justify-content: space-between;
+    grid-template-columns: 1fr 1fr 1fr;
     padding: initial;
   `,
   option: {
