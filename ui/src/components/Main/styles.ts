@@ -120,7 +120,7 @@ export const styles = {
       }
     `,
     expandButton: css`
-      ${commonStyles.emptyButton}
+      ${commonStyles.control}
       ${commonStyles.column}
       label: item-expand-button;
 

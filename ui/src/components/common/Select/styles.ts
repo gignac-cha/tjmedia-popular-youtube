@@ -25,7 +25,7 @@ export const styles = {
     }
   `,
   select: css`
-    ${commonStyles.control}
+    ${commonStyles.focusableControl}
     label: common-select;
 
     flex-grow: 1;

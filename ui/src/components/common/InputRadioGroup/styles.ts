@@ -4,6 +4,7 @@ import { commonStyles } from '../../../styles/common';
 export const styles = {
   container: css`
     ${commonStyles.column}
+    ${commonStyles.control}
     label: common-input-radio-group-container;
 
     justify-content: space-between;
@@ -11,6 +12,7 @@ export const styles = {
   `,
   option: {
     label: css`
+      ${commonStyles.focusableControl}
       ${commonStyles.column}
       label: common-input-radio-group-option-label;
 

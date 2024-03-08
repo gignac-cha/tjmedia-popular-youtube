@@ -3,7 +3,7 @@ import { commonStyles } from '../../../styles/common';
 
 export const styles = {
   container: css`
-    ${commonStyles.control}
+    ${commonStyles.focusableControl}
     label: common-button-container;
 
     background-color: #eee;
