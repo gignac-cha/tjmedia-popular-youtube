@@ -9,6 +9,7 @@ export const styles = {
 
     grid-template-columns: 1fr 1fr 1fr;
     padding: initial;
+    overflow: hidden;
   `,
   option: {
     label: css`
@@ -22,6 +23,13 @@ export const styles = {
       background-color: white;
       outline: initial;
       border-radius: initial;
+
+      &:has(input[type='radio']:focus) {
+        outline: initial;
+      }
+      &:has(input[type='radio']:active) {
+        outline: initial;
+      }
 
       &:has(input[type='radio']:checked) {
         background-color: #333;
