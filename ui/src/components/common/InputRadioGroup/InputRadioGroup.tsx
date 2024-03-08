@@ -1,15 +1,13 @@
 import {
-  Children,
-  ComponentProps,
   InputHTMLAttributes,
-  JSXElementConstructor,
   PropsWithChildren,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
-  cloneElement,
-  useMemo,
+  createContext,
+  useContext,
 } from 'react';
+
+const defaultValue: InputHTMLAttributes<HTMLInputElement> = {};
+
+const InputRadioContext = createContext<typeof defaultValue>(defaultValue);
 
 const Label = ({ children }: PropsWithChildren) => {
   return <label>{children}</label>;
@@ -34,33 +32,22 @@ const InputRadio = ({
 
 const Option = ({
   children,
-  name,
   value,
-  defaultChecked,
-  onChange,
 }: PropsWithChildren<InputHTMLAttributes<HTMLInputElement>>) => {
+  const { name, defaultValue, onChange } = useContext(InputRadioContext);
+
   return (
     <Label>
       <InputRadio
         name={name}
         value={value}
-        defaultChecked={defaultChecked}
+        defaultChecked={value === defaultValue}
         onChange={onChange}
       />
       {children}
     </Label>
   );
 };
-
-const isReactElement = <T,>(
-  element:
-    | string
-    | number
-    | ReactElement<T, string | JSXElementConstructor<T>>
-    | Iterable<ReactNode>
-    | ReactPortal,
-): element is ReactElement<T> =>
-  typeof element === 'object' && 'props' in element;
 
 export const InputRadioGroup = Object.assign(
   ({
@@ -69,21 +56,11 @@ export const InputRadioGroup = Object.assign(
     defaultValue,
     onChange,
   }: PropsWithChildren<InputHTMLAttributes<HTMLInputElement>>) => {
-    const newChildren = useMemo(
-      () =>
-        Children.toArray(children).map((child) => {
-          if (!isReactElement<ComponentProps<typeof Option>>(child)) {
-            return child;
-          }
-          return cloneElement(child, {
-            name,
-            defaultChecked: child.props.value === defaultValue,
-            onChange,
-          });
-        }),
-      [children, defaultValue, name, onChange],
+    return (
+      <InputRadioContext.Provider value={{ name, defaultValue, onChange }}>
+        <section>{children}</section>
+      </InputRadioContext.Provider>
     );
-    return <section>{newChildren}</section>;
   },
   { Option },
 );
