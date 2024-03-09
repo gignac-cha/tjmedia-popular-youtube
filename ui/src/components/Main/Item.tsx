@@ -1,40 +1,25 @@
 import { SyntheticEvent, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVideoContext } from '../../contexts/VideoContext';
+import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
 import { Details } from '../common/Details/Details';
 import { Video } from './Video';
 import { styles } from './styles';
 
 export const Item = ({ item }: { item: MusicItem }) => {
   const {
-    prepareVideoFrame,
     isExpanded,
     expandItem,
     collapseItem,
     removeItemsCache,
-    isPrepared,
     selectedIndex,
     cachedItems,
   } = useVideoContext();
 
-  const itemRef = useRef<HTMLLIElement>(null);
-
-  useEffect(() => {
-    if (itemRef.current) {
-      const observer = new IntersectionObserver(
-        (entries: IntersectionObserverEntry[]) => {
-          const isIntersected = entries.some(
-            (entry: IntersectionObserverEntry) => entry.isIntersecting,
-          );
-          if (isIntersected) {
-            prepareVideoFrame();
-          }
-        },
-      );
-      const target = itemRef.current;
-      observer.observe(target);
-      return () => target && observer.unobserve(target);
-    }
-  }, [prepareVideoFrame]);
+  const {
+    isIntersected: isPrepared,
+    observe,
+    unobserve,
+  } = useIntersectionObserver();
 
   const expandableRef = useRef<HTMLDetailsElement>(null);
 
@@ -43,7 +28,8 @@ export const Item = ({ item }: { item: MusicItem }) => {
       expandableRef.current.open = false;
     }
     removeItemsCache();
-  }, [item, removeItemsCache]);
+    return () => unobserve();
+  }, [removeItemsCache, unobserve]);
 
   const onToggle = useCallback(
     (event: SyntheticEvent<HTMLDetailsElement>) => {
@@ -62,7 +48,7 @@ export const Item = ({ item }: { item: MusicItem }) => {
   );
 
   return (
-    <li ref={itemRef} css={styles.item.container}>
+    <li ref={(ref) => ref && observe(ref)} css={styles.item.container}>
       <Details
         ref={expandableRef}
         css={[

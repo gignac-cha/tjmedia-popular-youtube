@@ -9,7 +9,6 @@ import { initialState, videoReducer } from '../reducers/videoReducer';
 import { doNothing } from '../utilities/common';
 
 export const defaultValue: typeof initialState & {
-  prepareVideoFrame: () => void;
   expandItem: () => void;
   collapseItem: () => void;
   cacheItems: (items: VideoItem[]) => void;
@@ -19,7 +18,6 @@ export const defaultValue: typeof initialState & {
   videoLoaded: () => void;
 } = {
   ...initialState,
-  prepareVideoFrame: doNothing,
   expandItem: doNothing,
   collapseItem: doNothing,
   cacheItems: doNothing,
@@ -34,10 +32,6 @@ const VideoContext = createContext<typeof defaultValue>(defaultValue);
 export const VideoContextProvider = ({ children }: PropsWithChildren) => {
   const [state, dispatch] = useReducer(videoReducer, initialState);
 
-  const prepareVideoFrame = useCallback(
-    () => !state.isPrepared && dispatch({ name: 'PREPARE_VIDEO_FRAME' }),
-    [state.isPrepared],
-  );
   const expandItem = useCallback(() => dispatch({ name: 'EXPAND_ITEM' }), []);
   const collapseItem = useCallback(
     () => dispatch({ name: 'COLLAPSE_ITEM' }),
@@ -62,7 +56,6 @@ export const VideoContextProvider = ({ children }: PropsWithChildren) => {
     <VideoContext.Provider
       value={{
         ...state,
-        prepareVideoFrame,
         expandItem,
         collapseItem,
         cacheItems,

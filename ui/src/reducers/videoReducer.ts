@@ -1,13 +1,11 @@
 import { Reducer } from 'react';
 
 export const initialState: {
-  isPrepared: boolean;
   isExpanded: boolean;
   cachedItems: VideoItem[];
   selectedIndex: number;
   isVideoLoading: boolean;
 } = {
-  isPrepared: false,
   isExpanded: false,
   cachedItems: [],
   selectedIndex: 0,
@@ -15,7 +13,6 @@ export const initialState: {
 };
 
 type VideoAction =
-  | { name: 'PREPARE_VIDEO_FRAME' }
   | { name: 'EXPAND_ITEM' }
   | { name: 'COLLAPSE_ITEM' }
   | { name: 'CACHE_ITEMS'; items: VideoItem[] }
@@ -29,8 +26,6 @@ export const videoReducer: Reducer<typeof initialState, VideoAction> = (
   action,
 ) => {
   switch (action.name) {
-    case 'PREPARE_VIDEO_FRAME':
-      return { ...prevState, isPrepared: true };
     case 'EXPAND_ITEM':
       return { ...prevState, isExpanded: true };
     case 'COLLAPSE_ITEM':
