@@ -1,4 +1,4 @@
-import { SyntheticEvent, useCallback, useEffect, useMemo, useRef } from 'react';
+import { SyntheticEvent, useCallback, useEffect, useMemo } from 'react';
 import { useVideoContext } from '../../contexts/VideoContext';
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
 import { Details } from '../common/Details/Details';
@@ -21,15 +21,17 @@ export const Item = ({ item }: { item: MusicItem }) => {
     unobserve,
   } = useIntersectionObserver();
 
-  const expandableRef = useRef<HTMLDetailsElement>(null);
-
   useEffect(() => {
-    if (expandableRef.current) {
-      expandableRef.current.open = false;
-    }
     removeItemsCache();
     return () => unobserve();
   }, [removeItemsCache, unobserve]);
+
+  const expandableRefCallback = useCallback(
+    (ref: HTMLDetailsElement) => item && ref && (ref.open = false),
+    // NOTE: `item` must be included in dependencies
+    // because of `open` not reset when changing `query.strType`.
+    [item],
+  );
 
   const onToggle = useCallback(
     (event: SyntheticEvent<HTMLDetailsElement>) => {
@@ -50,7 +52,7 @@ export const Item = ({ item }: { item: MusicItem }) => {
   return (
     <li ref={(ref) => ref && observe(ref)} css={styles.item.container}>
       <Details
-        ref={expandableRef}
+        ref={expandableRefCallback}
         css={[
           styles.item.expandable.container,
           isExpanded && styles.item.expandable.expanded,
@@ -67,10 +69,12 @@ export const Item = ({ item }: { item: MusicItem }) => {
             <sub css={styles.item.artist}>{item.artist}</sub>
           </section>
         </Details.Summary>
-        <Video item={item}>
-          {isPrepared && <Video.Frame musicItem={item} videoItem={videoItem} />}
-          {isPrepared && <Video.Controls />}
-        </Video>
+        {isPrepared && (
+          <Video item={item}>
+            <Video.Frame musicItem={item} videoItem={videoItem} />
+            <Video.Controls />
+          </Video>
+        )}
       </Details>
     </li>
   );
