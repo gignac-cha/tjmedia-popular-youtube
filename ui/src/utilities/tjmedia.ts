@@ -1,4 +1,4 @@
-import { parseDOM } from './htmlParser';
+import { fetch } from './fetch';
 
 export const getType = (): Type => {
   const type = localStorage.getItem('type');
@@ -32,9 +32,7 @@ const getMusicItemFromRow = (
   const artist: string = artistElement.textContent ?? 'error';
   return { index, title, artist };
 };
-const parseMusicList = (html: string) => {
-  const newDocument: Document = parseDOM(html);
-
+const parseMusicList = (newDocument: Document) => {
   const trs: HTMLTableRowElement[] = Array.from(
     newDocument.querySelectorAll<HTMLTableRowElement>('#BoardType1 tr'),
   ).slice(1);
@@ -55,7 +53,5 @@ export const getMusicList = async (
   for (const [key, value] of Object.entries(query)) {
     url.searchParams.set(key, value);
   }
-  const response: Response = await fetch(url);
-  const html: string = await response.text();
-  return parseMusicList(html);
+  return parseMusicList(await fetch.html(url));
 };

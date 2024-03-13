@@ -1,4 +1,4 @@
-import { parseDOM } from './htmlParser';
+import { fetch } from './fetch';
 
 const getVideoItems = function* (videoRenderer: YtVideoRenderer) {
   const videoId: string = videoRenderer.videoId;
@@ -15,8 +15,7 @@ const getVideoItems = function* (videoRenderer: YtVideoRenderer) {
     yield { videoId, title, width, height };
   }
 };
-const parseVideoList = (html: string) => {
-  const newDocument: Document = parseDOM(html);
+const parseVideoList = (newDocument: Document) => {
   const scripts: HTMLScriptElement[] = Array.from(
     newDocument.querySelectorAll<HTMLScriptElement>('script'),
   );
@@ -46,7 +45,5 @@ const parseVideoList = (html: string) => {
 export const getVideoList = async (item: MusicItem): Promise<VideoItem[]> => {
   const url = new URL(import.meta.env.VITE_YOUTUBE_API_URL);
   url.searchParams.set('search_query', `${item.title} ${item.artist}`);
-  const response: Response = await fetch(url);
-  const html: string = await response.text();
-  return parseVideoList(html);
+  return parseVideoList(await fetch.html(url));
 };
