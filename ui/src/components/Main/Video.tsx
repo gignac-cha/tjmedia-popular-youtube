@@ -1,7 +1,8 @@
-import { Suspense, useEffect } from 'react';
+import { PropsWithChildren, Suspense, useEffect } from 'react';
 import { useVideoContext } from '../../contexts/VideoContext';
 import { useVideoListQuery } from '../../queries/useYouTubeQuery';
-import { Loading } from '../Loading/Loading';
+import { Loading } from '../common/Loading/Loading';
+import { VideoControls } from './VideoControls';
 import { VideoFrame } from './VideoFrame';
 import { styles } from './styles';
 
@@ -17,20 +18,20 @@ const SuspenseContainer = ({ item }: { item: MusicItem }) => {
   return <></>;
 };
 
-export const Video = ({ item }: { item: MusicItem }) => {
-  const { isExpanded, isPrepared } = useVideoContext();
+export const Video = Object.assign(
+  ({ children, item }: PropsWithChildren<{ item: MusicItem }>) => {
+    const { isExpanded } = useVideoContext();
 
-  return (
-    <section
-      css={[
-        styles.item.middleContainer,
-        isExpanded && styles.item.showMiddleContainer,
-      ]}
-    >
-      <Suspense fallback={<Loading />}>
-        {isExpanded && <SuspenseContainer item={item} />}
-      </Suspense>
-      {isPrepared && <VideoFrame item={item} />}
-    </section>
-  );
-};
+    return (
+      <section
+        css={[styles.video.container, isExpanded && styles.video.showContainer]}
+      >
+        <Suspense fallback={<Loading />}>
+          {isExpanded && <SuspenseContainer item={item} />}
+        </Suspense>
+        {children}
+      </section>
+    );
+  },
+  { Frame: VideoFrame, Controls: VideoControls },
+);

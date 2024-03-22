@@ -18,15 +18,17 @@ export const styles = {
       row-gap: 1rem;
     `,
     queryContainer: css`
-      ${commonStyles.column}
+      ${commonStyles.grid}
       label: controls-query-container;
 
+      grid-template-columns: 1fr 1fr;
       column-gap: 1rem;
     `,
     buttonContainer: css`
-      ${commonStyles.column}
+      ${commonStyles.grid}
       label: controls-button-container;
 
+      grid-template-columns: 1fr 1fr;
       column-gap: 1rem;
     `,
 

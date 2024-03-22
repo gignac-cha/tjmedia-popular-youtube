@@ -5,7 +5,9 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import { ChangeEvent, useCallback, useMemo } from 'react';
 import { useQueryContext } from '../../contexts/QueryContext';
-import { commonStyles } from '../../styles/common';
+import { Button } from '../common/Button/Button';
+import { InputDate } from '../common/InputDate/InputDate';
+import { InputRadioGroup } from '../common/InputRadioGroup/InputRadioGroup';
 import { styles } from './styles';
 
 export const Controls = () => {
@@ -22,7 +24,7 @@ export const Controls = () => {
 
   const onChanges = {
     type: useCallback(
-      (event: ChangeEvent<HTMLSelectElement>) => {
+      (event: ChangeEvent<HTMLInputElement>) => {
         switch (event.currentTarget.value) {
           case '1':
           case '2':
@@ -71,53 +73,48 @@ export const Controls = () => {
 
   return (
     <section css={styles.controls.container}>
+      <InputRadioGroup
+        name="type"
+        defaultValue={type}
+        onChange={onChanges.type}
+      >
+        <InputRadioGroup.Option value={'1'}>가요</InputRadioGroup.Option>
+        <InputRadioGroup.Option value={'2'}>POP</InputRadioGroup.Option>
+        <InputRadioGroup.Option value={'3'}>JPOP</InputRadioGroup.Option>
+      </InputRadioGroup>
       <section css={styles.controls.queryContainer}>
-        <section
-          css={[commonStyles.selectContainer, styles.controls.selectContainer]}
-          title="가요 / POP / JPOP 선택"
-        >
-          <select
-            css={commonStyles.select}
-            value={type}
-            onChange={onChanges.type}
-          >
-            <option value="1">가요</option>
-            <option value="2">POP</option>
-            <option value="3">JPOP</option>
-          </select>
-        </section>
-        <input
-          css={[commonStyles.date, styles.controls.date]}
+        <InputDate
+          css={styles.controls.date}
           type="month"
-          value={start.format('YYYY-MM')}
-          max={today.format('YYYY-MM')}
+          defaultValue={start}
+          max={today}
           title="검색 범위 처음"
           onChange={onChanges.start}
         />
-        <input
-          css={[commonStyles.date, styles.controls.date]}
+        <InputDate
+          css={styles.controls.date}
           type="month"
-          value={end.format('YYYY-MM')}
-          max={today.format('YYYY-MM')}
+          defaultValue={end}
+          max={today}
           title="검색 범위 끝"
           onChange={onChanges.end}
         />
       </section>
       <section css={styles.controls.buttonContainer}>
-        <button
-          css={[commonStyles.button, styles.controls.button]}
+        <Button
+          css={styles.controls.button}
           title="인기곡 조회"
           onClick={_.throttle(onClicks.query, 1000)}
         >
           <FontAwesomeIcon icon={faMagnifyingGlass} /> 조회
-        </button>
-        <button
-          css={[commonStyles.button, styles.controls.button]}
+        </Button>
+        <Button
+          css={styles.controls.button}
           title="검색 조건 초기화"
           onClick={onClicks.reset}
         >
           <FontAwesomeIcon icon={faTrash} /> 초기화
-        </button>
+        </Button>
       </section>
     </section>
   );

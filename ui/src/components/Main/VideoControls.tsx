@@ -1,7 +1,7 @@
 import { faBackward, faForward } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useVideoContext } from '../../contexts/VideoContext';
-import { commonStyles } from '../../styles/common';
+import { Button } from '../common/Button/Button';
 import { styles } from './styles';
 
 export const VideoControls = () => {
@@ -9,15 +9,14 @@ export const VideoControls = () => {
     useVideoContext();
 
   return (
-    <section css={styles.item.bottomContainer}>
-      <button
-        css={commonStyles.button}
+    <section css={styles.video.controlsContainer}>
+      <Button
         onClick={previousItem}
-        disabled={selectedIndex === 0}
         title="이전 영상"
+        disabled={!(selectedIndex > 0)}
       >
         <FontAwesomeIcon icon={faBackward} /> 이전
-      </button>
+      </Button>
       {cachedItems.length > 0 && (
         <b
           title={`총 ${cachedItems.length}개의 영상 중 ${selectedIndex + 1}번째`}
@@ -25,14 +24,13 @@ export const VideoControls = () => {
           {selectedIndex + 1} / {cachedItems.length}
         </b>
       )}
-      <button
-        css={commonStyles.button}
+      <Button
         onClick={nextItem}
-        disabled={selectedIndex === cachedItems.length - 1}
         title="다음 영상"
+        disabled={!(selectedIndex < cachedItems.length - 1)}
       >
         <FontAwesomeIcon icon={faForward} /> 다음
-      </button>
+      </Button>
     </section>
   );
 };

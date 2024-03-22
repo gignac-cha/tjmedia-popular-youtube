@@ -1,4 +1,4 @@
-import { Loading } from '../Loading/Loading';
+import { Loading } from '../common/Loading/Loading';
 import { styles } from './styles';
 
 export const ListLoading = () => {
