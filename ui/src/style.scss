@@ -1,0 +1,29 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+html,
+body {
+  margin: 0px;
+  padding: 0px;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+  margin: auto;
+  transition: width 0.2s;
+
+  @media screen and (max-width: 40rem) {
+    width: 100%;
+  }
+  @media screen and (min-width: 40rem) and (max-width: 60rem) {
+    width: 40rem;
+  }
+  @media screen and (min-width: 60rem) {
+    width: 60rem;
+  }
+}
+
+* {
+  font-family: 'Pretendard Variable';
+}
