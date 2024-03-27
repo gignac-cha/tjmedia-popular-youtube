@@ -51,22 +51,25 @@ export const Controls = () => {
 
   const queryClient = useQueryClient();
 
+  const refresh = useCallback(() => {
+    queryClient.invalidateQueries({
+      queryKey: [
+        'tjmedia-music-list',
+        query.strType,
+        query.SYY,
+        query.SMM,
+        query.EYY,
+        query.EMM,
+      ],
+    });
+  }, [query.EMM, query.EYY, query.SMM, query.SYY, query.strType, queryClient]);
+
   const onClicks = {
-    query: useCallback(
-      () =>
-        queryClient.invalidateQueries({
-          queryKey: [
-            'tjmedia-music-list',
-            query.strType,
-            query.SYY,
-            query.SMM,
-            query.EYY,
-            query.EMM,
-          ],
-        }),
-      [query.EMM, query.EYY, query.SMM, query.SYY, query.strType, queryClient],
-    ),
-    reset: useCallback(() => resetQuery(), [resetQuery]),
+    query: useCallback(() => refresh(), [refresh]),
+    reset: useCallback(() => {
+      resetQuery();
+      refresh();
+    }, [refresh, resetQuery]),
   };
 
   const today = useMemo(() => dayjs(), []);
