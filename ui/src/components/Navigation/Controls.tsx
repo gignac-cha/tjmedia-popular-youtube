@@ -81,13 +81,12 @@ export const Controls = () => {
         defaultValue={type}
         onChange={onChanges.type}
       >
-        <InputRadioGroup.Option value={'1'}>가요</InputRadioGroup.Option>
-        <InputRadioGroup.Option value={'2'}>POP</InputRadioGroup.Option>
-        <InputRadioGroup.Option value={'3'}>JPOP</InputRadioGroup.Option>
+        <InputRadioGroup.Option value={'1'}>🇰🇷 가요</InputRadioGroup.Option>
+        <InputRadioGroup.Option value={'2'}>🇺🇸 POP</InputRadioGroup.Option>
+        <InputRadioGroup.Option value={'3'}>🇯🇵 JPOP</InputRadioGroup.Option>
       </InputRadioGroup>
       <section css={styles.controls.queryContainer}>
         <InputDate
-          css={styles.controls.date}
           type="month"
           defaultValue={start}
           max={today}
@@ -95,7 +94,6 @@ export const Controls = () => {
           onChange={onChanges.start}
         />
         <InputDate
-          css={styles.controls.date}
           type="month"
           defaultValue={end}
           max={today}
@@ -104,18 +102,10 @@ export const Controls = () => {
         />
       </section>
       <section css={styles.controls.buttonContainer}>
-        <Button
-          css={styles.controls.button}
-          title="인기곡 조회"
-          onClick={_.throttle(onClicks.query, 1000)}
-        >
+        <Button title="인기곡 조회" onClick={_.throttle(onClicks.query, 1000)}>
           <FontAwesomeIcon icon={faMagnifyingGlass} /> 조회
         </Button>
-        <Button
-          css={styles.controls.button}
-          title="검색 조건 초기화"
-          onClick={onClicks.reset}
-        >
+        <Button title="검색 조건 초기화" onClick={onClicks.reset}>
           <FontAwesomeIcon icon={faTrash} /> 초기화
         </Button>
       </section>

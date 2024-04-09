@@ -31,21 +31,5 @@ export const styles = {
       grid-template-columns: 1fr 1fr;
       column-gap: 1rem;
     `,
-
-    selectContainer: css`
-      label: controls-select-container;
-
-      flex-grow: 1;
-    `,
-    date: css`
-      label: controls-date;
-
-      flex-grow: 1;
-    `,
-    button: css`
-      label: controls-button;
-
-      flex-grow: 1;
-    `,
   },
 };

@@ -41,10 +41,12 @@ export const InputDate = ({
       ? convertDayjsByType(type, rawMax)
       : rawMax;
   return (
-    <input
-      ref={(ref: HTMLInputElement) => ref && (ref.value = defaultValue)}
-      css={styles.container}
-      {...{ className, type, defaultValue, max, title, onChange }}
-    />
+    <section>
+      <input
+        ref={(ref: HTMLInputElement) => ref && (ref.value = defaultValue)}
+        css={styles.container}
+        {...{ className, type, defaultValue, max, title, onChange }}
+      />
+    </section>
   );
 };
