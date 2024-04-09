@@ -1,8 +1,10 @@
 import { Suspense, useEffect } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useQueryContext } from '../../contexts/QueryContext';
 import { useMusicListQuery } from '../../queries/useTJMediaQuery';
 import { EmptyList } from './EmptyList';
 import { Items } from './Items';
+import { ListError } from './ListError';
 import { ListLoading } from './ListLoading';
 import { styles } from './styles';
 
@@ -26,9 +28,11 @@ export const List = () => {
 
   return (
     <section css={styles.list.container}>
-      <Suspense fallback={<ListLoading />}>
-        <SuspenseContainer />
-      </Suspense>
+      <ErrorBoundary fallback={<ListError />}>
+        <Suspense fallback={<ListLoading />}>
+          <SuspenseContainer />
+        </Suspense>
+      </ErrorBoundary>
       <ul
         css={[
           styles.list.innerContainer,
