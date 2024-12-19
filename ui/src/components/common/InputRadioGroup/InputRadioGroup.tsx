@@ -22,7 +22,7 @@ const Label = ({ children }: PropsWithChildren) => {
 const InputRadio = ({
   name,
   value,
-  defaultChecked,
+  checked,
   onChange,
 }: InputHTMLAttributes<HTMLInputElement>) => {
   return (
@@ -31,7 +31,7 @@ const InputRadio = ({
       type="radio"
       name={name}
       value={value}
-      defaultChecked={defaultChecked}
+      checked={checked}
       onChange={onChange}
     />
   );
@@ -50,7 +50,7 @@ const Option = ({
       <InputRadio
         name={name}
         value={value}
-        defaultChecked={value === defaultValue}
+        checked={value === defaultValue}
         onChange={onChange}
       />
       {position === 'right' && children}
