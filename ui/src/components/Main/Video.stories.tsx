@@ -1,10 +1,7 @@
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 import { useEffect, useState } from 'react';
-import {
-  VideoContextProvider,
-  useVideoContext,
-} from '../../contexts/VideoContext';
+import { VideoContext, useVideoContext } from '../../contexts/VideoContext';
 import { Video } from './Video';
 
 export default {
@@ -92,9 +89,9 @@ export const WithContextWithFrameAndControls: StoryObj<typeof Video> = {
   render: () => {
     return (
       <Section>
-        <VideoContextProvider>
+        <VideoContext.Provider>
           <ContextContainer />
-        </VideoContextProvider>
+        </VideoContext.Provider>
       </Section>
     );
   },

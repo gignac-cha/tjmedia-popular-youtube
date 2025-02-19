@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
-import { VideoContextProvider } from '../../contexts/VideoContext';
+import { VideoContext } from '../../contexts/VideoContext';
 import { Item } from './Item';
 import { styles } from './styles';
 
@@ -46,13 +46,13 @@ export const Default: StoryObj<typeof Item> = {
 export const WithVideoContext: StoryObj<typeof Item> = {
   render: () => (
     <Section>
-      <VideoContextProvider>
+      <VideoContext.Provider>
         <ul css={[styles.list.innerContainer]}>
           <Item item={musicItems[0]} />
           <Item item={musicItems[1]} />
           <Item item={musicItems[2]} />
         </ul>
-      </VideoContextProvider>
+      </VideoContext.Provider>
     </Section>
   ),
 };

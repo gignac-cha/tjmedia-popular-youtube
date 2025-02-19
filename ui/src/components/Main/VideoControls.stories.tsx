@@ -1,10 +1,7 @@
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 import { PropsWithChildren, useEffect } from 'react';
-import {
-  VideoContextProvider,
-  useVideoContext,
-} from '../../contexts/VideoContext';
+import { VideoContext, useVideoContext } from '../../contexts/VideoContext';
 import { VideoControls } from './VideoControls';
 
 export default {
@@ -23,15 +20,10 @@ const createFakeVideoItem = (index: number): VideoItem => ({
   height: 480,
 });
 
-const ContextContainer = ({
-  children,
-  count,
-}: PropsWithChildren<{ count: number }>) => {
+const ContextContainer = ({ children, count }: PropsWithChildren<{ count: number }>) => {
   const { cacheItems } = useVideoContext();
   useEffect(() => {
-    const items = new Array(count)
-      .fill(undefined)
-      .map((_, index) => createFakeVideoItem(index));
+    const items = new Array(count).fill(undefined).map((_, index) => createFakeVideoItem(index));
     cacheItems(items);
   }, [cacheItems, count]);
   return children;
@@ -42,11 +34,11 @@ export const Empty: StoryObj<typeof VideoControls> = {};
 export const WithContext: StoryObj<typeof VideoControls> = {
   render: () => (
     <Section>
-      <VideoContextProvider>
+      <VideoContext.Provider>
         <ContextContainer count={10}>
           <VideoControls />
         </ContextContainer>
-      </VideoContextProvider>
+      </VideoContext.Provider>
     </Section>
   ),
 };

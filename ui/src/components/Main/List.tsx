@@ -39,8 +39,8 @@ export const List = () => {
           isLoading && styles.list.loadingContainer,
         ]}
       >
-        {cachedItems && cachedItems.length === 0 && <EmptyList />}
-        {cachedItems && cachedItems.length > 0 && <Items items={cachedItems} />}
+        {cachedItems.length === 0 && <EmptyList />}
+        {cachedItems.length > 0 && <Items items={cachedItems} />}
       </ul>
     </section>
   );

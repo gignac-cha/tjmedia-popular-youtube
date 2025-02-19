@@ -1,24 +1,20 @@
 import dayjs, { Dayjs } from 'dayjs';
 import { Reducer } from 'react';
+import { typed } from '../utilities/common';
 import { getType } from '../utilities/tjmedia';
 
-const initialQuery: {
-  type: Type;
-  start: Dayjs;
-  end: Dayjs;
-} = {
-  type: '1',
+const initialQuery = {
+  type: typed<Type>('1'),
   start: dayjs().subtract(1, 'month'),
   end: dayjs(),
 };
-export const initialState: typeof initialQuery & {
-  isLoading: boolean;
-  cachedItems?: MusicItem[];
-} = {
+export const initialState = {
+  ...initialQuery,
   type: getType(),
   start: dayjs(localStorage.getItem('start') ?? initialQuery.start),
   end: dayjs(localStorage.getItem('end') ?? initialQuery.end),
   isLoading: false,
+  cachedItems: new Array<MusicItem>(),
 };
 
 type QueryAction =
@@ -28,10 +24,7 @@ type QueryAction =
   | { name: 'RESET_QUERY' }
   | { name: 'CACHE_ITEMS'; items: MusicItem[] };
 
-export const queryReducer: Reducer<typeof initialState, QueryAction> = (
-  prevState,
-  action,
-) => {
+export const queryReducer: Reducer<typeof initialState, QueryAction> = (prevState, action) => {
   switch (action.name) {
     case 'CHANGE_TYPE':
       localStorage.setItem('type', action.type);

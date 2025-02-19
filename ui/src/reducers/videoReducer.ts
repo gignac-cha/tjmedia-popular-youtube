@@ -1,13 +1,8 @@
 import { Reducer } from 'react';
 
-export const initialState: {
-  isExpanded: boolean;
-  cachedItems: VideoItem[];
-  selectedIndex: number;
-  isVideoLoading: boolean;
-} = {
+export const initialState = {
   isExpanded: false,
-  cachedItems: [],
+  cachedItems: new Array<VideoItem>(),
   selectedIndex: 0,
   isVideoLoading: false,
 };
@@ -21,10 +16,7 @@ type VideoAction =
   | { name: 'NEXT_ITEM' }
   | { name: 'VIDEO_LOADED' };
 
-export const videoReducer: Reducer<typeof initialState, VideoAction> = (
-  prevState,
-  action,
-) => {
+export const videoReducer: Reducer<typeof initialState, VideoAction> = (prevState, action) => {
   switch (action.name) {
     case 'EXPAND_ITEM':
       return { ...prevState, isExpanded: true };
@@ -43,10 +35,7 @@ export const videoReducer: Reducer<typeof initialState, VideoAction> = (
     case 'NEXT_ITEM':
       return {
         ...prevState,
-        selectedIndex: Math.min(
-          prevState.selectedIndex + 1,
-          prevState.cachedItems.length - 1,
-        ),
+        selectedIndex: Math.min(prevState.selectedIndex + 1, prevState.cachedItems.length - 1),
         isVideoLoading: true,
       };
     case 'VIDEO_LOADED':

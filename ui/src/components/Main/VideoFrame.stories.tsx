@@ -1,10 +1,7 @@
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 import { PropsWithChildren, useEffect } from 'react';
-import {
-  VideoContextProvider,
-  useVideoContext,
-} from '../../contexts/VideoContext';
+import { VideoContext, useVideoContext } from '../../contexts/VideoContext';
 import { VideoFrame } from './VideoFrame';
 
 export default {
@@ -63,11 +60,11 @@ export const WithContextWithValue: StoryObj<typeof VideoFrame> = {
   args: { musicItem: musicItems[0], videoItem: videoItems[0] },
   render: ({ musicItem, videoItem }) => (
     <Section>
-      <VideoContextProvider>
+      <VideoContext.Provider>
         <ContextContainer>
           <VideoFrame musicItem={musicItem} videoItem={videoItem} />
         </ContextContainer>
-      </VideoContextProvider>
+      </VideoContext.Provider>
     </Section>
   ),
 };
@@ -76,14 +73,11 @@ export const WithContextWithValueWithIndex: StoryObj<{ index: number }> = {
   args: { index: 0 },
   render: ({ index }) => (
     <Section>
-      <VideoContextProvider>
+      <VideoContext.Provider>
         <ContextContainer>
-          <VideoFrame
-            musicItem={musicItems[index]}
-            videoItem={videoItems[index]}
-          />
+          <VideoFrame musicItem={musicItems[index]} videoItem={videoItems[index]} />
         </ContextContainer>
-      </VideoContextProvider>
+      </VideoContext.Provider>
     </Section>
   ),
 };
