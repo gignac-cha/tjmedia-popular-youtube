@@ -13,11 +13,10 @@ const SuspenseContainer = () => {
   const { data: items, isStale: isCachedItems } = useMusicListQuery(query);
 
   useEffect(() => {
-    if (!items) {
-      return;
-    }
-
-    cacheItems(items);
+    // if (!items) {
+    //   return;
+    // }
+    // cacheItems(items);
   }, [cacheItems, isCachedItems, items]);
 
   return <></>;
@@ -33,12 +32,7 @@ export const List = () => {
           <SuspenseContainer />
         </Suspense>
       </ErrorBoundary>
-      <ul
-        css={[
-          styles.list.innerContainer,
-          isLoading && styles.list.loadingContainer,
-        ]}
-      >
+      <ul css={[styles.list.innerContainer, isLoading && styles.list.loadingContainer]}>
         {cachedItems.length === 0 && <EmptyList />}
         {cachedItems.length > 0 && <Items items={cachedItems} />}
       </ul>
