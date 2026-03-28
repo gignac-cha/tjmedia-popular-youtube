@@ -1,0 +1,12 @@
+{
+  "name": "@tjmedia-popular-youtube/workers",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "type": "module",
+  "scripts": {
+    "dev:tjmedia-popular": "pnpm --filter @tjmedia-popular-youtube/tjmedia-popular-worker dev",
+    "dev:youtube-search": "pnpm --filter @tjmedia-popular-youtube/youtube-search-worker dev",
+    "build": "pnpm --filter @tjmedia-popular-youtube/tjmedia-popular-worker build && pnpm --filter @tjmedia-popular-youtube/youtube-search-worker build",
+    "test": "pnpm --filter @tjmedia-popular-youtube/tjmedia-popular-worker test && pnpm --filter @tjmedia-popular-youtube/youtube-search-worker test"
+  }
+}

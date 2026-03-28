@@ -1,0 +1,147 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  setup-and-detect:
+    runs-on: ubuntu-latest
+    outputs:
+      web: ${{ steps.web.outputs.changed }}
+      workers-tools: ${{ steps.workers-tools.outputs.changed }}
+      tjmedia-popular-worker: ${{ steps.tjmedia-popular-worker.outputs.changed }}
+      youtube-search-worker: ${{ steps.youtube-search-worker.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/detect-changes
+        id: web
+        with:
+          path: applications/web
+      - uses: ./.github/actions/detect-changes
+        id: workers-tools
+        with:
+          path: workers/tools
+      - uses: ./.github/actions/detect-changes
+        id: tjmedia-popular-worker
+        with:
+          path: workers/tjmedia-popular-worker
+      - uses: ./.github/actions/detect-changes
+        id: youtube-search-worker
+        with:
+          path: workers/youtube-search-worker
+
+  test-web:
+    needs: setup-and-detect
+    if: needs.setup-and-detect.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @tjmedia-popular-youtube/web exec vitest run
+
+  test-workers-tools:
+    needs: setup-and-detect
+    if: needs.setup-and-detect.outputs.workers-tools == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @tjmedia-popular-youtube/workers-tools exec vitest run
+
+  test-tjmedia-popular-worker:
+    needs: setup-and-detect
+    if: needs.setup-and-detect.outputs.tjmedia-popular-worker == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @tjmedia-popular-youtube/tjmedia-popular-worker exec vitest run
+
+  test-youtube-search-worker:
+    needs: setup-and-detect
+    if: needs.setup-and-detect.outputs.youtube-search-worker == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @tjmedia-popular-youtube/youtube-search-worker exec vitest run
+
+  deploy-tjmedia-popular-worker:
+    needs:
+      - setup-and-detect
+      - test-workers-tools
+      - test-tjmedia-popular-worker
+    if: |
+      !cancelled() &&
+      needs.setup-and-detect.result == 'success' &&
+      needs.setup-and-detect.outputs.tjmedia-popular-worker == 'true' &&
+      (needs.test-workers-tools.result == 'success' || needs.test-workers-tools.result == 'skipped') &&
+      (needs.test-tjmedia-popular-worker.result == 'success' || needs.test-tjmedia-popular-worker.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @tjmedia-popular-youtube/tjmedia-popular-worker exec wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+  deploy-youtube-search-worker:
+    needs:
+      - setup-and-detect
+      - test-workers-tools
+      - test-youtube-search-worker
+    if: |
+      !cancelled() &&
+      needs.setup-and-detect.result == 'success' &&
+      needs.setup-and-detect.outputs.youtube-search-worker == 'true' &&
+      (needs.test-workers-tools.result == 'success' || needs.test-workers-tools.result == 'skipped') &&
+      (needs.test-youtube-search-worker.result == 'success' || needs.test-youtube-search-worker.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @tjmedia-popular-youtube/youtube-search-worker exec wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+  deploy-web:
+    needs:
+      - setup-and-detect
+      - test-web
+      - deploy-tjmedia-popular-worker
+      - deploy-youtube-search-worker
+    if: |
+      !cancelled() &&
+      needs.setup-and-detect.result == 'success' &&
+      needs.setup-and-detect.outputs.web == 'true' &&
+      (needs.test-web.result == 'success' || needs.test-web.result == 'skipped') &&
+      (needs.deploy-tjmedia-popular-worker.result == 'success' || needs.deploy-tjmedia-popular-worker.result == 'skipped') &&
+      (needs.deploy-youtube-search-worker.result == 'success' || needs.deploy-youtube-search-worker.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @tjmedia-popular-youtube/web exec vite build
+        env:
+          VITE_TJMEDIA_POPULAR_WORKER_URL: ${{ vars.VITE_TJMEDIA_POPULAR_WORKER_URL }}
+          VITE_YOUTUBE_SEARCH_WORKER_URL: ${{ vars.VITE_YOUTUBE_SEARCH_WORKER_URL }}
+      - run: pnpm --filter @tjmedia-popular-youtube/web exec storybook build -o outputs/storybook
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: applications/web/outputs
+      - uses: actions/deploy-pages@v4

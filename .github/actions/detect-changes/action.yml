@@ -1,0 +1,70 @@
+name: Detect Changes
+description: Check if a package directory has changes compared to base ref
+
+inputs:
+  path:
+    description: Package directory path (e.g. applications/web)
+    required: true
+
+outputs:
+  changed:
+    description: Whether the package has changes
+    value: ${{ steps.check.outputs.changed }}
+
+runs:
+  using: composite
+  steps:
+    - name: Determine base ref
+      id: base
+      shell: bash
+      run: |
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          git fetch origin ${{ github.base_ref }} --depth=50 2>/dev/null || true
+          REF=$(git merge-base origin/${{ github.base_ref }} HEAD 2>/dev/null || echo "HEAD~1")
+        elif [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+          REF="HEAD~1"
+        else
+          REF="${{ github.event.before }}"
+        fi
+        echo "ref=$REF" >> "$GITHUB_OUTPUT"
+
+    - name: Check for changes
+      id: check
+      shell: bash
+      run: |
+        BASE="${{ steps.base.outputs.ref }}"
+        PATH_PREFIX="${{ inputs.path }}"
+
+        # Check direct path changes
+        DIRECT=$(git diff --name-only "$BASE" HEAD -- "$PATH_PREFIX" | head -1)
+
+        # Check shared root files that affect all packages
+        ROOT=$(git diff --name-only "$BASE" HEAD -- package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json | head -1)
+
+        # Check if any workspace dependency of this package changed
+        PACKAGE_JSON="$PATH_PREFIX/package.json"
+        DEP_CHANGED="false"
+        if [ -f "$PACKAGE_JSON" ]; then
+          WORKSPACE_DEPS=$(cat "$PACKAGE_JSON" | grep -o '"@tjmedia-popular-youtube/[^"]*"' | tr -d '"' || true)
+          for DEP in $WORKSPACE_DEPS; do
+            DEP_PATH=$(pnpm list --filter "$DEP" --depth=-1 --json 2>/dev/null | jq -r '.[0].path // empty' 2>/dev/null || true)
+            if [ -n "$DEP_PATH" ]; then
+              REL_PATH=$(realpath --relative-to="$(git rev-parse --show-toplevel)" "$DEP_PATH" 2>/dev/null || true)
+              if [ -n "$REL_PATH" ]; then
+                DEP_DIFF=$(git diff --name-only "$BASE" HEAD -- "$REL_PATH" | head -1)
+                if [ -n "$DEP_DIFF" ]; then
+                  DEP_CHANGED="true"
+                  break
+                fi
+              fi
+            fi
+          done
+        fi
+
+        if [ -n "$DIRECT" ] || [ -n "$ROOT" ] || [ "$DEP_CHANGED" = "true" ]; then
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "::notice::$PATH_PREFIX: changes detected"
+        else
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+          echo "::notice::$PATH_PREFIX: no changes"
+        fi

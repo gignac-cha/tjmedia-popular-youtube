@@ -1,0 +1,22 @@
+{
+  "name": "@tjmedia-popular-youtube/youtube-search-worker",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --port 8789",
+    "build": "node build.ts",
+    "test": "vitest run",
+    "lint": "prettier --check \"*.{json,ts}\" \"tests/**/*.ts\"",
+    "typecheck": "tsc --project tsconfig.json"
+  },
+  "dependencies": {
+    "@tjmedia-popular-youtube/workers-tools": "workspace:*"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "catalog:workers",
+    "vitest": "catalog:workers",
+    "wrangler": "catalog:workers"
+  }
+}

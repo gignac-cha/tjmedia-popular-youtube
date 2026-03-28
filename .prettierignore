@@ -1,0 +1,4 @@
+**/outputs/**
+**/storybook-static/**
+**/.turbo/**
+workers/*/worker.js

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TJMedia Popular Worker</title>
+  </head>
+  <body>
+    <h1>TJMedia Popular Worker</h1>
+    <p>Available routes:</p>
+    <ul>
+      <li><code>GET /</code> or <code>GET /help</code> returns this document.</li>
+      <li>
+        <code>GET /search</code> proxies the TJ Media topAndHot100 endpoint (with R2 caching).
+        <br />All parameters are optional:
+        <ul>
+          <li><code>chartType</code> — TOP or HOT (default: TOP)</li>
+          <li><code>strType</code> — 1 (가요), 2 (POP), 3 (J-POP) (default: 1)</li>
+          <li><code>searchStartDate</code> — YYYY-MM-DD (default: 1st of current month)</li>
+          <li><code>searchEndDate</code> — YYYY-MM-DD (default: today)</li>
+        </ul>
+      </li>
+      <li><code>OPTIONS *</code> returns CORS headers.</li>
+      <li><code>HEAD *</code> returns an empty success response.</li>
+    </ul>
+  </body>
+</html>

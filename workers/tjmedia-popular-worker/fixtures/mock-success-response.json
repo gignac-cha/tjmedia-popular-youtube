@@ -1,0 +1,118 @@
+{
+  "resultCode": "99",
+  "resultData": {
+    "itemsTotalCount": 10,
+    "items": [
+      {
+        "rank": "1",
+        "pro": 68058,
+        "indexTitle": "Pretender",
+        "indexSong": "Official髭男dism",
+        "word": "藤原聡",
+        "com": "藤原聡",
+        "icongubun": "",
+        "mv_yn": "N",
+        "imgthumb_path": "https://www.tjmedia.com/SONG_ALBUMIMG/SONG_MATCH/068058_thumb.jpg"
+      },
+      {
+        "rank": "2",
+        "pro": 52959,
+        "indexTitle": "IRIS OUT",
+        "indexSong": "米津玄師",
+        "word": "米津玄師",
+        "com": "米津玄師",
+        "icongubun": "",
+        "mv_yn": "N",
+        "imgthumb_path": "https://www.tjmedia.com/SONG_ALBUMIMG/SONG_MATCH/052959_thumb.jpg"
+      },
+      {
+        "rank": "3",
+        "pro": 27762,
+        "indexTitle": "ヒロイン",
+        "indexSong": "back number",
+        "word": "清水依与吏",
+        "com": "清水依与吏",
+        "icongubun": "",
+        "mv_yn": "N",
+        "imgthumb_path": "https://www.tjmedia.com/SONG_ALBUMIMG/SONG_MATCH/027762_thumb.jpg"
+      },
+      {
+        "rank": "4",
+        "pro": 76320,
+        "indexTitle": "APT.",
+        "indexSong": "로제(ROSÉ)",
+        "word": "로제",
+        "com": "로제",
+        "icongubun": "",
+        "mv_yn": "N",
+        "imgthumb_path": "https://www.tjmedia.com/SONG_ALBUMIMG/SONG_MATCH/076320_thumb.jpg"
+      },
+      {
+        "rank": "5",
+        "pro": 75118,
+        "indexTitle": "Drowning",
+        "indexSong": "Woodz",
+        "word": "Woodz",
+        "com": "Woodz",
+        "icongubun": "",
+        "mv_yn": "N",
+        "imgthumb_path": "https://www.tjmedia.com/SONG_ALBUMIMG/SONG_MATCH/075118_thumb.jpg"
+      },
+      {
+        "rank": "6",
+        "pro": 49438,
+        "indexTitle": "첫 눈",
+        "indexSong": "EXO",
+        "word": "Kenzie",
+        "com": "Kenzie",
+        "icongubun": "",
+        "mv_yn": "N",
+        "imgthumb_path": "https://www.tjmedia.com/SONG_ALBUMIMG/SONG_MATCH/049438_thumb.jpg"
+      },
+      {
+        "rank": "7",
+        "pro": 62534,
+        "indexTitle": "밤편지",
+        "indexSong": "아이유",
+        "word": "아이유",
+        "com": "아이유",
+        "icongubun": "",
+        "mv_yn": "N",
+        "imgthumb_path": "https://www.tjmedia.com/SONG_ALBUMIMG/SONG_MATCH/062534_thumb.jpg"
+      },
+      {
+        "rank": "8",
+        "pro": 73415,
+        "indexTitle": "Supernova",
+        "indexSong": "aespa",
+        "word": "Kenzie",
+        "com": "Kenzie",
+        "icongubun": "",
+        "mv_yn": "N",
+        "imgthumb_path": "https://www.tjmedia.com/SONG_ALBUMIMG/SONG_MATCH/073415_thumb.jpg"
+      },
+      {
+        "rank": "9",
+        "pro": 41370,
+        "indexTitle": "소주 한 잔",
+        "indexSong": "임창정",
+        "word": "임창정",
+        "com": "임창정",
+        "icongubun": "",
+        "mv_yn": "N",
+        "imgthumb_path": "https://www.tjmedia.com/SONG_ALBUMIMG/SONG_MATCH/041370_thumb.jpg"
+      },
+      {
+        "rank": "10",
+        "pro": 68553,
+        "indexTitle": "ベテルギウス",
+        "indexSong": "優里",
+        "word": "優里",
+        "com": "優里",
+        "icongubun": "",
+        "mv_yn": "N",
+        "imgthumb_path": "https://www.tjmedia.com/SONG_ALBUMIMG/SONG_MATCH/068553_thumb.jpg"
+      }
+    ]
+  }
+}
