@@ -18,10 +18,13 @@ runs:
       id: base
       shell: bash
       run: |
-        if [ "${{ github.event_name }}" = "pull_request" ]; then
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "ref=DEPLOY_ALL" >> "$GITHUB_OUTPUT"
+          exit 0
+        elif [ "${{ github.event_name }}" = "pull_request" ]; then
           git fetch origin ${{ github.base_ref }} --depth=50 2>/dev/null || true
           REF=$(git merge-base origin/${{ github.base_ref }} HEAD 2>/dev/null || echo "HEAD~1")
-        elif [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+        elif [ -z "${{ github.event.before }}" ] || [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
           REF="HEAD~1"
         else
           REF="${{ github.event.before }}"
@@ -34,6 +37,13 @@ runs:
       run: |
         BASE="${{ steps.base.outputs.ref }}"
         PATH_PREFIX="${{ inputs.path }}"
+
+        # workflow_dispatch: deploy everything
+        if [ "$BASE" = "DEPLOY_ALL" ]; then
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "::notice::$PATH_PREFIX: forced deploy (workflow_dispatch)"
+          exit 0
+        fi
 
         # Check direct path changes
         DIRECT=$(git diff --name-only "$BASE" HEAD -- "$PATH_PREFIX" | head -1)
