@@ -20,10 +20,11 @@ export type WorkerErrorResponse = {
 };
 
 export function isWorkerErrorResponse(
-  responseBody:
-    | Record<string, unknown>
-    | WorkerErrorResponse
-    | null,
+  responseBody: unknown,
 ): responseBody is WorkerErrorResponse {
-  return responseBody !== null && 'error' in responseBody;
+  return (
+    responseBody !== null &&
+    typeof responseBody === 'object' &&
+    'error' in (responseBody as Record<string, unknown>)
+  );
 }

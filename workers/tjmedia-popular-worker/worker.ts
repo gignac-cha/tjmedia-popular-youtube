@@ -191,6 +191,7 @@ function validateUpstreamResponse(
         },
       };
 
+    // Pass through as 200 — client checks resultCode and shows error via buildChartErrorMessage
     case RESULT_CODE.UNKNOWN_ERROR:
       return { parsedBody };
 
@@ -323,7 +324,7 @@ async function handleScheduledEvent(
       }
 
       const cacheKey = `cache/${today}_${today}/strType-${strType}.json`;
-      await environment.R2_TJMEDIA_POPULAR.put(cacheKey, upstream.upstreamBody);
+      await environment.R2_TJMEDIA_POPULAR.put(cacheKey, JSON.stringify(validation.parsedBody));
       console.log(`Scheduled crawl succeeded for strType ${strType}: stored at ${cacheKey}.`);
     } catch (error) {
       console.error(

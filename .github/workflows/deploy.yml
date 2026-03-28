@@ -25,6 +25,8 @@ jobs:
       youtube-search-worker: ${{ steps.youtube-search-worker.outputs.changed }}
     steps:
       - uses: ./.github/actions/setup
+        with:
+          fetch-depth: 0
       - uses: ./.github/actions/detect-changes
         id: web
         with:
@@ -80,7 +82,8 @@ jobs:
       - test-workers-tools
       - test-tjmedia-popular-worker
     if: |
-      always() &&
+      !cancelled() &&
+      needs.setup-and-detect.result == 'success' &&
       needs.setup-and-detect.outputs.tjmedia-popular-worker == 'true' &&
       (needs.test-workers-tools.result == 'success' || needs.test-workers-tools.result == 'skipped') &&
       (needs.test-tjmedia-popular-worker.result == 'success' || needs.test-tjmedia-popular-worker.result == 'skipped')
@@ -97,7 +100,8 @@ jobs:
       - test-workers-tools
       - test-youtube-search-worker
     if: |
-      always() &&
+      !cancelled() &&
+      needs.setup-and-detect.result == 'success' &&
       needs.setup-and-detect.outputs.youtube-search-worker == 'true' &&
       (needs.test-workers-tools.result == 'success' || needs.test-workers-tools.result == 'skipped') &&
       (needs.test-youtube-search-worker.result == 'success' || needs.test-youtube-search-worker.result == 'skipped')
@@ -115,7 +119,8 @@ jobs:
       - deploy-tjmedia-popular-worker
       - deploy-youtube-search-worker
     if: |
-      always() &&
+      !cancelled() &&
+      needs.setup-and-detect.result == 'success' &&
       needs.setup-and-detect.outputs.web == 'true' &&
       (needs.test-web.result == 'success' || needs.test-web.result == 'skipped') &&
       (needs.deploy-tjmedia-popular-worker.result == 'success' || needs.deploy-tjmedia-popular-worker.result == 'skipped') &&

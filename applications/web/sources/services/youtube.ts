@@ -1,4 +1,4 @@
-import type { YoutubeResponse, WorkerErrorResponse } from '../types/youtube.ts';
+import type { YoutubeResponse } from '../types/youtube.ts';
 import { isWorkerErrorResponse } from '../types/youtube.ts';
 
 function buildYoutubeApiBaseUrl(): string {
@@ -29,24 +29,30 @@ export async function fetchYoutubeVideos(
   const response = await fetch(searchUrl.toString());
   const responseText = await response.text();
 
-  let parsedResponseBody: YoutubeResponse | WorkerErrorResponse;
-
-  try {
-    parsedResponseBody = JSON.parse(responseText) as
-      | YoutubeResponse
-      | WorkerErrorResponse;
-  } catch {
-    throw new Error('YouTube worker returned invalid JSON.');
-  }
-
   if (!response.ok) {
-    const errorMessage = isWorkerErrorResponse(parsedResponseBody)
-      ? parsedResponseBody.error?.message
-      : undefined;
+    let errorMessage: string | undefined;
+
+    try {
+      const errorBody = JSON.parse(responseText) as unknown;
+      if (isWorkerErrorResponse(errorBody)) {
+        errorMessage = errorBody.error?.message;
+      }
+    } catch {
+      // non-JSON error response (e.g. 502 gateway HTML)
+    }
+
     throw new Error(
       errorMessage ?? `YouTube worker request failed with ${response.status}.`,
     );
   }
 
-  return parsedResponseBody as YoutubeResponse;
+  let parsedResponseBody: YoutubeResponse;
+
+  try {
+    parsedResponseBody = JSON.parse(responseText) as YoutubeResponse;
+  } catch {
+    throw new Error('YouTube worker returned invalid JSON.');
+  }
+
+  return parsedResponseBody;
 }

@@ -1,5 +1,4 @@
 import type { SearchForm, TjmediaResponse } from '../types/tjmedia.ts';
-import type { WorkerErrorResponse } from '../types/youtube.ts';
 import { isWorkerErrorResponse } from '../types/youtube.ts';
 import { isDefaultDateRange } from '../tools/search-form-storage.ts';
 
@@ -49,23 +48,29 @@ export async function fetchPopularSongs(
   const response = await fetch(searchUrl.toString());
   const responseText = await response.text();
 
-  let parsedResponseBody: TjmediaResponse | WorkerErrorResponse;
-
-  try {
-    parsedResponseBody = JSON.parse(responseText) as
-      | TjmediaResponse
-      | WorkerErrorResponse;
-  } catch {
-    throw new Error('TJMedia worker returned invalid JSON.');
-  }
-
   if (!response.ok) {
-    const errorMessage = isWorkerErrorResponse(parsedResponseBody)
-      ? parsedResponseBody.error?.message
-      : undefined;
+    let errorMessage: string | undefined;
+
+    try {
+      const errorBody = JSON.parse(responseText) as unknown;
+      if (isWorkerErrorResponse(errorBody)) {
+        errorMessage = errorBody.error?.message;
+      }
+    } catch {
+      // non-JSON error response (e.g. 502 gateway HTML)
+    }
+
     throw new Error(
       errorMessage ?? `TJMedia worker request failed with ${response.status}.`,
     );
+  }
+
+  let parsedResponseBody: TjmediaResponse;
+
+  try {
+    parsedResponseBody = JSON.parse(responseText) as TjmediaResponse;
+  } catch {
+    throw new Error('TJMedia worker returned invalid JSON.');
   }
 
   const tjmediaResponse = parsedResponseBody as TjmediaResponse;

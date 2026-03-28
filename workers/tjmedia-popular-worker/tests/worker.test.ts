@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import worker from '../worker.ts';
 
-type WorkerEnv = {
+type WorkerEnvironment = {
   ALLOWED_ORIGINS?: string;
   DEBUG_MOCK_MODE?: string;
   R2_TJMEDIA_POPULAR: R2Bucket;
@@ -10,12 +10,12 @@ type WorkerEnv = {
 
 const TEST_ALLOWED_ORIGINS = 'http://localhost:5173,http://localhost:5174';
 
-function buildTestEnvironment(overrides: Partial<WorkerEnv> = {}): WorkerEnv {
+function buildTestEnvironment(overrides: Partial<WorkerEnvironment> = {}): WorkerEnvironment {
   return {
     ALLOWED_ORIGINS: TEST_ALLOWED_ORIGINS,
     R2_TJMEDIA_POPULAR: createMockR2Bucket(),
     ...overrides,
-  } as WorkerEnv;
+  } as WorkerEnvironment;
 }
 
 

@@ -47,9 +47,9 @@ function matchesWildcard(origin: string, pattern: string): boolean {
   return new RegExp(`^${regexString}$`).test(origin);
 }
 
-const CIDR_PATTERN_REGEX = /^(https?):\/\/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2}):(.+)$/;
+const CIDR_PATTERN_REGEX = /^(https?):\/\/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2})(?::(.+))?$/;
 
-function parseCIDRPattern(pattern: string): { protocol: string; cidr: string; port: string } | null {
+function parseCIDRPattern(pattern: string): { protocol: string; cidr: string; port: string | undefined } | null {
   const match = CIDR_PATTERN_REGEX.exec(pattern);
   if (match === null) return null;
   return { protocol: match[1], cidr: match[2], port: match[3] };
@@ -71,7 +71,7 @@ function matchesOrigin(origin: string, pattern: string): boolean {
 
     if (originProtocol !== cidrPattern.protocol) return false;
     if (!matchesCIDR(url.hostname, cidrPattern.cidr)) return false;
-    if (cidrPattern.port === '*') return true;
+    if (cidrPattern.port === undefined || cidrPattern.port === '*') return true;
 
     return url.port === cidrPattern.port
       || (url.port === '' && originProtocol === 'https' && cidrPattern.port === '443')
@@ -88,9 +88,10 @@ function isAllowedOrigin(origin: string): boolean {
 export function buildCORSHeaders(origin?: string): Headers {
   const headers = new Headers();
 
+  headers.set('Vary', 'Origin');
+
   if (origin !== undefined && isAllowedOrigin(origin)) {
     headers.set('Access-Control-Allow-Origin', origin);
-    headers.set('Vary', 'Origin');
   }
 
   headers.set(

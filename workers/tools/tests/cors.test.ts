@@ -230,14 +230,10 @@ describe('buildCORSHeaders', () => {
     expect(headers.get('Access-Control-Allow-Headers')).toBe('Content-Type, Authorization');
   });
 
-  it('sets Vary header when origin is allowed', () => {
-    const headers = buildCORSHeaders('https://example.com');
-    expect(headers.get('Vary')).toBe('Origin');
-  });
-
-  it('does not set Vary header when origin is rejected', () => {
-    const headers = buildCORSHeaders('https://evil.com');
-    expect(headers.get('Vary')).toBeNull();
+  it('always sets Vary header regardless of origin', () => {
+    expect(buildCORSHeaders('https://example.com').get('Vary')).toBe('Origin');
+    expect(buildCORSHeaders('https://evil.com').get('Vary')).toBe('Origin');
+    expect(buildCORSHeaders(undefined).get('Vary')).toBe('Origin');
   });
 });
 

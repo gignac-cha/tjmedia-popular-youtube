@@ -22,6 +22,8 @@ jobs:
       youtube-search-worker: ${{ steps.youtube-search-worker.outputs.changed }}
     steps:
       - uses: ./.github/actions/setup
+        with:
+          fetch-depth: 0
       - uses: ./.github/actions/detect-changes
         id: web
         with:
