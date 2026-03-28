@@ -10,9 +10,13 @@ export function buildTodayDateRange(): {
   searchStartDate: string;
   searchEndDate: string;
 } {
-  const today = formatLocalDate(new Date());
+  const now = new Date();
+  const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
 
-  return { searchStartDate: today, searchEndDate: today };
+  return {
+    searchStartDate: formatLocalDate(yesterday),
+    searchEndDate: formatLocalDate(now),
+  };
 }
 
 export function buildThisMonthDateRange(): {
