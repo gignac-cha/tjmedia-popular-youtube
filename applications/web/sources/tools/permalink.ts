@@ -118,5 +118,5 @@ export function pushPermalink(
 ): void {
   const url = buildPermalinkURL(searchForm, rank);
 
-  window.history.replaceState(null, '', url);
+  window.history.pushState(null, '', url);
 }
