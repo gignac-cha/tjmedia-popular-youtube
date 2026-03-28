@@ -21,4 +21,4 @@ binding = "R2_TJMEDIA_POPULAR"
 bucket_name = "tjmedia-popular-youtube"
 
 [triggers]
-crons = ["0 9 * * *"]
+crons = ["0 16 * * *"]

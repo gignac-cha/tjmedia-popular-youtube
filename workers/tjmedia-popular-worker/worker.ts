@@ -54,8 +54,20 @@ function buildDefaultDateRange(): {
   };
 }
 
-function getTodayDateString(): string {
-  return new Date().toISOString().slice(0, 10);
+function formatDateString(date: Date): string {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+function getYesterdayKSTDateString(): string {
+  const now = new Date();
+  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  kst.setUTCDate(kst.getUTCDate() - 1);
+
+  return formatDateString(kst);
 }
 
 function getDebugMockMode(environment: WorkerEnvironment): DebugMockMode {
@@ -289,48 +301,78 @@ async function handleSearchRequest(
   });
 }
 
+const CRAWL_MAX_RETRIES = 3;
+const CRAWL_RETRY_DELAY_MILLISECONDS = 5000;
+
+function delay(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+async function crawlStrType(
+  strType: string,
+  date: string,
+  environment: WorkerEnvironment,
+): Promise<boolean> {
+  const searchParameters = new URLSearchParams();
+  searchParameters.set('searchStartDate', date);
+  searchParameters.set('searchEndDate', date);
+  searchParameters.set('chartType', CRAWL_CHART_TYPE);
+  searchParameters.set('strType', strType);
+
+  const upstream = await fetchFromUpstream(searchParameters);
+  const validation = validateUpstreamResponse(
+    upstream.upstreamBody,
+    upstream.upstreamContentType,
+    upstream.upstreamStatus,
+  );
+
+  if (validation.errorResponse !== undefined) {
+    console.error(`Scheduled crawl failed for strType ${strType}: upstream returned error.`);
+    return false;
+  }
+
+  if (validation.parsedBody.resultCode !== RESULT_CODE.SUCCESS) {
+    console.error(
+      `Scheduled crawl skipped for strType ${strType}: resultCode ${validation.parsedBody.resultCode ?? 'unknown'}.`,
+    );
+    return false;
+  }
+
+  const cacheKey = `cache/${date}_${date}/strType-${strType}.json`;
+  await environment.R2_TJMEDIA_POPULAR.put(cacheKey, JSON.stringify(validation.parsedBody));
+  console.log(`Scheduled crawl succeeded for strType ${strType}: stored at ${cacheKey}.`);
+
+  return true;
+}
+
 async function handleScheduledEvent(
   environment: WorkerEnvironment,
 ): Promise<void> {
-  const today = getTodayDateString();
+  const yesterday = getYesterdayKSTDateString();
 
   for (const strType of CRAWL_STR_TYPES) {
-    const searchParameters = new URLSearchParams();
-    searchParameters.set('searchStartDate', today);
-    searchParameters.set('searchEndDate', today);
-    searchParameters.set('chartType', CRAWL_CHART_TYPE);
-    searchParameters.set('strType', strType);
+    let succeeded = false;
 
-    try {
-      const upstream = await fetchFromUpstream(searchParameters);
-      const validation = validateUpstreamResponse(
-        upstream.upstreamBody,
-        upstream.upstreamContentType,
-        upstream.upstreamStatus,
-      );
-
-      if (validation.errorResponse !== undefined) {
+    for (let attempt = 1; attempt <= CRAWL_MAX_RETRIES; attempt++) {
+      try {
+        succeeded = await crawlStrType(strType, yesterday, environment);
+        // Whether true or false, the upstream responded — no need to retry
+        break;
+      } catch (error) {
+        // Network error or unexpected failure — retry
         console.error(
-          `Scheduled crawl failed for strType ${strType}: upstream returned error.`,
+          `Scheduled crawl failed for strType ${strType} (attempt ${attempt}/${CRAWL_MAX_RETRIES}):`,
+          error,
         );
-        continue;
-      }
 
-      if (validation.parsedBody.resultCode !== RESULT_CODE.SUCCESS) {
-        console.error(
-          `Scheduled crawl skipped for strType ${strType}: resultCode ${validation.parsedBody.resultCode ?? 'unknown'}.`,
-        );
-        continue;
+        if (attempt < CRAWL_MAX_RETRIES) {
+          await delay(CRAWL_RETRY_DELAY_MILLISECONDS);
+        }
       }
+    }
 
-      const cacheKey = `cache/${today}_${today}/strType-${strType}.json`;
-      await environment.R2_TJMEDIA_POPULAR.put(cacheKey, JSON.stringify(validation.parsedBody));
-      console.log(`Scheduled crawl succeeded for strType ${strType}: stored at ${cacheKey}.`);
-    } catch (error) {
-      console.error(
-        `Scheduled crawl failed for strType ${strType}:`,
-        error,
-      );
+    if (!succeeded) {
+      console.error(`Scheduled crawl gave up for strType ${strType} after ${CRAWL_MAX_RETRIES} attempts.`);
     }
   }
 }

@@ -546,9 +546,10 @@ describe('scheduled handler', () => {
     vi.restoreAllMocks();
   });
 
-  it('crawls all three strTypes and stores them in R2', async () => {
+  it('crawls all three strTypes for yesterday (KST) and stores them in R2', async () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-03-22T09:00:00.000Z'));
+    // KST 2026-03-22 01:00 = UTC 2026-03-21 16:00 → yesterday KST = 2026-03-21
+    vi.setSystemTime(new Date('2026-03-21T16:00:00.000Z'));
 
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(async () =>
       new Response(buildSuccessUpstreamBody(), {
@@ -567,7 +568,7 @@ describe('scheduled handler', () => {
     } as unknown as ExecutionContext;
 
     await worker.scheduled(
-      { scheduledTime: Date.now(), cron: '0 9 * * *' } as ScheduledEvent,
+      { scheduledTime: Date.now(), cron: '0 16 * * *' } as ScheduledEvent,
       buildTestEnvironment({ R2_TJMEDIA_POPULAR: r2Bucket }),
       mockContext,
     );
@@ -577,27 +578,27 @@ describe('scheduled handler', () => {
     expect(fetchMock).toHaveBeenCalledTimes(3);
     expect(r2Bucket.put).toHaveBeenCalledTimes(3);
     expect(r2Bucket.put).toHaveBeenCalledWith(
-      'cache/2026-03-22_2026-03-22/strType-1.json',
+      'cache/2026-03-21_2026-03-21/strType-1.json',
       buildSuccessUpstreamBody(),
     );
     expect(r2Bucket.put).toHaveBeenCalledWith(
-      'cache/2026-03-22_2026-03-22/strType-2.json',
+      'cache/2026-03-21_2026-03-21/strType-2.json',
       buildSuccessUpstreamBody(),
     );
     expect(r2Bucket.put).toHaveBeenCalledWith(
-      'cache/2026-03-22_2026-03-22/strType-3.json',
+      'cache/2026-03-21_2026-03-21/strType-3.json',
       buildSuccessUpstreamBody(),
     );
 
     vi.useRealTimers();
   });
 
-  it('continues crawling remaining strTypes when one fails', async () => {
+  it('continues crawling remaining strTypes when one returns error', async () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-03-22T09:00:00.000Z'));
+    vi.setSystemTime(new Date('2026-03-21T16:00:00.000Z'));
 
     let callCount = 0;
-    vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
       callCount++;
 
       if (callCount === 1) {
@@ -626,14 +627,15 @@ describe('scheduled handler', () => {
     } as unknown as ExecutionContext;
 
     await worker.scheduled(
-      { scheduledTime: Date.now(), cron: '0 9 * * *' } as ScheduledEvent,
+      { scheduledTime: Date.now(), cron: '0 16 * * *' } as ScheduledEvent,
       buildTestEnvironment({ R2_TJMEDIA_POPULAR: r2Bucket }),
       mockContext,
     );
 
     await Promise.all(waitUntilPromises);
 
-    // strType 1 failed, but 2 and 3 should succeed
+    // strType 1 returned 04 (no retry for server errors), but 2 and 3 succeeded
+    expect(fetchMock).toHaveBeenCalledTimes(3);
     expect(r2Bucket.put).toHaveBeenCalledTimes(2);
 
     vi.useRealTimers();
