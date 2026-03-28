@@ -3,10 +3,11 @@ import react from '@vitejs/plugin-react';
 import path from 'node:path';
 
 export default defineConfig({
+  base: '/tjmedia-popular-youtube/',
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './sources'),
+      '@': path.resolve(import.meta.dirname, './sources'),
     },
   },
   test: {

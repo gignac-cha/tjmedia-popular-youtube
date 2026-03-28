@@ -107,7 +107,9 @@ export function buildPermalinkURL(
   const parameters = buildSearchParameters(searchForm, rank);
   const queryString = parameters.toString();
 
-  return queryString.length > 0 ? `/?${queryString}` : '/';
+  const basePath = import.meta.env.BASE_URL;
+
+  return queryString.length > 0 ? `${basePath}?${queryString}` : basePath;
 }
 
 export function pushPermalink(

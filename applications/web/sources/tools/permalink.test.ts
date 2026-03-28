@@ -283,7 +283,7 @@ describe('buildSearchParameters', () => {
 });
 
 describe('buildPermalinkURL', () => {
-  it('returns "/" for all-default parameters and no rank', () => {
+  it('returns base path for all-default parameters and no rank', () => {
     const defaultDateRange = buildThisMonthDateRange();
     const searchForm: SearchForm = {
       chartType: 'TOP',
@@ -294,7 +294,7 @@ describe('buildPermalinkURL', () => {
 
     const result = buildPermalinkURL(searchForm, null);
 
-    expect(result).toBe('/');
+    expect(result).toBe('/tjmedia-popular-youtube/');
   });
 
   it('returns URL with type parameter for non-default genre', () => {
@@ -308,7 +308,7 @@ describe('buildPermalinkURL', () => {
 
     const result = buildPermalinkURL(searchForm, null);
 
-    expect(result).toBe('/?type=english');
+    expect(result).toBe('/tjmedia-popular-youtube/?type=english');
   });
 
   it('returns URL with rank parameter', () => {
@@ -322,7 +322,7 @@ describe('buildPermalinkURL', () => {
 
     const result = buildPermalinkURL(searchForm, 3);
 
-    expect(result).toBe('/?rank=3');
+    expect(result).toBe('/tjmedia-popular-youtube/?rank=3');
   });
 
   it('returns URL with multiple parameters', () => {
@@ -339,6 +339,6 @@ describe('buildPermalinkURL', () => {
     expect(result).toContain('from=2024-07-01');
     expect(result).toContain('to=2024-07-31');
     expect(result).toContain('rank=10');
-    expect(result).toMatch(/^\/\?/);
+    expect(result).toMatch(/^\/tjmedia-popular-youtube\/\?/);
   });
 });
