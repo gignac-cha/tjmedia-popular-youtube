@@ -1,0 +1,17 @@
+{
+  "name": "@tjmedia-popular-youtube/workers-tools",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "type": "module",
+  "exports": {
+    "./cors": "./cors.ts",
+    "./json": "./json.ts",
+    "./html": "./html.ts",
+    "./text": "./text.ts",
+    "./error": "./error.ts"
+  },
+  "dependencies": {
+    "vitest": "catalog:workers"
+  }
+}

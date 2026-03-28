@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.head_ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  setup-and-detect:
+    runs-on: ubuntu-latest
+    outputs:
+      web: ${{ steps.web.outputs.changed }}
+      workers-tools: ${{ steps.workers-tools.outputs.changed }}
+      tjmedia-popular-worker: ${{ steps.tjmedia-popular-worker.outputs.changed }}
+      youtube-search-worker: ${{ steps.youtube-search-worker.outputs.changed }}
+    steps:
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/detect-changes
+        id: web
+        with:
+          path: applications/web
+      - uses: ./.github/actions/detect-changes
+        id: workers-tools
+        with:
+          path: workers/tools
+      - uses: ./.github/actions/detect-changes
+        id: tjmedia-popular-worker
+        with:
+          path: workers/tjmedia-popular-worker
+      - uses: ./.github/actions/detect-changes
+        id: youtube-search-worker
+        with:
+          path: workers/youtube-search-worker
+
+  test-web:
+    needs: setup-and-detect
+    if: needs.setup-and-detect.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @tjmedia-popular-youtube/web exec vitest run
+
+  test-workers-tools:
+    needs: setup-and-detect
+    if: needs.setup-and-detect.outputs.workers-tools == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @tjmedia-popular-youtube/workers-tools exec vitest run
+
+  test-tjmedia-popular-worker:
+    needs: setup-and-detect
+    if: needs.setup-and-detect.outputs.tjmedia-popular-worker == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @tjmedia-popular-youtube/tjmedia-popular-worker exec vitest run
+
+  test-youtube-search-worker:
+    needs: setup-and-detect
+    if: needs.setup-and-detect.outputs.youtube-search-worker == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @tjmedia-popular-youtube/youtube-search-worker exec vitest run
+
+  build-check:
+    needs: setup-and-detect
+    if: needs.setup-and-detect.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @tjmedia-popular-youtube/web exec vite build
+        env:
+          VITE_TJMEDIA_POPULAR_WORKER_URL: https://placeholder.workers.dev
+          VITE_YOUTUBE_SEARCH_WORKER_URL: https://placeholder.workers.dev
+      - run: pnpm --filter @tjmedia-popular-youtube/web exec storybook build -o outputs/storybook

@@ -140,6 +140,18 @@ web_modules/
 # TypeScript cache
 *.tsbuildinfo
 
+# Turbo and workspace outputs
+.turbo/
+**/outputs/
+**/storybook-static/
+workers/*/worker.js
+
+# Wrangler local state
+**/.wrangler/
+
+# Playwright MCP
+.playwright-mcp/
+
 # Optional npm cache directory
 .npm
 

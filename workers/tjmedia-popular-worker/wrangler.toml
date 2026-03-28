@@ -1,0 +1,23 @@
+name = "tjmedia-popular-youtube-tjmedia-popular-worker"
+main = "worker.ts"
+compatibility_date = "2026-03-17"
+
+[vars]
+ALLOWED_ORIGINS = "https://gignac-cha.github.io"
+
+[env.development.vars]
+ALLOWED_ORIGINS = "http://localhost:*,http://127.0.0.0/8:*,http://10.0.0.0/8:*,http://172.16.0.0/12:*,http://192.168.0.0/16:*"
+
+[[env.development.r2_buckets]]
+binding = "R2_TJMEDIA_POPULAR"
+bucket_name = "tjmedia-popular-youtube"
+
+[observability]
+enabled = true
+
+[[r2_buckets]]
+binding = "R2_TJMEDIA_POPULAR"
+bucket_name = "tjmedia-popular-youtube"
+
+[triggers]
+crons = ["0 9 * * *"]
