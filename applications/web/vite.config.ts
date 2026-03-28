@@ -6,6 +6,7 @@ const tjmediaPopularWorkerDevelopmentURL = 'http://localhost:8788';
 const youtubeSearchWorkerDevelopmentURL = 'http://localhost:8789';
 
 export default defineConfig({
+  base: '/tjmedia-popular-youtube/',
   plugins: [react()],
   resolve: {
     alias: {
