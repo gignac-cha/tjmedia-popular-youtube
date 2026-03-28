@@ -24,9 +24,10 @@ jobs:
       tjmedia-popular-worker: ${{ steps.tjmedia-popular-worker.outputs.changed }}
       youtube-search-worker: ${{ steps.youtube-search-worker.outputs.changed }}
     steps:
-      - uses: ./.github/actions/setup
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - uses: ./.github/actions/setup
       - uses: ./.github/actions/detect-changes
         id: web
         with:
@@ -49,6 +50,7 @@ jobs:
     if: needs.setup-and-detect.outputs.web == 'true'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - run: pnpm --filter @tjmedia-popular-youtube/web exec vitest run
 
@@ -57,6 +59,7 @@ jobs:
     if: needs.setup-and-detect.outputs.workers-tools == 'true'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - run: pnpm --filter @tjmedia-popular-youtube/workers-tools exec vitest run
 
@@ -65,6 +68,7 @@ jobs:
     if: needs.setup-and-detect.outputs.tjmedia-popular-worker == 'true'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - run: pnpm --filter @tjmedia-popular-youtube/tjmedia-popular-worker exec vitest run
 
@@ -73,6 +77,7 @@ jobs:
     if: needs.setup-and-detect.outputs.youtube-search-worker == 'true'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - run: pnpm --filter @tjmedia-popular-youtube/youtube-search-worker exec vitest run
 
@@ -89,6 +94,7 @@ jobs:
       (needs.test-tjmedia-popular-worker.result == 'success' || needs.test-tjmedia-popular-worker.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - run: pnpm --filter @tjmedia-popular-youtube/tjmedia-popular-worker exec wrangler deploy
         env:
@@ -107,6 +113,7 @@ jobs:
       (needs.test-youtube-search-worker.result == 'success' || needs.test-youtube-search-worker.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - run: pnpm --filter @tjmedia-popular-youtube/youtube-search-worker exec wrangler deploy
         env:
@@ -127,6 +134,7 @@ jobs:
       (needs.deploy-youtube-search-worker.result == 'success' || needs.deploy-youtube-search-worker.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - run: pnpm --filter @tjmedia-popular-youtube/web exec vite build
         env:
