@@ -62,12 +62,21 @@ function formatDateString(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
+function toKST(date: Date): Date {
+  return new Date(date.getTime() + 9 * 60 * 60 * 1000);
+}
+
 function getYesterdayKSTDateString(): string {
-  const now = new Date();
-  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const kst = toKST(new Date());
   kst.setUTCDate(kst.getUTCDate() - 1);
 
   return formatDateString(kst);
+}
+
+function getFirstDayOfMonthKSTDateString(): string {
+  const kst = toKST(new Date());
+
+  return `${kst.getUTCFullYear()}-${String(kst.getUTCMonth() + 1).padStart(2, '0')}-01`;
 }
 
 function getDebugMockMode(environment: WorkerEnvironment): DebugMockMode {
@@ -308,14 +317,15 @@ function delay(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
-async function crawlStrType(
+async function crawlAndStore(
   strType: string,
-  date: string,
+  startDate: string,
+  endDate: string,
   environment: WorkerEnvironment,
 ): Promise<boolean> {
   const searchParameters = new URLSearchParams();
-  searchParameters.set('searchStartDate', date);
-  searchParameters.set('searchEndDate', date);
+  searchParameters.set('searchStartDate', startDate);
+  searchParameters.set('searchEndDate', endDate);
   searchParameters.set('chartType', CRAWL_CHART_TYPE);
   searchParameters.set('strType', strType);
 
@@ -327,52 +337,69 @@ async function crawlStrType(
   );
 
   if (validation.errorResponse !== undefined) {
-    console.error(`Scheduled crawl failed for strType ${strType}: upstream returned error.`);
+    console.error(`Scheduled crawl failed for strType ${strType} (${startDate}_${endDate}): upstream returned error.`);
     return false;
   }
 
   if (validation.parsedBody.resultCode !== RESULT_CODE.SUCCESS) {
     console.error(
-      `Scheduled crawl skipped for strType ${strType}: resultCode ${validation.parsedBody.resultCode ?? 'unknown'}.`,
+      `Scheduled crawl skipped for strType ${strType} (${startDate}_${endDate}): resultCode ${validation.parsedBody.resultCode ?? 'unknown'}.`,
     );
     return false;
   }
 
-  const cacheKey = `cache/${date}_${date}/strType-${strType}.json`;
+  const cacheKey = `cache/${startDate}_${endDate}/strType-${strType}.json`;
   await environment.R2_TJMEDIA_POPULAR.put(cacheKey, JSON.stringify(validation.parsedBody));
   console.log(`Scheduled crawl succeeded for strType ${strType}: stored at ${cacheKey}.`);
 
   return true;
 }
 
+async function crawlWithRetry(
+  strType: string,
+  startDate: string,
+  endDate: string,
+  environment: WorkerEnvironment,
+): Promise<void> {
+  const label = `${startDate}_${endDate}`;
+
+  for (let attempt = 1; attempt <= CRAWL_MAX_RETRIES; attempt++) {
+    try {
+      const succeeded = await crawlAndStore(strType, startDate, endDate, environment);
+      // Whether true or false, the upstream responded — no need to retry
+      if (!succeeded) {
+        console.error(`Scheduled crawl gave up for strType ${strType} (${label}): upstream returned non-success.`);
+      }
+      return;
+    } catch (error) {
+      // Network error or unexpected failure — retry
+      console.error(
+        `Scheduled crawl failed for strType ${strType} (${label}) (attempt ${attempt}/${CRAWL_MAX_RETRIES}):`,
+        error,
+      );
+
+      if (attempt < CRAWL_MAX_RETRIES) {
+        await delay(CRAWL_RETRY_DELAY_MILLISECONDS);
+      }
+    }
+  }
+
+  console.error(`Scheduled crawl gave up for strType ${strType} (${label}) after ${CRAWL_MAX_RETRIES} attempts.`);
+}
+
 async function handleScheduledEvent(
   environment: WorkerEnvironment,
 ): Promise<void> {
   const yesterday = getYesterdayKSTDateString();
+  const firstDayOfMonth = getFirstDayOfMonthKSTDateString();
 
   for (const strType of CRAWL_STR_TYPES) {
-    let succeeded = false;
+    // Daily archive: yesterday only
+    await crawlWithRetry(strType, yesterday, yesterday, environment);
 
-    for (let attempt = 1; attempt <= CRAWL_MAX_RETRIES; attempt++) {
-      try {
-        succeeded = await crawlStrType(strType, yesterday, environment);
-        // Whether true or false, the upstream responded — no need to retry
-        break;
-      } catch (error) {
-        // Network error or unexpected failure — retry
-        console.error(
-          `Scheduled crawl failed for strType ${strType} (attempt ${attempt}/${CRAWL_MAX_RETRIES}):`,
-          error,
-        );
-
-        if (attempt < CRAWL_MAX_RETRIES) {
-          await delay(CRAWL_RETRY_DELAY_MILLISECONDS);
-        }
-      }
-    }
-
-    if (!succeeded) {
-      console.error(`Scheduled crawl gave up for strType ${strType} after ${CRAWL_MAX_RETRIES} attempts.`);
+    // This month cache: 1st of month to yesterday
+    if (firstDayOfMonth !== yesterday) {
+      await crawlWithRetry(strType, firstDayOfMonth, yesterday, environment);
     }
   }
 }
