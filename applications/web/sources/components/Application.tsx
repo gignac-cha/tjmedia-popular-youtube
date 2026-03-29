@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { type ReactNode, useEffect, useState, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { usePermalink } from '../hooks/usePermalink.ts';
 import { usePopularSongsQuery } from '../hooks/usePopularSongsQuery.ts';
@@ -27,7 +27,7 @@ const MainContent = styled.main`
   }
 `;
 
-export function Application(): JSX.Element {
+export function Application(): ReactNode {
   const {
     searchForm,
     selectedSong,
