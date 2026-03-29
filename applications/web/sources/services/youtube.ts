@@ -1,4 +1,4 @@
-import type { YoutubeResponse } from '../types/youtube.ts';
+import type { YouTubeResponse } from '../types/youtube.ts';
 import { isWorkerErrorResponse } from '../types/youtube.ts';
 
 function buildYoutubeApiBaseUrl(): string {
@@ -16,9 +16,9 @@ function buildYoutubeApiBaseUrl(): string {
   return url;
 }
 
-export async function fetchYoutubeVideos(
+export async function fetchYouTubeVideos(
   query: string,
-): Promise<YoutubeResponse> {
+): Promise<YouTubeResponse> {
   const youtubeApiBaseUrl = buildYoutubeApiBaseUrl().replace(/\/$/, '');
   const searchUrl = youtubeApiBaseUrl.startsWith('http')
     ? new URL(`${youtubeApiBaseUrl}/search`)
@@ -46,10 +46,10 @@ export async function fetchYoutubeVideos(
     );
   }
 
-  let parsedResponseBody: YoutubeResponse;
+  let parsedResponseBody: YouTubeResponse;
 
   try {
-    parsedResponseBody = JSON.parse(responseText) as YoutubeResponse;
+    parsedResponseBody = JSON.parse(responseText) as YouTubeResponse;
   } catch {
     throw new Error('YouTube worker returned invalid JSON.');
   }

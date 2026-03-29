@@ -173,7 +173,17 @@ export function Header({
   return (
     <StyledHeader>
       <HeaderTop>
-        <TitleGroup>
+        <TitleGroup
+          onClick={() => {
+            const defaultRange = buildThisMonthDateRange();
+            onSearchFormChange({
+              chartType: 'TOP',
+              strType: '1',
+              ...defaultRange,
+            });
+          }}
+          style={{ cursor: 'pointer' }}
+        >
           <Title>TJMedia</Title>
           <Subtitle>Charts</Subtitle>
         </TitleGroup>

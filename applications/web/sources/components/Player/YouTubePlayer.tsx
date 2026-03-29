@@ -7,7 +7,7 @@ import {
   faExclamationTriangle,
   faTimes,
 } from '@fortawesome/free-solid-svg-icons';
-import { useYoutubeSearchQuery } from '../../hooks/useYoutubeSearchQuery.ts';
+import { useYouTubeSearchQuery } from '../../hooks/useYouTubeSearchQuery.ts';
 import { useYouTubePlayer } from '../../hooks/useYouTubePlayer.ts';
 import type { PlayerState } from '../../hooks/useYouTubePlayer.ts';
 import {
@@ -66,7 +66,7 @@ export function YouTubePlayer({
     }
   }, [playerState, onPlayerStateChange]);
 
-  const { data, isPending, isError, error } = useYoutubeSearchQuery(query);
+  const { data, isPending, isError, error } = useYouTubeSearchQuery(query);
 
   const videos = data?.items ?? [];
   const currentVideo = videos[currentIndex] ?? null;

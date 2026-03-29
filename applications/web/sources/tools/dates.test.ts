@@ -1,27 +1,26 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { buildTodayDateRange, buildThisMonthDateRange } from './dates.ts';
 
-function formatLocalDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+beforeEach(() => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date('2026-03-15T12:00:00'));
+});
 
-  return `${year}-${month}-${day}`;
-}
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe('buildTodayDateRange', () => {
   it('returns searchStartDate as yesterday', () => {
     const result = buildTodayDateRange();
-    const now = new Date();
-    const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
 
-    expect(result.searchStartDate).toBe(formatLocalDate(yesterday));
+    expect(result.searchStartDate).toBe('2026-03-14');
   });
 
   it('returns searchEndDate as today', () => {
     const result = buildTodayDateRange();
 
-    expect(result.searchEndDate).toBe(formatLocalDate(new Date()));
+    expect(result.searchEndDate).toBe('2026-03-15');
   });
 
   it('returns dates in YYYY-MM-DD format', () => {
@@ -40,21 +39,27 @@ describe('buildTodayDateRange', () => {
 
     expect(differenceInDays).toBe(1);
   });
+
+  it('handles month boundary correctly', () => {
+    vi.setSystemTime(new Date('2026-04-01T12:00:00'));
+    const result = buildTodayDateRange();
+
+    expect(result.searchStartDate).toBe('2026-03-31');
+    expect(result.searchEndDate).toBe('2026-04-01');
+  });
 });
 
 describe('buildThisMonthDateRange', () => {
   it('returns searchStartDate as the first day of the current month', () => {
     const result = buildThisMonthDateRange();
-    const now = new Date();
-    const expectedStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    expect(result.searchStartDate).toBe(formatLocalDate(expectedStart));
+    expect(result.searchStartDate).toBe('2026-03-01');
   });
 
   it('returns searchEndDate as today', () => {
     const result = buildThisMonthDateRange();
 
-    expect(result.searchEndDate).toBe(formatLocalDate(new Date()));
+    expect(result.searchEndDate).toBe('2026-03-15');
   });
 
   it('returns dates in YYYY-MM-DD format', () => {

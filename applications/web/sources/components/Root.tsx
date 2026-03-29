@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Application } from './Application.tsx';
 
@@ -10,7 +11,7 @@ const queryClient = new QueryClient({
   },
 });
 
-export function Root(): JSX.Element {
+export function Root(): ReactNode {
   return (
     <QueryClientProvider client={queryClient}>
       <Application />

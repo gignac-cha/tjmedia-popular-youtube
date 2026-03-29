@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from 'storybook/test';
 
-import type { TjmediaItem } from '../../types/tjmedia.ts';
+import type { TJMediaItem } from '../../types/tjmedia.ts';
 import { SongList } from './SongList.tsx';
 
-const mockSongs: TjmediaItem[] = [
+const mockSongs: TJMediaItem[] = [
   {
     rank: '1',
     pro: 10001,

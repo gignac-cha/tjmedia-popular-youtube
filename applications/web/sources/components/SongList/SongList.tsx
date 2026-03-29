@@ -1,4 +1,4 @@
-import type { TjmediaItem } from '../../types/tjmedia.ts';
+import type { TJMediaItem } from '../../types/tjmedia.ts';
 import { buildChartErrorMessage } from '../../services/tjmedia.ts';
 import { Subtitle, EmptyState, ErrorMessage } from '../shared/styles.ts';
 import { ListSection, ListHeader } from './styles.ts';
@@ -14,13 +14,13 @@ export function SongList({
   isPlaying,
   onSelectSong,
 }: {
-  songs: TjmediaItem[];
+  songs: TJMediaItem[];
   isPending: boolean;
   isError: boolean;
   errorMessage: string | undefined;
-  selectedSong: TjmediaItem | null;
+  selectedSong: TJMediaItem | null;
   isPlaying: boolean;
-  onSelectSong: (song: TjmediaItem) => void;
+  onSelectSong: (song: TJMediaItem) => void;
 }) {
   return (
     <ListSection>

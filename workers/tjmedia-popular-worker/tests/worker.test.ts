@@ -575,8 +575,11 @@ describe('scheduled handler', () => {
 
     await Promise.all(waitUntilPromises);
 
-    expect(fetchMock).toHaveBeenCalledTimes(3);
-    expect(r2Bucket.put).toHaveBeenCalledTimes(3);
+    // 3 strTypes × 2 (daily + this month) = 6
+    expect(fetchMock).toHaveBeenCalledTimes(6);
+    expect(r2Bucket.put).toHaveBeenCalledTimes(6);
+
+    // Daily archive
     expect(r2Bucket.put).toHaveBeenCalledWith(
       'cache/2026-03-21_2026-03-21/strType-1.json',
       buildSuccessUpstreamBody(),
@@ -587,6 +590,20 @@ describe('scheduled handler', () => {
     );
     expect(r2Bucket.put).toHaveBeenCalledWith(
       'cache/2026-03-21_2026-03-21/strType-3.json',
+      buildSuccessUpstreamBody(),
+    );
+
+    // This month cache
+    expect(r2Bucket.put).toHaveBeenCalledWith(
+      'cache/2026-03-01_2026-03-21/strType-1.json',
+      buildSuccessUpstreamBody(),
+    );
+    expect(r2Bucket.put).toHaveBeenCalledWith(
+      'cache/2026-03-01_2026-03-21/strType-2.json',
+      buildSuccessUpstreamBody(),
+    );
+    expect(r2Bucket.put).toHaveBeenCalledWith(
+      'cache/2026-03-01_2026-03-21/strType-3.json',
       buildSuccessUpstreamBody(),
     );
 
@@ -634,9 +651,9 @@ describe('scheduled handler', () => {
 
     await Promise.all(waitUntilPromises);
 
-    // strType 1 returned 04 (no retry for server errors), but 2 and 3 succeeded
-    expect(fetchMock).toHaveBeenCalledTimes(3);
-    expect(r2Bucket.put).toHaveBeenCalledTimes(2);
+    // strType 1 daily returned 04, remaining 5 calls succeeded
+    expect(fetchMock).toHaveBeenCalledTimes(6);
+    expect(r2Bucket.put).toHaveBeenCalledTimes(5);
 
     vi.useRealTimers();
   });
