@@ -47,4 +47,20 @@ describe('isWorkerErrorResponse', () => {
 
     expect(isWorkerErrorResponse(response)).toBe(true);
   });
+
+  it('returns false for string primitive', () => {
+    expect(isWorkerErrorResponse('error')).toBe(false);
+  });
+
+  it('returns false for number primitive', () => {
+    expect(isWorkerErrorResponse(42)).toBe(false);
+  });
+
+  it('returns false for undefined', () => {
+    expect(isWorkerErrorResponse(undefined)).toBe(false);
+  });
+
+  it('returns false for boolean', () => {
+    expect(isWorkerErrorResponse(true)).toBe(false);
+  });
 });

@@ -1,9 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   parseSearchFormFromURL,
   parseRankFromURL,
   buildSearchParameters,
   buildPermalinkURL,
+  pushPermalink,
 } from './permalink.ts';
 import { buildThisMonthDateRange } from './dates.ts';
 import type { SearchForm } from '../types/tjmedia.ts';
@@ -340,5 +341,54 @@ describe('buildPermalinkURL', () => {
     expect(result).toContain('to=2024-07-31');
     expect(result).toContain('rank=10');
     expect(result).toMatch(/^\/tjmedia-popular-youtube\/\?/);
+  });
+});
+
+describe('pushPermalink', () => {
+  it('calls history.pushState with the permalink URL', () => {
+    const pushStateSpy = vi.spyOn(window.history, 'pushState');
+    const defaultDateRange = buildThisMonthDateRange();
+    const searchForm: SearchForm = {
+      chartType: 'TOP',
+      strType: '2',
+      searchStartDate: defaultDateRange.searchStartDate,
+      searchEndDate: defaultDateRange.searchEndDate,
+    };
+
+    pushPermalink(searchForm, 5);
+
+    expect(pushStateSpy).toHaveBeenCalledWith(
+      null,
+      '',
+      expect.stringContaining('type=english'),
+    );
+    expect(pushStateSpy).toHaveBeenCalledWith(
+      null,
+      '',
+      expect.stringContaining('rank=5'),
+    );
+
+    pushStateSpy.mockRestore();
+  });
+
+  it('calls history.pushState with base path for defaults', () => {
+    const pushStateSpy = vi.spyOn(window.history, 'pushState');
+    const defaultDateRange = buildThisMonthDateRange();
+    const searchForm: SearchForm = {
+      chartType: 'TOP',
+      strType: '1',
+      searchStartDate: defaultDateRange.searchStartDate,
+      searchEndDate: defaultDateRange.searchEndDate,
+    };
+
+    pushPermalink(searchForm, null);
+
+    expect(pushStateSpy).toHaveBeenCalledWith(
+      null,
+      '',
+      '/tjmedia-popular-youtube/',
+    );
+
+    pushStateSpy.mockRestore();
   });
 });
