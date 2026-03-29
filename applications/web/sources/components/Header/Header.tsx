@@ -173,7 +173,10 @@ export function Header({
   return (
     <StyledHeader>
       <HeaderTop>
-        <TitleGroup>
+        <TitleGroup
+          onClick={() => { window.location.href = import.meta.env.BASE_URL; }}
+          style={{ cursor: 'pointer' }}
+        >
           <Title>TJMedia</Title>
           <Subtitle>Charts</Subtitle>
         </TitleGroup>
