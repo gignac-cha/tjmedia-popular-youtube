@@ -1,6 +1,8 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import type { TJMediaItem } from '../../types/tjmedia.ts';
 import { buildChartErrorMessage } from '../../services/tjmedia.ts';
-import { Subtitle, EmptyState, ErrorMessage } from '../shared/styles.ts';
+import { Subtitle, EmptyState, ErrorContainer, ErrorMessage, RetryButton } from '../shared/styles.ts';
 import { ListSection, ListHeader } from './styles.ts';
 import { SkeletonList } from './SkeletonList.tsx';
 import { SongItem } from './SongItem.tsx';
@@ -13,6 +15,7 @@ export function SongList({
   selectedSong,
   isPlaying,
   onSelectSong,
+  onRetry,
 }: {
   songs: TJMediaItem[];
   isPending: boolean;
@@ -21,6 +24,7 @@ export function SongList({
   selectedSong: TJMediaItem | null;
   isPlaying: boolean;
   onSelectSong: (song: TJMediaItem) => void;
+  onRetry?: () => void;
 }) {
   return (
     <ListSection>
@@ -31,7 +35,13 @@ export function SongList({
       {isPending && <SkeletonList />}
 
       {isError && errorMessage && (
-        <ErrorMessage>{buildChartErrorMessage(errorMessage)}</ErrorMessage>
+        <ErrorContainer>
+          <FontAwesomeIcon icon={faExclamationCircle} />
+          <ErrorMessage>{buildChartErrorMessage(errorMessage)}</ErrorMessage>
+          {onRetry !== undefined && (
+            <RetryButton onClick={onRetry}>다시 시도</RetryButton>
+          )}
+        </ErrorContainer>
       )}
 
       {!isPending && !isError && songs.length === 0 && (

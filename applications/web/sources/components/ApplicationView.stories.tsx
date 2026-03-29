@@ -3,42 +3,9 @@ import { fn } from 'storybook/test';
 
 import { ApplicationView } from './ApplicationView.tsx';
 import { buildThisMonthDateRange } from '../tools/dates.ts';
-import type { TJMediaItem } from '../types/tjmedia.ts';
+import { mockSongs } from '../fixtures/mock-songs.ts';
 
 const thisMonthRange = buildThisMonthDateRange();
-
-const mockSongs: TJMediaItem[] = [
-  {
-    rank: '1',
-    pro: 10001,
-    indexTitle: 'Drowning',
-    indexSong: 'WOODZ (조승연)',
-    word: 'Drowning',
-    com: 'YUEHUA',
-    imgthumb_path: '',
-    mv_yn: 'Y',
-  },
-  {
-    rank: '2',
-    pro: 10002,
-    indexTitle: 'APT.',
-    indexSong: 'ROSE (로제)',
-    word: 'APT',
-    com: 'YG',
-    imgthumb_path: '',
-    mv_yn: 'Y',
-  },
-  {
-    rank: '3',
-    pro: 10003,
-    indexTitle: 'Supernova',
-    indexSong: 'aespa (에스파)',
-    word: 'Supernova',
-    com: 'SM',
-    imgthumb_path: '',
-    mv_yn: 'Y',
-  },
-];
 
 const meta = {
   title: 'Components/ApplicationView',
@@ -55,9 +22,11 @@ const meta = {
     songs: mockSongs,
     isPending: false,
     isError: false,
+    isPlaying: false,
     selectedSong: null,
     onSearchFormChange: fn(),
     onSelectSong: fn(),
+    onRetry: fn(),
   },
 } satisfies Meta<typeof ApplicationView>;
 
@@ -85,5 +54,10 @@ export const Error: Story = {
 export const WithSelectedSong: Story = {
   args: {
     selectedSong: mockSongs[0],
+    playerSlot: (
+      <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+        Player placeholder for &quot;{mockSongs[0].indexTitle} - {mockSongs[0].indexSong}&quot;
+      </div>
+    ),
   },
 };

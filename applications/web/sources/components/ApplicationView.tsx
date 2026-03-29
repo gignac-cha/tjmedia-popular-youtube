@@ -1,11 +1,8 @@
-import { type ReactNode, useState, useCallback } from 'react';
+import { type ReactNode } from 'react';
 import styled from '@emotion/styled';
 import type { SearchForm, TJMediaItem } from '../types/tjmedia.ts';
-import type { PlayerState } from '../hooks/useYouTubePlayer.ts';
 import { Header } from './Header/Header.tsx';
 import { SongList } from './SongList/SongList.tsx';
-import { YouTubePlayer } from './Player/YouTubePlayer.tsx';
-import { PlayerSection } from './Player/styles.ts';
 
 const PageShell = styled.div`
   display: flex;
@@ -33,8 +30,11 @@ export function ApplicationView({
   isError,
   errorMessage,
   selectedSong,
+  isPlaying,
   onSearchFormChange,
   onSelectSong,
+  onRetry,
+  playerSlot,
 }: {
   searchForm: SearchForm;
   songs: TJMediaItem[];
@@ -42,15 +42,12 @@ export function ApplicationView({
   isError: boolean;
   errorMessage?: string;
   selectedSong: TJMediaItem | null;
+  isPlaying?: boolean;
   onSearchFormChange: (next: SearchForm) => void;
   onSelectSong: (song: TJMediaItem) => void;
+  onRetry?: () => void;
+  playerSlot?: ReactNode;
 }): ReactNode {
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  const handlePlayerStateChange = useCallback((state: PlayerState) => {
-    setIsPlaying(state === 'playing');
-  }, []);
-
   return (
     <PageShell>
       <Header
@@ -65,20 +62,12 @@ export function ApplicationView({
           isError={isError}
           errorMessage={errorMessage}
           selectedSong={selectedSong}
-          isPlaying={isPlaying}
+          isPlaying={isPlaying ?? false}
           onSelectSong={onSelectSong}
+          onRetry={onRetry}
         />
 
-        {selectedSong !== null ? (
-          <YouTubePlayer
-            query={`${selectedSong.indexTitle} ${selectedSong.indexSong}`}
-            songTitle={selectedSong.indexTitle}
-            artist={selectedSong.indexSong}
-            onPlayerStateChange={handlePlayerStateChange}
-          />
-        ) : (
-          <PlayerSection style={{ display: 'none' }} />
-        )}
+        {playerSlot}
       </MainContent>
     </PageShell>
   );

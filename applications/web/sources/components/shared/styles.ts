@@ -72,14 +72,45 @@ export const EmptyState = styled.div`
   }
 `;
 
-export const ErrorMessage = styled.div`
-  padding: 1rem;
-  background-color: rgba(239, 68, 68, 0.1);
-  border-left: 4px solid var(--error-color);
-  color: var(--error-color);
+export const ErrorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2.5rem 2rem;
   margin: 1.5rem;
-  border-radius: 0 8px 8px 0;
+  background-color: rgba(239, 68, 68, 0.06);
+  border-radius: 12px;
+  text-align: center;
+
+  svg {
+    font-size: 2rem;
+    color: var(--error-color);
+    opacity: 0.7;
+  }
+`;
+
+export const ErrorMessage = styled.p`
+  margin: 0;
+  color: var(--error-color);
   font-size: 0.875rem;
+  line-height: 1.5;
+`;
+
+export const RetryButton = styled.button`
+  padding: 0.5rem 1.25rem;
+  border: 1px solid var(--error-color);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--error-color);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+
+  &:hover {
+    background-color: var(--error-color);
+    color: white;
+  }
 `;
 
 export const SkeletonBase = styled.div`
