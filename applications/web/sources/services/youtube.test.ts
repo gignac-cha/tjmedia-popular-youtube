@@ -8,6 +8,7 @@ describe('fetchYouTubeVideos', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it('returns parsed response on success', async () => {

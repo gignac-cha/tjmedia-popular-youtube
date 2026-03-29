@@ -174,7 +174,14 @@ export function Header({
     <StyledHeader>
       <HeaderTop>
         <TitleGroup
-          onClick={() => { window.location.href = import.meta.env.BASE_URL; }}
+          onClick={() => {
+            const defaultRange = buildThisMonthDateRange();
+            onSearchFormChange({
+              chartType: 'TOP',
+              strType: '1',
+              ...defaultRange,
+            });
+          }}
           style={{ cursor: 'pointer' }}
         >
           <Title>TJMedia</Title>

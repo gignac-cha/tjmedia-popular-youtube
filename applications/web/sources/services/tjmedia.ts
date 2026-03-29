@@ -73,15 +73,13 @@ export async function fetchTJMediaPopularSongs(
     throw new Error('TJMedia worker returned invalid JSON.');
   }
 
-  const tjmediaResponse = parsedResponseBody as TJMediaResponse;
-
-  if (tjmediaResponse.resultCode !== '99') {
-    const resultCode = tjmediaResponse.resultCode ?? 'unknown';
-    const resultMessage = tjmediaResponse.resultMsg ?? 'Unknown upstream error';
+  if (parsedResponseBody.resultCode !== '99') {
+    const resultCode = parsedResponseBody.resultCode ?? 'unknown';
+    const resultMessage = parsedResponseBody.resultMsg ?? 'Unknown upstream error';
     throw new Error(
       `TJMedia returned unexpected resultCode ${resultCode}: ${resultMessage}.`,
     );
   }
 
-  return tjmediaResponse;
+  return parsedResponseBody;
 }
