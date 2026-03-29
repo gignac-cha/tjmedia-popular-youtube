@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import type { SearchForm, TjmediaItem } from '../types/tjmedia.ts';
+import type { SearchForm, TJMediaItem } from '../types/tjmedia.ts';
 import {
   parseSearchFormFromURL,
   parseRankFromURL,
@@ -9,10 +9,10 @@ import {
 type UsePermalinkResult = {
   searchForm: SearchForm;
   selectedRank: number | null;
-  selectedSong: TjmediaItem | null;
+  selectedSong: TJMediaItem | null;
   updateSearchForm: (next: SearchForm) => void;
-  selectSong: (song: TjmediaItem | null) => void;
-  syncSelectedSongFromData: (songs: TjmediaItem[]) => void;
+  selectSong: (song: TJMediaItem | null) => void;
+  syncSelectedSongFromData: (songs: TJMediaItem[]) => void;
 };
 
 function readInitialState(): { searchForm: SearchForm; rank: number | null } {
@@ -28,7 +28,7 @@ export function usePermalink(): UsePermalinkResult {
   const [initial] = useState(readInitialState);
   const [searchForm, setSearchForm] = useState<SearchForm>(initial.searchForm);
   const [selectedRank, setSelectedRank] = useState<number | null>(initial.rank);
-  const [selectedSong, setSelectedSong] = useState<TjmediaItem | null>(null);
+  const [selectedSong, setSelectedSong] = useState<TJMediaItem | null>(null);
 
   const updateSearchForm = useCallback((next: SearchForm) => {
     setSearchForm(next);
@@ -38,7 +38,7 @@ export function usePermalink(): UsePermalinkResult {
   }, []);
 
   const selectSong = useCallback(
-    (song: TjmediaItem | null) => {
+    (song: TJMediaItem | null) => {
       setSelectedSong(song);
       const rank = song !== null ? Number(song.rank) : null;
       setSelectedRank(rank);
@@ -48,7 +48,7 @@ export function usePermalink(): UsePermalinkResult {
   );
 
   const syncSelectedSongFromData = useCallback(
-    (songs: TjmediaItem[]) => {
+    (songs: TJMediaItem[]) => {
       if (selectedRank === null || selectedSong !== null) {
         return;
       }

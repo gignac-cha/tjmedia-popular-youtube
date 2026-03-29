@@ -8,7 +8,7 @@ export type SearchForm = {
   strType: GenreType;
 };
 
-export type TjmediaItem = {
+export type TJMediaItem = {
   rank: string;
   pro: number;
   indexTitle: string;
@@ -19,10 +19,10 @@ export type TjmediaItem = {
   mv_yn: string;
 };
 
-export type TjmediaResponse = {
+export type TJMediaResponse = {
   resultCode: string;
   resultMsg?: string;
   resultData?: {
-    items?: TjmediaItem[];
+    items?: TJMediaItem[];
   };
 };

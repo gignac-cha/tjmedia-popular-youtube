@@ -1,4 +1,4 @@
-export type YoutubeItem = {
+export type YouTubeItem = {
   videoId: string;
   title: string;
   thumbnailUrl: string;
@@ -7,9 +7,9 @@ export type YoutubeItem = {
   height: number;
 };
 
-export type YoutubeResponse = {
+export type YouTubeResponse = {
   query: string;
-  items: YoutubeItem[];
+  items: YouTubeItem[];
 };
 
 export type WorkerErrorResponse = {

@@ -1,4 +1,4 @@
-import type { SearchForm, TjmediaResponse } from '../types/tjmedia.ts';
+import type { SearchForm, TJMediaResponse } from '../types/tjmedia.ts';
 import { isWorkerErrorResponse } from '../types/youtube.ts';
 import { isDefaultDateRange } from '../tools/search-form-storage.ts';
 
@@ -29,9 +29,9 @@ export function buildChartErrorMessage(errorMessage: string): string {
   return `Failed to load charts: ${errorMessage}`;
 }
 
-export async function fetchPopularSongs(
+export async function fetchTJMediaPopularSongs(
   searchForm: SearchForm,
-): Promise<TjmediaResponse> {
+): Promise<TJMediaResponse> {
   const tjmediaApiBaseUrl = buildTjmediaApiBaseUrl().replace(/\/$/, '');
   const searchUrl = tjmediaApiBaseUrl.startsWith('http')
     ? new URL(`${tjmediaApiBaseUrl}/search`)
@@ -65,15 +65,15 @@ export async function fetchPopularSongs(
     );
   }
 
-  let parsedResponseBody: TjmediaResponse;
+  let parsedResponseBody: TJMediaResponse;
 
   try {
-    parsedResponseBody = JSON.parse(responseText) as TjmediaResponse;
+    parsedResponseBody = JSON.parse(responseText) as TJMediaResponse;
   } catch {
     throw new Error('TJMedia worker returned invalid JSON.');
   }
 
-  const tjmediaResponse = parsedResponseBody as TjmediaResponse;
+  const tjmediaResponse = parsedResponseBody as TJMediaResponse;
 
   if (tjmediaResponse.resultCode !== '99') {
     const resultCode = tjmediaResponse.resultCode ?? 'unknown';

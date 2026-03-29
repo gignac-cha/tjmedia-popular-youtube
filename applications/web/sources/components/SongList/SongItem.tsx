@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
-import type { TjmediaItem } from '../../types/tjmedia.ts';
+import type { TJMediaItem } from '../../types/tjmedia.ts';
 import {
   StyledSongItem,
   Rank,
@@ -23,7 +23,7 @@ export function SongItem({
   isPlaying,
   onSelect,
 }: {
-  song: TjmediaItem;
+  song: TJMediaItem;
   index: number;
   isSelected: boolean;
   isPlaying: boolean;

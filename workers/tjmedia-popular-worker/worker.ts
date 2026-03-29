@@ -26,7 +26,7 @@ type WorkerEnvironment = {
   R2_TJMEDIA_POPULAR: R2Bucket;
 };
 
-type TjmediaSearchResponse = {
+type TJMediaSearchResponse = {
   resultCode?: string;
   resultMsg?: string;
   resultData?: {
@@ -158,7 +158,7 @@ function validateUpstreamResponse(
   upstreamContentType: string,
   upstreamStatus: number,
   origin?: string,
-): { parsedBody: TjmediaSearchResponse; errorResponse?: Response } {
+): { parsedBody: TJMediaSearchResponse; errorResponse?: Response } {
   if (!upstreamContentType.toLowerCase().includes('application/json')) {
     return {
       parsedBody: {},
@@ -170,10 +170,10 @@ function validateUpstreamResponse(
     };
   }
 
-  let parsedBody: TjmediaSearchResponse;
+  let parsedBody: TJMediaSearchResponse;
 
   try {
-    parsedBody = JSON.parse(upstreamBody) as TjmediaSearchResponse;
+    parsedBody = JSON.parse(upstreamBody) as TJMediaSearchResponse;
   } catch {
     return {
       parsedBody: {},
