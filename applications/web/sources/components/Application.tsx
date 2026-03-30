@@ -4,7 +4,6 @@ import { usePopularSongsQuery } from '../hooks/usePopularSongsQuery.ts';
 import type { PlayerState } from '../hooks/useYouTubePlayer.ts';
 import { ApplicationView } from './ApplicationView.tsx';
 import { YouTubePlayer } from './Player/YouTubePlayer.tsx';
-import { PlayerSection } from './Player/styles.ts';
 
 export function Application(): ReactNode {
   const {
@@ -56,9 +55,7 @@ export function Application(): ReactNode {
             artist={selectedSong.indexSong}
             onPlayerStateChange={handlePlayerStateChange}
           />
-        ) : (
-          <PlayerSection style={{ display: 'none' }} />
-        )
+        ) : undefined
       }
     />
   );

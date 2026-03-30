@@ -34,10 +34,14 @@ export function SongList({
 
       {isPending && <SkeletonList />}
 
-      {isError && errorMessage && (
-        <ErrorContainer>
+      {isError && (
+        <ErrorContainer role="alert">
           <FontAwesomeIcon icon={faExclamationCircle} />
-          <ErrorMessage>{buildChartErrorMessage(errorMessage)}</ErrorMessage>
+          <ErrorMessage>
+            {errorMessage !== undefined
+              ? buildChartErrorMessage(errorMessage)
+              : 'Failed to load charts.'}
+          </ErrorMessage>
           {onRetry !== undefined && (
             <RetryButton onClick={onRetry}>다시 시도</RetryButton>
           )}

@@ -66,7 +66,14 @@ export function VideoPlayerView({
 
   const COLLAPSE_THRESHOLD_PIXELS = 80;
 
-  const currentVideo = videos[currentIndex] ?? null;
+  const clampedIndex = videos.length > 0 ? Math.min(currentIndex, videos.length - 1) : 0;
+  const currentVideo = videos[clampedIndex] ?? null;
+
+  useEffect(() => {
+    if (clampedIndex !== currentIndex) {
+      setCurrentIndex(clampedIndex);
+    }
+  }, [clampedIndex, currentIndex]);
 
   useEffect(() => {
     if (currentVideo !== null && onVideoChange !== undefined) {
@@ -140,7 +147,7 @@ export function VideoPlayerView({
       <PlayerSection>
         <EmptyState>
           <FontAwesomeIcon icon={faExclamationTriangle} />
-          <p>Failed to load videos: {errorMessage}</p>
+          <p>{errorMessage ?? 'Failed to load videos.'}</p>
         </EmptyState>
       </PlayerSection>
     );
