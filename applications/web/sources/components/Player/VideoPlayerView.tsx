@@ -145,7 +145,7 @@ export function VideoPlayerView({
   if (isError) {
     return (
       <PlayerSection>
-        <EmptyState>
+        <EmptyState role="alert">
           <FontAwesomeIcon icon={faExclamationTriangle} />
           <p>{errorMessage ?? 'Failed to load videos.'}</p>
         </EmptyState>
@@ -198,14 +198,14 @@ export function VideoPlayerView({
           <OverlayControls data-overlay>
             <OverlayArrow
               onClick={() => setCurrentIndex((previous) => Math.max(0, previous - 1))}
-              disabled={currentIndex === 0}
+              disabled={clampedIndex === 0}
               aria-label="Previous video"
             >
               <FontAwesomeIcon icon={faChevronLeft} />
             </OverlayArrow>
             <OverlayArrow
               onClick={() => setCurrentIndex((previous) => Math.min(videos.length - 1, previous + 1))}
-              disabled={currentIndex === videos.length - 1}
+              disabled={clampedIndex === videos.length - 1}
               aria-label="Next video"
             >
               <FontAwesomeIcon icon={faChevronRight} />
@@ -214,7 +214,7 @@ export function VideoPlayerView({
         )}
         {videos.length > 1 && (
           <OverlayCounter data-overlay>
-            {currentIndex + 1} / {videos.length}
+            {clampedIndex + 1} / {videos.length}
           </OverlayCounter>
         )}
       </VideoContainer>
@@ -232,13 +232,13 @@ export function VideoPlayerView({
               event.stopPropagation();
               setCurrentIndex((previous) => Math.max(0, previous - 1));
             }}
-            disabled={currentIndex === 0}
+            disabled={clampedIndex === 0}
             aria-label="Previous video"
           >
             <FontAwesomeIcon icon={faChevronLeft} />
           </IconButton>
           <VideoCounter>
-            {currentIndex + 1} / {videos.length}
+            {clampedIndex + 1} / {videos.length}
           </VideoCounter>
           <IconButton
             onClick={(event) => {
@@ -247,7 +247,7 @@ export function VideoPlayerView({
                 Math.min(videos.length - 1, previous + 1),
               );
             }}
-            disabled={currentIndex === videos.length - 1}
+            disabled={clampedIndex === videos.length - 1}
             aria-label="Next video"
           >
             <FontAwesomeIcon icon={faChevronRight} />
