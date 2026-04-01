@@ -1,27 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from 'storybook/test';
 
-import type { TJMediaItem } from '../../types/tjmedia.ts';
 import { SongItem } from './SongItem.tsx';
-
-const mockSong: TJMediaItem = {
-  rank: '3',
-  pro: 12345,
-  indexTitle: 'APT.',
-  indexSong: 'ROSE (로제)',
-  word: 'APT',
-  com: 'YG',
-  imgthumb_path: 'https://via.placeholder.com/48',
-  mv_yn: 'Y',
-};
-
-const firstPlaceSong: TJMediaItem = {
-  ...mockSong,
-  rank: '1',
-  pro: 99999,
-  indexTitle: 'Supernova',
-  indexSong: 'aespa (에스파)',
-};
+import { mockSongs } from '../../fixtures/mock-songs.ts';
 
 const meta = {
   title: 'Components/SongList/SongItem',
@@ -30,7 +11,7 @@ const meta = {
     layout: 'padded',
   },
   args: {
-    song: mockSong,
+    song: mockSongs[2],
     index: 2,
     isSelected: false,
     isPlaying: false,
@@ -59,7 +40,7 @@ export const Playing: Story = {
 
 export const FirstPlace: Story = {
   args: {
-    song: firstPlaceSong,
+    song: mockSongs[0],
     index: 0,
   },
 };
