@@ -84,7 +84,7 @@ export async function fetchTJMediaPopularSongs(
   if (parsedResponseBody.resultCode === '98' && noDataRetryCount < NO_DATA_MAXIMUM_RETRIES) {
     const todayRange = buildTodayDateRange();
     const startDate = new Date(todayRange.searchStartDate);
-    startDate.setDate(startDate.getDate() - noDataRetryCount);
+    startDate.setDate(startDate.getDate() - (noDataRetryCount + 1));
     const fallbackStartDate = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}-${String(startDate.getDate()).padStart(2, '0')}`;
 
     return fetchTJMediaPopularSongs(
