@@ -189,46 +189,23 @@ describe('fetchTJMediaPopularSongs', () => {
     expect(fetch).toHaveBeenCalledTimes(2);
   });
 
-  it('throws when retry with today range also returns 98', async () => {
-    vi.mocked(fetch)
-      .mockResolvedValueOnce(
-        new Response(
-          JSON.stringify({ resultCode: '98', resultMsg: '실패.' }),
-          { status: 200 },
-        ),
-      )
-      .mockResolvedValueOnce(
-        new Response(
-          JSON.stringify({ resultCode: '98', resultMsg: '실패.' }),
-          { status: 200 },
-        ),
+  it('throws after exhausting all NO_DATA retries', async () => {
+    const noDataResponse = () =>
+      new Response(
+        JSON.stringify({ resultCode: '98', resultMsg: '실패.' }),
+        { status: 200 },
       );
+
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(noDataResponse())
+      .mockResolvedValueOnce(noDataResponse())
+      .mockResolvedValueOnce(noDataResponse())
+      .mockResolvedValueOnce(noDataResponse());
 
     await expect(fetchTJMediaPopularSongs(defaultSearchForm)).rejects.toThrow(
       'TJMedia returned unexpected resultCode 98: 실패.',
     );
 
-    expect(fetch).toHaveBeenCalledTimes(2);
-  });
-
-  it('does not retry when already using today range and resultCode is 98', async () => {
-    const { buildTodayDateRange } = await import('../tools/dates.ts');
-    const todayRange = buildTodayDateRange();
-
-    vi.mocked(fetch).mockResolvedValue(
-      new Response(
-        JSON.stringify({ resultCode: '98', resultMsg: '실패.' }),
-        { status: 200 },
-      ),
-    );
-
-    await expect(
-      fetchTJMediaPopularSongs({
-        ...defaultSearchForm,
-        ...todayRange,
-      }),
-    ).rejects.toThrow('TJMedia returned unexpected resultCode 98: 실패.');
-
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(4);
   });
 });

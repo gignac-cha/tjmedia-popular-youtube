@@ -34,8 +34,11 @@ export function buildChartErrorMessage(errorMessage: string): string {
   return `Failed to load charts: ${errorMessage}`;
 }
 
+const NO_DATA_MAXIMUM_RETRIES = 3;
+
 export async function fetchTJMediaPopularSongs(
   searchForm: SearchForm,
+  noDataRetryCount: number = 0,
 ): Promise<TJMediaResponse> {
   const tjmediaApiBaseUrl = buildTjmediaApiBaseUrl().replace(/\/$/, '');
   const searchUrl = tjmediaApiBaseUrl.startsWith('http')
@@ -78,18 +81,20 @@ export async function fetchTJMediaPopularSongs(
     throw new Error('TJMedia worker returned invalid JSON.');
   }
 
-  if (parsedResponseBody.resultCode === '98') {
+  if (parsedResponseBody.resultCode === '98' && noDataRetryCount < NO_DATA_MAXIMUM_RETRIES) {
     const todayRange = buildTodayDateRange();
-    const isAlreadyTodayRange =
-      searchForm.searchStartDate === todayRange.searchStartDate &&
-      searchForm.searchEndDate === todayRange.searchEndDate;
+    const startDate = new Date(todayRange.searchStartDate);
+    startDate.setDate(startDate.getDate() - noDataRetryCount);
+    const fallbackStartDate = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}-${String(startDate.getDate()).padStart(2, '0')}`;
 
-    if (!isAlreadyTodayRange) {
-      return fetchTJMediaPopularSongs({
+    return fetchTJMediaPopularSongs(
+      {
         ...searchForm,
-        ...todayRange,
-      });
-    }
+        searchStartDate: fallbackStartDate,
+        searchEndDate: todayRange.searchEndDate,
+      },
+      noDataRetryCount + 1,
+    );
   }
 
   if (parsedResponseBody.resultCode !== '99') {
