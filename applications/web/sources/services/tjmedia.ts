@@ -1,6 +1,7 @@
 import type { SearchForm, TJMediaResponse } from '../types/tjmedia.ts';
 import { isWorkerErrorResponse } from '../types/youtube.ts';
 import { isDefaultDateRange } from '../tools/search-form-storage.ts';
+import { buildTodayDateRange } from '../tools/dates.ts';
 
 function buildTjmediaApiBaseUrl(): string {
   if (import.meta.env.DEV) {
@@ -18,6 +19,10 @@ function buildTjmediaApiBaseUrl(): string {
 }
 
 export function buildChartErrorMessage(errorMessage: string): string {
+  if (errorMessage.includes('resultCode 98')) {
+    return '현재 이 장르의 차트 데이터가 없습니다. 잠시 후 다시 시도해주세요.';
+  }
+
   if (errorMessage.includes('resultCode 04')) {
     return 'TJMedia returned an application-level failure (`resultCode 04`). Try again in a moment or change the date range.';
   }
@@ -29,8 +34,11 @@ export function buildChartErrorMessage(errorMessage: string): string {
   return `Failed to load charts: ${errorMessage}`;
 }
 
+const NO_DATA_MAXIMUM_RETRIES = 3;
+
 export async function fetchTJMediaPopularSongs(
   searchForm: SearchForm,
+  noDataRetryCount: number = 0,
 ): Promise<TJMediaResponse> {
   const tjmediaApiBaseUrl = buildTjmediaApiBaseUrl().replace(/\/$/, '');
   const searchUrl = tjmediaApiBaseUrl.startsWith('http')
@@ -71,6 +79,22 @@ export async function fetchTJMediaPopularSongs(
     parsedResponseBody = JSON.parse(responseText) as TJMediaResponse;
   } catch {
     throw new Error('TJMedia worker returned invalid JSON.');
+  }
+
+  if (parsedResponseBody.resultCode === '98' && noDataRetryCount < NO_DATA_MAXIMUM_RETRIES) {
+    const todayRange = buildTodayDateRange();
+    const startDate = new Date(todayRange.searchStartDate);
+    startDate.setDate(startDate.getDate() - (noDataRetryCount + 1));
+    const fallbackStartDate = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}-${String(startDate.getDate()).padStart(2, '0')}`;
+
+    return fetchTJMediaPopularSongs(
+      {
+        ...searchForm,
+        searchStartDate: fallbackStartDate,
+        searchEndDate: todayRange.searchEndDate,
+      },
+      noDataRetryCount + 1,
+    );
   }
 
   if (parsedResponseBody.resultCode !== '99') {

@@ -165,4 +165,73 @@ describe('fetchTJMediaPopularSongs', () => {
       'TJMedia returned unexpected resultCode 04: 알수 없는 에러.',
     );
   });
+
+  it('retries with expanded date range when resultCode is 98', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-04-04T12:00:00'));
+
+    const noDataResponse = new Response(
+      JSON.stringify({ resultCode: '98', resultMsg: '실패.' }),
+      { status: 200 },
+    );
+    const successResponse = new Response(
+      JSON.stringify({
+        resultCode: '99',
+        resultData: { items: [{ rank: '1', indexTitle: 'Test' }] },
+      }),
+      { status: 200 },
+    );
+
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(noDataResponse)
+      .mockResolvedValueOnce(successResponse);
+
+    const result = await fetchTJMediaPopularSongs(defaultSearchForm);
+
+    expect(result.resultCode).toBe('99');
+    expect(fetch).toHaveBeenCalledTimes(2);
+
+    const retryUrl = new URL(vi.mocked(fetch).mock.calls[1]![0] as string);
+    expect(retryUrl.searchParams.get('searchStartDate')).toBe('2026-04-02');
+    expect(retryUrl.searchParams.get('searchEndDate')).toBe('2026-04-04');
+
+    vi.useRealTimers();
+  });
+
+  it('throws after exhausting all NO_DATA retries with expanding dates', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-04-04T12:00:00'));
+
+    const noDataResponse = () =>
+      new Response(
+        JSON.stringify({ resultCode: '98', resultMsg: '실패.' }),
+        { status: 200 },
+      );
+
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(noDataResponse())
+      .mockResolvedValueOnce(noDataResponse())
+      .mockResolvedValueOnce(noDataResponse())
+      .mockResolvedValueOnce(noDataResponse());
+
+    await expect(fetchTJMediaPopularSongs(defaultSearchForm)).rejects.toThrow(
+      'TJMedia returned unexpected resultCode 98: 실패.',
+    );
+
+    expect(fetch).toHaveBeenCalledTimes(4);
+
+    const calls = vi.mocked(fetch).mock.calls;
+    const retryUrls = calls.slice(1).map((call) => new URL(call[0] as string));
+    // 1회차 재시도: 4/2~4/4
+    expect(retryUrls[0]!.searchParams.get('searchStartDate')).toBe('2026-04-02');
+    expect(retryUrls[0]!.searchParams.get('searchEndDate')).toBe('2026-04-04');
+    // 2회차 재시도: 4/1~4/4 — isDefaultDateRange와 일치하므로 날짜 파라미터 생략
+    expect(retryUrls[1]!.searchParams.get('searchStartDate')).toBeNull();
+    expect(retryUrls[1]!.searchParams.get('searchEndDate')).toBeNull();
+    // 3회차 재시도: 3/31~4/4
+    expect(retryUrls[2]!.searchParams.get('searchStartDate')).toBe('2026-03-31');
+    expect(retryUrls[2]!.searchParams.get('searchEndDate')).toBe('2026-04-04');
+
+    vi.useRealTimers();
+  });
 });
