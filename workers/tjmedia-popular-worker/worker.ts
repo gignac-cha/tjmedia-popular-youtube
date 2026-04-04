@@ -204,15 +204,6 @@ function validateUpstreamResponse(
       break;
 
     case RESULT_CODE.NO_DATA:
-      return {
-        parsedBody: {
-          ...parsedBody,
-          resultCode: RESULT_CODE.SUCCESS,
-          resultData: { itemsTotalCount: 0, items: [] },
-        },
-      };
-
-    // Pass through as 200 — client checks resultCode and shows error via buildChartErrorMessage
     case RESULT_CODE.UNKNOWN_ERROR:
       return { parsedBody };
 
@@ -294,10 +285,12 @@ async function handleSearchRequest(
 
   const responseBody = JSON.stringify(validation.parsedBody);
 
-  try {
-    await environment.R2_TJMEDIA_POPULAR.put(cacheKey, responseBody);
-  } catch {
-    // R2 write failed, still return the response
+  if (validation.parsedBody.resultCode === RESULT_CODE.SUCCESS) {
+    try {
+      await environment.R2_TJMEDIA_POPULAR.put(cacheKey, responseBody);
+    } catch {
+      // R2 write failed, still return the response
+    }
   }
 
   const headers = buildCORSHeaders(origin);

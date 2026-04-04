@@ -1,6 +1,7 @@
 import type { SearchForm, TJMediaResponse } from '../types/tjmedia.ts';
 import { isWorkerErrorResponse } from '../types/youtube.ts';
 import { isDefaultDateRange } from '../tools/search-form-storage.ts';
+import { buildTodayDateRange } from '../tools/dates.ts';
 
 function buildTjmediaApiBaseUrl(): string {
   if (import.meta.env.DEV) {
@@ -18,6 +19,10 @@ function buildTjmediaApiBaseUrl(): string {
 }
 
 export function buildChartErrorMessage(errorMessage: string): string {
+  if (errorMessage.includes('resultCode 98')) {
+    return '현재 이 장르의 차트 데이터가 없습니다. 잠시 후 다시 시도해주세요.';
+  }
+
   if (errorMessage.includes('resultCode 04')) {
     return 'TJMedia returned an application-level failure (`resultCode 04`). Try again in a moment or change the date range.';
   }
@@ -71,6 +76,20 @@ export async function fetchTJMediaPopularSongs(
     parsedResponseBody = JSON.parse(responseText) as TJMediaResponse;
   } catch {
     throw new Error('TJMedia worker returned invalid JSON.');
+  }
+
+  if (parsedResponseBody.resultCode === '98') {
+    const todayRange = buildTodayDateRange();
+    const isAlreadyTodayRange =
+      searchForm.searchStartDate === todayRange.searchStartDate &&
+      searchForm.searchEndDate === todayRange.searchEndDate;
+
+    if (!isAlreadyTodayRange) {
+      return fetchTJMediaPopularSongs({
+        ...searchForm,
+        ...todayRange,
+      });
+    }
   }
 
   if (parsedResponseBody.resultCode !== '99') {

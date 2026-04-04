@@ -237,7 +237,9 @@ describe('tjmedia popular worker', () => {
     expect(body.resultData).toBeNull();
   });
 
-  it('returns empty items when TJMedia returns resultCode 98 (no data)', async () => {
+  it('passes through resultCode 98 (no data) without conversion and does not cache', async () => {
+    const r2Bucket = createMockR2Bucket();
+
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -258,14 +260,46 @@ describe('tjmedia popular worker', () => {
       new Request(
         'http://localhost/search?chartType=TOP&searchStartDate=2026-04-01&searchEndDate=2026-04-30&strType=1',
       ),
-      buildTestEnvironment(),
+      buildTestEnvironment({ R2_TJMEDIA_POPULAR: r2Bucket }),
     );
 
     expect(response.status).toBe(200);
-    const body = await response.json() as { resultCode: string; resultData: { itemsTotalCount: number; items: unknown[] } };
-    expect(body.resultCode).toBe('99');
-    expect(body.resultData.itemsTotalCount).toBe(0);
-    expect(body.resultData.items).toEqual([]);
+    const body = await response.json() as { resultCode: string; resultData: null };
+    expect(body.resultCode).toBe('98');
+    expect(body.resultData).toBeNull();
+    expect(r2Bucket.put).not.toHaveBeenCalled();
+  });
+
+  it('passes through resultCode 04 (unknown error) and does not cache', async () => {
+    const r2Bucket = createMockR2Bucket();
+
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          resultCode: '04',
+          resultMsg: '알수 없는 에러.',
+          resultData: null,
+        }),
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+          },
+        },
+      ),
+    );
+
+    const response = await worker.fetch(
+      new Request(
+        'http://localhost/search?chartType=TOP&searchStartDate=2026-04-01&searchEndDate=2026-04-30&strType=1',
+      ),
+      buildTestEnvironment({ R2_TJMEDIA_POPULAR: r2Bucket }),
+    );
+
+    expect(response.status).toBe(200);
+    const body = await response.json() as { resultCode: string };
+    expect(body.resultCode).toBe('04');
+    expect(r2Bucket.put).not.toHaveBeenCalled();
   });
 
   it('returns 502 for unknown resultCode', async () => {
