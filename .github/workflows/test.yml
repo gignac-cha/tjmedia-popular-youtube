@@ -20,6 +20,7 @@ jobs:
       workers-tools: ${{ steps.workers-tools.outputs.changed }}
       tjmedia-popular-worker: ${{ steps.tjmedia-popular-worker.outputs.changed }}
       youtube-search-worker: ${{ steps.youtube-search-worker.outputs.changed }}
+      browser: ${{ steps.browser.outputs.changed }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -41,6 +42,10 @@ jobs:
         id: youtube-search-worker
         with:
           path: workers/youtube-search-worker
+      - uses: ./.github/actions/detect-changes
+        id: browser
+        with:
+          path: tests/browser
 
   test-web:
     needs: setup-and-detect
@@ -90,3 +95,15 @@ jobs:
           VITE_TJMEDIA_POPULAR_WORKER_URL: https://placeholder.workers.dev
           VITE_YOUTUBE_SEARCH_WORKER_URL: https://placeholder.workers.dev
       - run: pnpm --filter @tjmedia-popular-youtube/web exec storybook build -o outputs/storybook
+
+  test-browser:
+    needs: setup-and-detect
+    if: |
+      needs.setup-and-detect.outputs.browser == 'true' ||
+      needs.setup-and-detect.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @tjmedia-popular-youtube/browser exec playwright install --with-deps chromium
+      - run: TEST_LOCAL=true pnpm --filter @tjmedia-popular-youtube/browser test
