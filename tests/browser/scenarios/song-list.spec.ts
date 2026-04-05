@@ -1,16 +1,15 @@
 import { test, expect } from '@playwright/test';
-import { buildMockResponse, buildLongTextSong } from '../fixtures/mock-data.ts';
+import { buildMockResponse } from '../fixtures/mock-data.ts';
 import { waitForSongListLoaded } from '../fixtures/helpers.ts';
 
 test.describe('곡 목록 (SongList)', () => {
   // ──────────────────────────────────────────────
   // 시나리오 1: 로딩 스켈레톤 표시
   // ──────────────────────────────────────────────
-  test('로딩 중 스켈레톤 행이 Ranking 아래에 표시된다', async ({ page }) => {
-    test.skip(process.env.MOCK_API !== 'true', 'mock 전용 테스트 — API 지연 필요 (MOCK_API=true 로 실행)');
+  test('로딩 중 스켈레톤 행이 Ranking 아래에 표시된다', { tag: '@mock' }, async ({ page }) => {
 
     // API 응답을 지연시켜 로딩 상태를 유지
-    await page.route('**/tjmedia/**', async (route) => {
+    await page.route('**/search?chartType=*', async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 10_000));
       await route.fulfill({
         status: 200,
@@ -161,12 +160,11 @@ test.describe('곡 목록 (SongList)', () => {
   // ──────────────────────────────────────────────
   // 시나리오 6: 빈 결과 상태
   // ──────────────────────────────────────────────
-  test('곡이 없으면 "No songs found for this period." 메시지가 표시된다', async ({
+  test('곡이 없으면 "No songs found for this period." 메시지가 표시된다', { tag: '@mock' }, async ({
     page,
   }) => {
-    test.skip(process.env.MOCK_API !== 'true', 'mock 전용 테스트 — 빈 결과 필요 (MOCK_API=true 로 실행)');
 
-    await page.route('**/tjmedia/**', async (route) => {
+    await page.route('**/search?chartType=*', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -191,21 +189,20 @@ test.describe('곡 목록 (SongList)', () => {
   // ──────────────────────────────────────────────
   // 시나리오 7: 에러 상태 표시
   // ──────────────────────────────────────────────
-  test('에러 발생 시 role="alert" 컨테이너에 에러 메시지와 다시 시도 버튼이 표시된다', async ({
+  test('에러 발생 시 role="alert" 컨테이너에 에러 메시지와 다시 시도 버튼이 표시된다', { tag: '@mock' }, async ({
     page,
   }) => {
-    test.skip(process.env.MOCK_API !== 'true', '실제 API 환경에서는 에러 재현 불가 (MOCK_API=true 로 실행)');
-    await page.route('**/tjmedia/**', async (route) => {
+    await page.route('**/search?chartType=*', async (route) => {
       await route.fulfill({
-        status: 500,
+        status: 502,
         contentType: 'application/json',
-        body: JSON.stringify({ error: { message: 'Internal Server Error' } }),
+        body: JSON.stringify({ error: { message: 'Internal Server Error', status: 502 } }),
       });
     });
 
     await page.goto('./');
 
-    // role="alert" 영역이 표시되어야 한다
+    // role="alert" 영역이 표시되어야 한다 (React Query retry: 1 이후)
     const alertContainer = page.locator('[role="alert"]');
     await expect(alertContainer).toBeVisible();
 
@@ -220,22 +217,21 @@ test.describe('곡 목록 (SongList)', () => {
   // ──────────────────────────────────────────────
   // 시나리오 8: 재시도 버튼 동작
   // ──────────────────────────────────────────────
-  test('다시 시도 버튼 클릭 시 API를 재조회한다', async ({ page }) => {
-    test.skip(process.env.MOCK_API !== 'true', '실제 API 환경에서는 에러 재현 불가 (MOCK_API=true 로 실행)');
+  test('다시 시도 버튼 클릭 시 API를 재조회한다', { tag: '@mock' }, async ({ page }) => {
     let requestCount = 0;
 
-    await page.route('**/tjmedia/**', async (route) => {
+    await page.route('**/search?chartType=*', async (route) => {
       requestCount += 1;
 
-      if (requestCount === 1) {
-        // 첫 번째 요청: 에러
+      if (requestCount <= 2) {
+        // 첫 두 요청 (원본 + React Query 자동 재시도): 에러
         await route.fulfill({
-          status: 500,
+          status: 502,
           contentType: 'application/json',
-          body: JSON.stringify({ error: { message: 'Server Error' } }),
+          body: JSON.stringify({ error: { message: 'Server Error', status: 502 } }),
         });
       } else {
-        // 두 번째 요청(재시도): 성공
+        // 세 번째 요청 (다시 시도 버튼 클릭): 성공
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -258,8 +254,8 @@ test.describe('곡 목록 (SongList)', () => {
     await expect(songItems.first()).toBeVisible();
     await expect(songItems).toHaveCount(5);
 
-    // API가 2번 호출되었는지 확인
-    expect(requestCount).toBe(2);
+    // API가 3번 호출되었는지 확인 (원본 + RQ 자동 재시도 + 다시 시도 클릭)
+    expect(requestCount).toBe(3);
   });
 
   // ──────────────────────────────────────────────

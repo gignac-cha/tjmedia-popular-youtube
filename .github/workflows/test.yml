@@ -96,7 +96,21 @@ jobs:
           VITE_YOUTUBE_SEARCH_WORKER_URL: https://placeholder.workers.dev
       - run: pnpm --filter @tjmedia-popular-youtube/web exec storybook build -o outputs/storybook
 
-  test-browser:
+  test-browser-live:
+    needs: setup-and-detect
+    if: |
+      needs.setup-and-detect.outputs.browser == 'true' ||
+      needs.setup-and-detect.outputs.web == 'true' ||
+      needs.setup-and-detect.outputs.tjmedia-popular-worker == 'true' ||
+      needs.setup-and-detect.outputs.youtube-search-worker == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @tjmedia-popular-youtube/browser exec playwright install --with-deps chromium
+      - run: TEST_LOCAL=true pnpm --filter @tjmedia-popular-youtube/browser exec playwright test --project=live-desktop --project=live-mobile
+
+  test-browser-mock:
     needs: setup-and-detect
     if: |
       needs.setup-and-detect.outputs.browser == 'true' ||
@@ -106,4 +120,4 @@ jobs:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
       - run: pnpm --filter @tjmedia-popular-youtube/browser exec playwright install --with-deps chromium
-      - run: TEST_LOCAL=true pnpm --filter @tjmedia-popular-youtube/browser test
+      - run: TEST_MOCK=true pnpm --filter @tjmedia-popular-youtube/browser exec playwright test --project=mock-desktop --project=mock-mobile

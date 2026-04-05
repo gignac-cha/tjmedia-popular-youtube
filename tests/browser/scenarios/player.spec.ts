@@ -45,9 +45,9 @@ async function mockYouTubeAPIEmpty(page: Page) {
 async function mockYouTubeAPIError(page: Page) {
   await page.route('**/search?search_query=*', async (route) => {
     await route.fulfill({
-      status: 500,
+      status: 502,
       contentType: 'application/json',
-      body: JSON.stringify({ error: 'Internal Server Error' }),
+      body: JSON.stringify({ error: { message: 'upstream failed', status: 502 } }),
     });
   });
 }
@@ -89,10 +89,9 @@ test.describe('플레이어 데스크톱 시나리오', () => {
   });
 
   // 시나리오 2: YouTube 검색 로딩 — 원형 스켈레톤 + 텍스트 스켈레톤
-  test('YouTube 검색 중 원형 스켈레톤과 텍스트 스켈레톤이 표시된다', async ({
+  test('YouTube 검색 중 원형 스켈레톤과 텍스트 스켈레톤이 표시된다', { tag: '@mock' }, async ({
     page,
   }) => {
-    test.skip(process.env.MOCK_API !== 'true', 'mock 전용 테스트 — YouTube API 지연 필요 (MOCK_API=true 로 실행)');
 
     await mockTJMediaAPIForTest(page);
     await mockYouTubeAPIDelayed(page);
@@ -112,10 +111,9 @@ test.describe('플레이어 데스크톱 시나리오', () => {
   });
 
   // 시나리오 3: YouTube 결과 없음 — "No videos found for ..." 문구
-  test('YouTube 검색 결과가 없으면 "No videos found for ..." 메시지가 표시된다', async ({
+  test('YouTube 검색 결과가 없으면 "No videos found for ..." 메시지가 표시된다', { tag: '@mock' }, async ({
     page,
   }) => {
-    test.skip(process.env.MOCK_API !== 'true', 'mock 전용 테스트 — 빈 YouTube 결과 필요 (MOCK_API=true 로 실행)');
 
     await mockTJMediaAPIForTest(page);
     await mockYouTubeAPIEmpty(page);
@@ -128,10 +126,9 @@ test.describe('플레이어 데스크톱 시나리오', () => {
   });
 
   // 시나리오 4: 플레이어 에러 — role="alert", "Failed to load videos."
-  test('YouTube API 에러 시 role=alert과 "Failed to load videos." 메시지가 표시된다', async ({
+  test('YouTube API 에러 시 role=alert과 "Failed to load videos." 메시지가 표시된다', { tag: '@mock' }, async ({
     page,
   }) => {
-    test.skip(process.env.MOCK_API !== 'true', '실제 API 환경에서는 에러 재현 불가 (MOCK_API=true 로 실행)');
 
     await mockTJMediaAPIForTest(page);
     await mockYouTubeAPIError(page);
@@ -143,8 +140,8 @@ test.describe('플레이어 데스크톱 시나리오', () => {
     const alertElement = page.locator('[role="alert"]');
     await expect(alertElement).toBeVisible();
 
-    // "Failed to load videos." 문구 확인
-    await expect(alertElement).toContainText('Failed to load videos.');
+    // 에러 메시지 확인 (Worker 에러 응답의 message가 표시된다)
+    await expect(alertElement).toContainText('upstream failed');
   });
 
   // 시나리오 5: 다중 비디오 네비게이션 버튼 — Previous/Next video + 카운터
