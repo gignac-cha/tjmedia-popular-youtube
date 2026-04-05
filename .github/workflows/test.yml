@@ -1,4 +1,4 @@
-name: CI
+name: Test
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - main
 
 concurrency:
-  group: ci-${{ github.head_ref }}
+  group: test-${{ github.head_ref }}
   cancel-in-progress: true
 
 permissions:
