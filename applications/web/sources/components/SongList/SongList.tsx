@@ -27,15 +27,15 @@ export function SongList({
   onRetry?: () => void;
 }) {
   return (
-    <ListSection>
-      <ListHeader>
+    <ListSection data-testid="song-list-section">
+      <ListHeader data-testid="song-list-header">
         <Subtitle>Ranking</Subtitle>
       </ListHeader>
 
       {isPending && <SkeletonList />}
 
       {isError && (
-        <ErrorContainer role="alert">
+        <ErrorContainer role="alert" data-testid="song-list-error">
           <FontAwesomeIcon icon={faExclamationCircle} />
           <ErrorMessage>
             {errorMessage !== undefined
@@ -43,13 +43,13 @@ export function SongList({
               : 'Failed to load charts.'}
           </ErrorMessage>
           {onRetry !== undefined && (
-            <RetryButton onClick={onRetry}>다시 시도</RetryButton>
+            <RetryButton onClick={onRetry} data-testid="song-list-retry-button">다시 시도</RetryButton>
           )}
         </ErrorContainer>
       )}
 
       {!isPending && !isError && songs.length === 0 && (
-        <EmptyState>
+        <EmptyState data-testid="song-list-empty">
           <p>No songs found for this period.</p>
         </EmptyState>
       )}

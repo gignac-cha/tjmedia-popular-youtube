@@ -63,7 +63,7 @@ test.describe('모바일 필터', () => {
     await popButton.click();
 
     // BottomSheet가 닫혀야 한다 (Backdrop이 사라짐)
-    await expect(page.locator('[style*="z-index: 50"]')).toBeHidden({ timeout: 5000 });
+    await expect(page.getByTestId('bottom-sheet-backdrop')).toBeHidden({ timeout: 5000 });
 
     // 다시 BottomSheet 열어서 POP이 활성인지 확인
     await filterToggle.click();
@@ -82,7 +82,7 @@ test.describe('모바일 필터', () => {
     await jpopButton.click();
 
     // BottomSheet가 닫혀야 한다
-    await expect(page.locator('[style*="z-index: 50"]')).toBeHidden({ timeout: 5000 });
+    await expect(page.getByTestId('bottom-sheet-backdrop')).toBeHidden({ timeout: 5000 });
 
     // URL에 type=japanese가 반영되어야 한다 (J-POP)
     await expect(page).toHaveURL(/type=japanese/);
@@ -99,12 +99,12 @@ test.describe('모바일 필터', () => {
 
     // Today 클릭 — BottomSheet가 닫힌다
     await page.getByRole('button', { name: 'Today' }).last().click();
-    await expect(page.locator('[style*="z-index: 50"]')).toBeHidden({ timeout: 5000 });
+    await expect(page.getByTestId('bottom-sheet-backdrop')).toBeHidden({ timeout: 5000 });
 
     // 다시 열어서 This Month 클릭
     await filterToggle.click();
     await page.getByRole('button', { name: 'This Month' }).last().click();
-    await expect(page.locator('[style*="z-index: 50"]')).toBeHidden({ timeout: 5000 });
+    await expect(page.getByTestId('bottom-sheet-backdrop')).toBeHidden({ timeout: 5000 });
 
     // This Month은 기본값이므로 from/to 파라미터가 URL에서 제거된다
     // 기본 상태로 복원되었는지 확인한다
@@ -151,7 +151,7 @@ test.describe('모바일 필터', () => {
     await page.getByRole('button', { name: 'Apply' }).last().click();
 
     // BottomSheet가 닫혀야 한다
-    await expect(page.locator('[style*="z-index: 50"]')).toBeHidden({ timeout: 5000 });
+    await expect(page.getByTestId('bottom-sheet-backdrop')).toBeHidden({ timeout: 5000 });
 
     // URL에 커스텀 날짜가 반영되어야 한다
     await expect(page).toHaveURL(/from=2026-01-01/);
@@ -169,7 +169,7 @@ test.describe('모바일 필터', () => {
     // 먼저 POP으로 변경
     await filterToggle.click();
     await page.getByRole('button', { name: 'POP', exact: true }).last().click();
-    await expect(page.locator('[style*="z-index: 50"]')).toBeHidden({ timeout: 5000 });
+    await expect(page.getByTestId('bottom-sheet-backdrop')).toBeHidden({ timeout: 5000 });
 
     // URL에 type=english가 반영됨을 확인
     await expect(page).toHaveURL(/type=english/);
@@ -194,7 +194,7 @@ test.describe('모바일 필터', () => {
     // POP으로 변경 후 Reset
     await filterToggle.click();
     await page.getByRole('button', { name: 'POP', exact: true }).last().click();
-    await expect(page.locator('[style*="z-index: 50"]')).toBeHidden({ timeout: 5000 });
+    await expect(page.getByTestId('bottom-sheet-backdrop')).toBeHidden({ timeout: 5000 });
     await filterToggle.click();
     await page.getByRole('button', { name: 'Reset' }).last().click();
 
@@ -203,7 +203,7 @@ test.describe('모바일 필터', () => {
     // 다시 J-POP으로 변경 후 타이틀 클릭
     await filterToggle.click();
     await page.getByRole('button', { name: 'J-POP' }).last().click();
-    await expect(page.locator('[style*="z-index: 50"]')).toBeHidden({ timeout: 5000 });
+    await expect(page.getByTestId('bottom-sheet-backdrop')).toBeHidden({ timeout: 5000 });
 
     // TitleGroup 클릭 (TJMedia 타이틀)
     await page.locator('header h1').click();
@@ -230,10 +230,10 @@ test.describe('모바일 필터', () => {
     await expect(page.getByRole('button', { name: '가요' }).last()).toBeVisible();
 
     // Backdrop 클릭 (화면 상단 영역 — Sheet 바깥)
-    await page.mouse.click(187, 50);
+    await page.getByTestId('bottom-sheet-backdrop').click();
 
     // BottomSheet가 닫혀야 한다
-    await expect(page.locator('[style*="z-index: 50"]')).toBeHidden({ timeout: 5000 });
+    await expect(page.getByTestId('bottom-sheet-backdrop')).toBeHidden({ timeout: 5000 });
   });
 
   // -------------------------------------------------------------------------
@@ -259,7 +259,7 @@ test.describe('모바일 필터', () => {
       // 짧은 스와이프 (30px — threshold 미만) — Touch API로 시뮬레이션
       await page.evaluate(
         ({ sx, sy, deltaY }) => {
-          const backdrop = document.querySelector('[style*="z-index: 50"]');
+          const backdrop = document.querySelector('[data-testid="bottom-sheet-drag-handle"]');
           const sheet = backdrop?.querySelector('div') ?? backdrop;
           if (sheet === null || sheet === undefined) return;
           const touchStart = new Touch({ identifier: 0, target: sheet, clientX: sx, clientY: sy });
@@ -276,8 +276,8 @@ test.describe('모바일 필터', () => {
     }
 
     // 닫고 다시 열기
-    await page.mouse.click(187, 50);
-    await expect(page.locator('[style*="z-index: 50"]')).toBeHidden({ timeout: 5000 });
+    await page.getByTestId('bottom-sheet-backdrop').click();
+    await expect(page.getByTestId('bottom-sheet-backdrop')).toBeHidden({ timeout: 5000 });
 
     // --- 충분한 드래그 → 닫힘 ---
     await filterToggle.click();
@@ -291,7 +291,7 @@ test.describe('모바일 필터', () => {
       // 충분한 스와이프 (150px — threshold 초과) — Touch API로 시뮬레이션
       await page.evaluate(
         ({ sx, sy, deltaY }) => {
-          const backdrop = document.querySelector('[style*="z-index: 50"]');
+          const backdrop = document.querySelector('[data-testid="bottom-sheet-drag-handle"]');
           const sheet = backdrop?.querySelector('div') ?? backdrop;
           if (sheet === null || sheet === undefined) return;
           const touchStart = new Touch({ identifier: 0, target: sheet, clientX: sx, clientY: sy });
@@ -304,7 +304,7 @@ test.describe('모바일 필터', () => {
       );
 
       // BottomSheet가 닫혀야 한다 (애니메이션 200ms 대기)
-      await expect(page.locator('[style*="z-index: 50"]')).toBeHidden({ timeout: 5000 });
+      await expect(page.getByTestId('bottom-sheet-backdrop')).toBeHidden({ timeout: 5000 });
     }
   });
 });

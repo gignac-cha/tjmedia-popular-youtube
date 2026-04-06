@@ -12,7 +12,7 @@ export function SkeletonList() {
   return (
     <>
       {Array.from({ length: 15 }).map((_, index) => (
-        <SkeletonItem key={index}>
+        <SkeletonItem key={index} data-testid="skeleton-item">
           <SkeletonRank />
           <SkeletonThumb />
           <SkeletonTextGroup>

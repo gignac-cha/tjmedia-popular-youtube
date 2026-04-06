@@ -126,8 +126,8 @@ export function VideoPlayerView({
 
   if (isPending) {
     return (
-      <PlayerSection>
-        <EmptyState>
+      <PlayerSection data-testid="player-section">
+        <EmptyState data-testid="player-loading">
           <SkeletonBase
             style={{
               width: '64px',
@@ -144,8 +144,8 @@ export function VideoPlayerView({
 
   if (isError) {
     return (
-      <PlayerSection>
-        <EmptyState role="alert">
+      <PlayerSection data-testid="player-section">
+        <EmptyState role="alert" data-testid="player-error">
           <FontAwesomeIcon icon={faExclamationTriangle} />
           <p>{errorMessage ?? 'Failed to load videos.'}</p>
         </EmptyState>
@@ -155,8 +155,8 @@ export function VideoPlayerView({
 
   if (videos.length === 0 || currentVideo === null) {
     return (
-      <PlayerSection>
-        <EmptyState>
+      <PlayerSection data-testid="player-section">
+        <EmptyState data-testid="player-empty">
           <FontAwesomeIcon icon={faPlay} />
           <p>No videos found for &quot;{query}&quot;</p>
         </EmptyState>
@@ -165,8 +165,9 @@ export function VideoPlayerView({
   }
 
   return (
-    <PlayerSection ref={sectionReference}>
+    <PlayerSection ref={sectionReference} data-testid="player-section">
       <MiniPlayerBar
+        data-testid="mini-player-bar"
         onClick={handleMiniPlayerBarClick}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -182,7 +183,7 @@ export function VideoPlayerView({
           ) : (
             <FontAwesomeIcon icon={faPlay} color="var(--accent-color)" />
           )}
-          <MiniPlayerTitle>
+          <MiniPlayerTitle data-testid="mini-player-title">
             {songTitle} - {artist}
           </MiniPlayerTitle>
         </MiniPlayerInfo>
@@ -192,8 +193,8 @@ export function VideoPlayerView({
         />
       </MiniPlayerBar>
 
-      <VideoContainer isExpanded={isMobileExpanded}>
-        <PlayerTarget ref={onContainerReady} />
+      <VideoContainer isExpanded={isMobileExpanded} data-testid="video-container">
+        <PlayerTarget ref={onContainerReady} data-testid="player-target" />
         {videos.length > 1 && (
           <OverlayControls data-overlay>
             <OverlayArrow
@@ -219,10 +220,10 @@ export function VideoPlayerView({
         )}
       </VideoContainer>
 
-      <VideoInfo isExpanded={isMobileExpanded}>
+      <VideoInfo isExpanded={isMobileExpanded} data-testid="video-info">
         <div>
           <Subtitle>Now Playing</Subtitle>
-          <VideoTitle>
+          <VideoTitle data-testid="video-title">
             {songTitle} - {artist}
           </VideoTitle>
         </div>
@@ -237,7 +238,7 @@ export function VideoPlayerView({
           >
             <FontAwesomeIcon icon={faChevronLeft} />
           </IconButton>
-          <VideoCounter>
+          <VideoCounter data-testid="video-counter">
             {clampedIndex + 1} / {videos.length}
           </VideoCounter>
           <IconButton

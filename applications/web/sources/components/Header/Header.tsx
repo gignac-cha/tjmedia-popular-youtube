@@ -143,7 +143,7 @@ export function Header({
         </SegmentedControl>
 
         {(showCustomDate || (!isToday && !isThisMonth)) && (
-          <CustomDateContainer>
+          <CustomDateContainer data-testid="custom-date-container">
             <Input
               type="date"
               value={draftStartDate}
@@ -165,7 +165,7 @@ export function Header({
           </CustomDateContainer>
         )}
 
-        <ResetButton onClick={handleReset}>Reset</ResetButton>
+        <ResetButton data-testid="reset-button" onClick={handleReset}>Reset</ResetButton>
       </DateControls>
     </FilterGroup>
   );
@@ -187,12 +187,12 @@ export function Header({
           <Title>TJMedia</Title>
           <Subtitle>Charts</Subtitle>
         </TitleGroup>
-        <MobileFilterToggle onClick={() => setIsBottomSheetOpen(true)}>
+        <MobileFilterToggle data-testid="mobile-filter-toggle" onClick={() => setIsBottomSheetOpen(true)}>
           <FontAwesomeIcon icon={faFilter} />
         </MobileFilterToggle>
       </HeaderTop>
 
-      <DesktopControls>{filterControls}</DesktopControls>
+      <DesktopControls data-testid="desktop-controls">{filterControls}</DesktopControls>
 
       <BottomSheet
         isOpen={isBottomSheetOpen}

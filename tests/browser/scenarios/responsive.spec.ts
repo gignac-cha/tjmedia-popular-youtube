@@ -62,7 +62,7 @@ test.describe('모바일 반응형', () => {
     await firstSong.click();
 
     // 플레이어 섹션이 나타날 때까지 대기
-    const playerSection = page.locator('main section').nth(1);
+    const playerSection = page.getByTestId('player-section');
     await expect(playerSection).toBeVisible({ timeout: 10_000 });
 
     // position: fixed 확인
@@ -81,7 +81,7 @@ test.describe('모바일 반응형', () => {
   // 시나리오 6: 모바일 리스트 하단 여백 — 플레이어 열렸을 때 마지막 곡 가려지지 않음
   test('플레이어가 열렸을 때 리스트 하단에 여백이 있어 마지막 곡이 가려지지 않는다', async ({ page }) => {
     // ListSection의 padding-bottom이 80px인지 확인 (플레이어 가림 방지)
-    const listSection = page.locator('main section').first();
+    const listSection = page.getByTestId('song-list-section');
     const paddingBottom = await listSection.evaluate(
       (element) => window.getComputedStyle(element).paddingBottom,
     );
@@ -194,7 +194,7 @@ test.describe('데스크톱 반응형', () => {
     await firstSong.click();
 
     // 플레이어 섹션이 나타날 때까지 대기
-    const playerSection = page.locator('main section').nth(1);
+    const playerSection = page.getByTestId('player-section');
     await expect(playerSection).toBeVisible({ timeout: 10_000 });
 
     // position: sticky 확인
@@ -227,8 +227,8 @@ test.describe('데스크톱 반응형', () => {
     expect(flexDirection).toBe('row');
 
     // 리스트 섹션(첫 번째 section)과 플레이어 섹션(두 번째 section)의 수평 위치 비교
-    const listSection = page.locator('main section').first();
-    const playerSection = page.locator('main section').nth(1);
+    const listSection = page.getByTestId('song-list-section');
+    const playerSection = page.getByTestId('player-section');
 
     const listBox = await listSection.boundingBox();
     const playerBox = await playerSection.boundingBox();

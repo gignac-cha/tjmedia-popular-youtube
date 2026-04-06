@@ -82,7 +82,7 @@ test.describe('플레이어 데스크톱 시나리오', () => {
     await expect(page.locator('text=Now Playing')).toBeVisible();
 
     // "곡명 - 가수명" 형태의 제목 확인 (h2 VideoTitle) — 내용 무관, 텍스트 존재만 확인
-    const videoTitle = page.locator('h2');
+    const videoTitle = page.getByTestId('video-title');
     await expect(videoTitle).toBeVisible();
     const titleText = await videoTitle.textContent();
     expect(titleText?.trim().length).toBeGreaterThan(0);
@@ -102,11 +102,11 @@ test.describe('플레이어 데스크톱 시나리오', () => {
     await page.locator('.song-item').first().click();
 
     // 원형 스켈레톤 (borderRadius: 50%, width: 64px)
-    const circularSkeleton = page.locator('section >> div[style*="border-radius: 50%"]');
+    const circularSkeleton = page.getByTestId('player-loading').locator('div').first();
     await expect(circularSkeleton).toBeVisible();
 
     // 텍스트 스켈레톤 (width: 200px)
-    const textSkeleton = page.locator('section >> div[style*="width: 200px"]');
+    const textSkeleton = page.getByTestId('player-loading').locator('div').nth(1);
     await expect(textSkeleton).toBeVisible();
   });
 
@@ -153,7 +153,7 @@ test.describe('플레이어 데스크톱 시나리오', () => {
     await selectFirstSong(page);
 
     // 카운터 텍스트("/ ")가 존재하는지 확인 — 비디오가 1개이면 네비게이션이 없다
-    const counterLocator = page.locator('text=/ ');
+    const counterLocator = page.getByTestId('video-counter');
     const hasMultipleVideos = (await counterLocator.count()) > 0;
     test.skip(!hasMultipleVideos, '비디오가 1개뿐이므로 네비게이션 테스트를 건너뜁니다');
 
@@ -173,7 +173,7 @@ test.describe('플레이어 데스크톱 시나리오', () => {
     await selectFirstSong(page);
 
     // 카운터 텍스트("/ ")가 존재하는지 확인
-    const counterLocator = page.locator('text=/ ');
+    const counterLocator = page.getByTestId('video-counter');
     const hasMultipleVideos = (await counterLocator.count()) > 0;
     test.skip(!hasMultipleVideos, '비디오가 1개뿐이므로 네비게이션 테스트를 건너뜁니다');
 
@@ -207,7 +207,7 @@ test.describe('플레이어 데스크톱 시나리오', () => {
     await selectFirstSong(page);
 
     // 카운터 텍스트("/ ")가 존재하는지 확인
-    const counterLocator = page.locator('text=/ ');
+    const counterLocator = page.getByTestId('video-counter');
     const hasMultipleVideos = (await counterLocator.count()) > 0;
     test.skip(!hasMultipleVideos, '비디오가 1개뿐이므로 네비게이션 테스트를 건너뜁니다');
 
@@ -251,7 +251,7 @@ test.describe('플레이어 데스크톱 시나리오', () => {
 
     // 비디오 컨테이너 호버 — [data-overlay]의 부모가 VideoContainer이며
     // VideoContainer:hover [data-overlay] { opacity: 1 } 룰이 적용된다
-    const videoContainer = overlayControls.first().locator('..');
+    const videoContainer = page.getByTestId('video-container');
     await videoContainer.hover();
 
     // CSS :hover 트랜지션이 완료될 때까지 auto-wait으로 확인
@@ -278,7 +278,7 @@ test.describe('플레이어 모바일 시나리오', () => {
     page,
   }) => {
     // MiniPlayerBar — PlayerSection(section:last)의 첫 직접 자식 div
-    const miniPlayerBar = page.locator('section').last().locator('> div').first();
+    const miniPlayerBar = page.getByTestId('mini-player-bar');
     const barText = await miniPlayerBar.textContent();
     expect(barText?.trim().length).toBeGreaterThan(0);
 
@@ -297,11 +297,11 @@ test.describe('플레이어 모바일 시나리오', () => {
     });
 
     // h2 제목이 보이면 펼쳐진 상태이다 — 내용 무관
-    const h2Element = page.locator('h2');
+    const h2Element = page.getByTestId('video-title');
     await expect(h2Element).toBeVisible();
 
     // 미니 플레이어 바 클릭 → 접기
-    const miniPlayerBar = page.locator('section').last().locator('> div').first();
+    const miniPlayerBar = page.getByTestId('mini-player-bar');
     await miniPlayerBar.click();
 
     // 접힌 상태: VideoInfo(h2 포함)가 display: none이 된다
@@ -317,10 +317,10 @@ test.describe('플레이어 모바일 시나리오', () => {
     page,
   }) => {
     // 펼쳐진 상태 확인 — h2가 보이면 펼쳐진 상태
-    const h2Element = page.locator('h2');
+    const h2Element = page.getByTestId('video-title');
     await expect(h2Element).toBeVisible();
 
-    const miniPlayerBar = page.locator('section').last().locator('> div').first();
+    const miniPlayerBar = page.getByTestId('mini-player-bar');
     const boundingBox = await miniPlayerBar.boundingBox();
     if (boundingBox === null) throw new Error('미니 플레이어 바의 boundingBox를 가져올 수 없습니다');
 
@@ -331,8 +331,7 @@ test.describe('플레이어 모바일 시나리오', () => {
     // page.evaluate로 실제 Touch 객체를 생성하여 터치 이벤트를 발생시킨다
     await page.evaluate(
       ({ sx, sy, deltaY }) => {
-        const el = document.querySelectorAll('section')[document.querySelectorAll('section').length - 1]
-          ?.querySelector(':scope > div');
+        const el = document.querySelector('[data-testid="mini-player-bar"]');
         if (el === null || el === undefined) return;
         const touchStart = new Touch({ identifier: 0, target: el, clientX: sx, clientY: sy });
         const touchMove = new Touch({ identifier: 0, target: el, clientX: sx, clientY: sy + deltaY });
@@ -348,8 +347,7 @@ test.describe('플레이어 모바일 시나리오', () => {
     // 긴 드래그 (120px) — 임계값 초과 → 접힘
     await page.evaluate(
       ({ sx, sy, deltaY }) => {
-        const el = document.querySelectorAll('section')[document.querySelectorAll('section').length - 1]
-          ?.querySelector(':scope > div');
+        const el = document.querySelector('[data-testid="mini-player-bar"]');
         if (el === null || el === undefined) return;
         const touchStart = new Touch({ identifier: 0, target: el, clientX: sx, clientY: sy });
         const touchMove = new Touch({ identifier: 0, target: el, clientX: sx, clientY: sy + deltaY });
@@ -369,7 +367,7 @@ test.describe('플레이어 모바일 시나리오', () => {
   }) => {
     // 초기 상태 (idle/unstarted) — Play 아이콘(svg)이 보인다
     // MiniPlayerInfo 안의 첫 번째 요소가 svg(Play) 또는 div(Equalizer)이다
-    const miniPlayerInfo = page.locator('section').last().locator('> div').first();
+    const miniPlayerInfo = page.getByTestId('mini-player-bar');
 
     // Play 아이콘: FontAwesomeIcon은 svg로 렌더링된다
     const playIcon = miniPlayerInfo.locator('svg[data-icon="play"]');

@@ -35,7 +35,7 @@ test.describe('홈 페이지', () => {
     await expect(header).toBeVisible();
 
     // 곡 리스트 섹션 존재 (ListSection은 <section> 태그)
-    const listSection = page.locator('main section').first();
+    const listSection = page.getByTestId('song-list-section');
     await expect(listSection).toBeVisible();
 
     // 선택 전이므로 "Now Playing" 텍스트가 없어야 한다

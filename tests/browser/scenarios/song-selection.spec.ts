@@ -26,7 +26,7 @@ test.describe('곡 선택 시나리오', () => {
     const secondSong = songItemLocator(page, 1);
 
     // 선택 전 — 순위 텍스트 "2"가 보인다
-    const rankArea = secondSong.locator('> div').first();
+    const rankArea = secondSong.getByTestId('song-item-rank');
     await expect(rankArea).toContainText('2');
 
     // 클릭
@@ -48,7 +48,7 @@ test.describe('곡 선택 시나리오', () => {
     // 이퀄라이저 바(EqualizerBar)는 Equalizer 컨테이너 안에 3개의 div로 렌더링된다
     // 실제 YouTube 자동재생은 환경에 따라 불안정하므로,
     // 선택 직후 Play 아이콘(SelectedRank)이라도 표시되는지 확인한다
-    const rankArea = firstSong.locator('> div').first();
+    const rankArea = firstSong.getByTestId('song-item-rank');
     const svgOrEqualizer = rankArea.locator('svg, div');
     await expect(svgOrEqualizer.first()).toBeVisible();
   });

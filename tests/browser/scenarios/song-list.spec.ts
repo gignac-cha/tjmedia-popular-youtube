@@ -24,7 +24,7 @@ test.describe('곡 목록 (SongList)', () => {
     await expect(page.locator('text=Ranking')).toBeVisible();
 
     // 스켈레톤 아이템들이 렌더링되어야 한다 (SkeletonList는 15개 생성)
-    const listSection = page.locator('main section').first();
+    const listSection = page.getByTestId('song-list-section');
     // 스켈레톤 아이템은 grid 구조를 가진 div (.song-item 클래스 없음)
     const skeletonItems = listSection.locator('> div:not(.song-item)');
     await expect(skeletonItems.first()).toBeVisible();
@@ -57,11 +57,11 @@ test.describe('곡 목록 (SongList)', () => {
 
     // 제목과 아티스트 — 텍스트가 존재하는지만 확인 (내용 무관)
     // 구조: child 0 = rank, child 1 = thumbnail, child 2 = song info
-    const songInfo = firstItem.locator('> div').nth(2);
-    const titleText = await songInfo.locator('div').first().textContent();
+    const songInfo = firstItem.getByTestId('song-item-info');
+    const titleText = await songInfo.getByTestId('song-item-title').textContent();
     expect(titleText?.trim().length).toBeGreaterThan(0);
 
-    const artistText = await songInfo.locator('div').nth(1).textContent();
+    const artistText = await songInfo.getByTestId('song-item-artist').textContent();
     expect(artistText?.trim().length).toBeGreaterThan(0);
   });
 
@@ -78,7 +78,7 @@ test.describe('곡 목록 (SongList)', () => {
     // 1위 곡의 순위 영역에서 GoldRank 스타일 확인
     // GoldRank는 -webkit-text-fill-color: transparent + background-clip: text 적용
     // 구조: child 0 = rank div
-    const firstRankArea = songItems.first().locator('> div').first();
+    const firstRankArea = songItems.first().getByTestId('song-item-rank');
     const goldRankElement = firstRankArea.locator('div', { hasText: '1' });
     await expect(goldRankElement).toBeVisible();
 
@@ -107,7 +107,7 @@ test.describe('곡 목록 (SongList)', () => {
 
     // 호버 전: PlayOverlay는 opacity: 0
     const firstItem = songItems.first();
-    const thumbnailContainer = firstItem.locator('img').locator('..');
+    const thumbnailContainer = firstItem.getByTestId('song-item-thumbnail');
     const playOverlay = thumbnailContainer.locator('div').last();
 
     const opacityBefore = await playOverlay.evaluate((element) =>
@@ -134,9 +134,8 @@ test.describe('곡 목록 (SongList)', () => {
 
     // SongTitle과 SongArtist의 overflow 스타일 검증
     // 구조: child 0 = rank, child 1 = thumbnail, child 2 = song info
-    const songInfoChildren = songItem.locator('> div').nth(2).locator('div');
-    const titleElement = songInfoChildren.first();
-    const artistElement = songInfoChildren.nth(1);
+    const titleElement = songItem.getByTestId('song-item-title');
+    const artistElement = songItem.getByTestId('song-item-artist');
 
     // overflow: hidden, text-overflow: ellipsis 확인
     for (const element of [titleElement, artistElement]) {

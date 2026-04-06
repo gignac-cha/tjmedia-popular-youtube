@@ -55,8 +55,13 @@ export function songItemLocator(page: Page, index: number) {
 
 /** 첫 번째 곡을 선택하고 플레이어가 표시될 때까지 대기한다 */
 export async function selectFirstSong(page: Page) {
+  const youtubeResponse = page.waitForResponse(
+    (response) => response.url().includes('search_query') || response.url().includes('search?search_query'),
+    { timeout: 30_000 },
+  );
   await page.locator('.song-item').first().click();
-  await expect(page.locator('text=Now Playing')).toBeVisible();
+  await youtubeResponse;
+  await expect(page.locator('text=Now Playing')).toBeVisible({ timeout: 30_000 });
 }
 
 /** 장르 버튼을 클릭한다 (데스크톱/모바일 공통) */
@@ -69,7 +74,7 @@ export async function clickGenreButton(page: Page, genreName: string, isMobile: 
     await filterToggle.click();
     await page.getByRole('button', { name: genreName, exact: true }).last().click();
     // BottomSheet가 닫힐 때까지 대기
-    await expect(page.locator('[style*="z-index: 50"]')).toBeHidden({ timeout: 5000 });
+    await expect(page.getByTestId('bottom-sheet-backdrop')).toBeHidden({ timeout: 5000 });
   } else {
     await page.locator('header').getByRole('button', { name: genreName }).first().click();
   }
