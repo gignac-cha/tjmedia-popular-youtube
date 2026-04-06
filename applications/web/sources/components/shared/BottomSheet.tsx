@@ -126,14 +126,15 @@ export function BottomSheet({
 
   return (
     <>
-      <Backdrop onClick={onClose} />
+      <Backdrop data-testid="bottom-sheet-backdrop" onClick={onClose} />
       <Sheet
+        data-testid="bottom-sheet"
         ref={sheetReference}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <DragHandle />
+        <DragHandle data-testid="bottom-sheet-drag-handle" />
         {children}
       </Sheet>
     </>

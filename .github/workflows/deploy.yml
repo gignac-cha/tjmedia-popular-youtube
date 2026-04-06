@@ -137,6 +137,8 @@ jobs:
       (needs.deploy-tjmedia-popular-worker.result == 'success' || needs.deploy-tjmedia-popular-worker.result == 'skipped') &&
       (needs.deploy-youtube-search-worker.result == 'success' || needs.deploy-youtube-search-worker.result == 'skipped')
     runs-on: ubuntu-latest
+    outputs:
+      page_url: ${{ steps.deploy-pages.outputs.page_url }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
@@ -151,3 +153,15 @@ jobs:
       - uses: actions/deploy-pages@v5
         id: deploy-pages
       - run: echo "Deployed to ${{ steps.deploy-pages.outputs.page_url }}"
+
+  test-browser:
+    needs: deploy-web
+    if: needs.deploy-web.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @tjmedia-popular-youtube/browser exec playwright install --with-deps chromium
+      - run: pnpm --filter @tjmedia-popular-youtube/browser exec playwright test --project=live-desktop --project=live-mobile
+        env:
+          BASE_URL: ${{ needs.deploy-web.outputs.page_url }}

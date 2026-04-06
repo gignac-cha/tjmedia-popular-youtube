@@ -1,6 +1,7 @@
 packages:
   - 'applications/*'
   - 'workers/*'
+  - 'tests/*'
 
 catalogs:
   workers:

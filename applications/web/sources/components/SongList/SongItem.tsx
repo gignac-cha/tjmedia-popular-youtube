@@ -39,7 +39,7 @@ export function SongItem({
       data-selected={isSelected}
       onClick={onSelect}
     >
-      <Rank>
+      <Rank data-testid="song-item-rank">
         {isSelected ? (
           isPlaying ? (
             <Equalizer>
@@ -58,7 +58,7 @@ export function SongItem({
           song.rank
         )}
       </Rank>
-      <ThumbnailContainer>
+      <ThumbnailContainer data-testid="song-item-thumbnail">
         {song.imgthumb_path ? (
           <Thumbnail
             src={song.imgthumb_path}
@@ -78,9 +78,9 @@ export function SongItem({
           <FontAwesomeIcon icon={faPlay} />
         </PlayOverlay>
       </ThumbnailContainer>
-      <SongInfo>
-        <SongTitle>{song.indexTitle}</SongTitle>
-        <SongArtist>{song.indexSong}</SongArtist>
+      <SongInfo data-testid="song-item-info">
+        <SongTitle data-testid="song-item-title">{song.indexTitle}</SongTitle>
+        <SongArtist data-testid="song-item-artist">{song.indexSong}</SongArtist>
       </SongInfo>
     </StyledSongItem>
   );
